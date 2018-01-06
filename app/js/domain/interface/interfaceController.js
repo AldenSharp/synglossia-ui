@@ -1,0 +1,149 @@
+angular.module('app').controller('interfaceController', ['interfaceService', '$route', '$routeParams',
+  function interfaceController (svc, $route, $routeParams) {
+    let ctrl = this
+
+    let initializeController = function() {
+      ctrl.syngloss = svc.syngloss
+      ctrl.parentLanguage = svc.parentLanguage
+
+      for (let position of ctrl.parentLanguage.phonotactics) {
+        for (let option of position) {
+          option.presentation = svc.present(option.value)
+        }
+      }
+
+      ctrl.languageTree = svc.getLanguageTree(ctrl.parentLanguage)
+      ctrl.earliestDate = ctrl.parentLanguage.date
+      ctrl.latestDate = svc.getLatestDate(ctrl.languageTree, ctrl.earliestDate)
+      ctrl.selectedDate = ctrl.latestDate
+      ctrl.displayDate = ctrl.selectedDate < 0 ? -ctrl.selectedDate + ' BCE' : ctrl.selectedDate + ' CE'
+
+      ctrl.wordMemory = svc.getWord()
+      ctrl.wordLength = ctrl.wordMemory.syllables.length
+      ctrl.word = svc.copyWord(ctrl.wordMemory)
+      svc.verifyWord(ctrl.word, ctrl.parentLanguage)
+      ctrl.wordMemory.syllables.push(svc.getRandomSyllable())
+
+      ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
+      ctrl.descendentWords = svc.getDescendentWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+    }
+
+    this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)
+      .then(initializeController)
+
+    this.updateDate = function () {
+      if (ctrl.selectedDate < 0) {
+        ctrl.displayDate = -ctrl.selectedDate + ' BCE'
+      } else {
+        ctrl.displayDate = ctrl.selectedDate + ' CE'
+      }
+      ctrl.descendentWords = svc.getDescendentWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+    }
+
+    this.write = (word, language, writingSystemName) => 'word' in ctrl ?
+      svc.write(word, language, writingSystemName)
+      : null
+
+    function getWordTree () {
+      ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
+    }
+
+    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.parentLanguage.vowelCore
+
+    this.restressWord = function () {
+      ctrl.word = svc.restress(ctrl.word)
+    }
+
+    this.updateWord = function () {
+      ctrl.restressWord()
+      getWordTree()
+      ctrl.updateDate()
+    }
+
+    this.incrementWord = function () {
+      ctrl.wordLength++
+      changeWordLength()
+      ctrl.updateWord()
+    }
+
+    this.decrementWord = function () {
+      ctrl.wordLength--
+      changeWordLength()
+      ctrl.updateWord()
+    }
+
+    this.incrementedWordInvalid = function () {
+      if ('word' in ctrl) {
+        return !svc.testAlterationValidity(ctrl.word, {
+          type: 'SYLLABLE_INCREMENT',
+          newSyllable: ctrl.wordMemory.syllables[ctrl.wordLength]
+        })
+      }
+      return true
+    }
+
+    this.decrementedWordInvalid = function () {
+      if ('word' in ctrl) {
+        return !svc.testAlterationValidity(ctrl.word, { type: 'SYLLABLE_DECREMENT' })
+      }
+      return true
+    }
+
+    function changeWordLength () {
+      while (ctrl.wordMemory.syllables.length <= ctrl.wordLength) {
+        ctrl.wordMemory.syllables.push(svc.getRandomSyllable(ctrl.wordMemory))
+      }
+      while (ctrl.word.syllables.length < ctrl.wordLength) {
+        ctrl.word.syllables.push(ctrl.wordMemory.syllables[ctrl.word.syllables.length])
+        if (ctrl.parentLanguage.prosody.stressType === 'ABSOLUTE' || ctrl.parentLanguage.prosody.stressType === 'CONDITIONAL') {
+          ctrl.word = svc.restress(ctrl.word)
+        }
+      }
+      while (ctrl.word.syllables.length > ctrl.wordLength) {
+        ctrl.word.syllables.pop()
+      }
+    }
+
+    this.getCardinal = (number) => svc.getCardinal(number)
+  }])
+  // Attempt to fix the issue with the slider initalizing at 100 instead of the maximum value:
+  // .directive('range', function () {
+  //   return {
+  //     replace: true,
+  //     restrict: 'E',
+  //     scope: {
+  //       value: '=ngModel',
+  //       min: '=rangeMin',
+  //       max: '=rangeMax',
+  //       step: '=rangeStep'
+  //     },
+  //     template: '<input type="range"/>',
+  //     link: function (scope, iElement, iAttrs) {
+  //       scope.$watch('min', function () { setValue() })
+  //       scope.$watch('max', function () { setValue() })
+  //       scope.$watch('step', function () { setValue() })
+  //       scope.$watch('value', function () { setValue() })
+  //
+  //       function setValue () {
+  //         if (
+  //           angular.isDefined(scope.min) &&
+  //           angular.isDefined(scope.max) &&
+  //           angular.isDefined(scope.step) &&
+  //           angular.isDefined(scope.value)
+  //         ) {
+  //           iElement.attr('min', scope.min)
+  //           iElement.attr('max', scope.max)
+  //           iElement.attr('step', scope.step)
+  //           iElement.val(scope.value)
+  //         }
+  //       }
+  //       function read () {
+  //         scope.value = iElement.val()
+  //       }
+  //
+  //       iElement.on('change', function () {
+  //         scope.$apply(read)
+  //       })
+  //     }
+  //   }
+  // })

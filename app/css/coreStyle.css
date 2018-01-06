@@ -1,0 +1,35 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.jumbotron {
+    background-color: #202020;
+    color: white;
+}
+
+.jumbotron>p, .jumbotron>p>a, .jumbotron>h2 {
+    color: #505050;
+}
+
+[ng-href],
+[ng-click],
+[data-ng-click],
+[x-ng-click] {
+    cursor: pointer;
+}
+
+p, table {
+    color: #606060;
+}
+
+th, .data-header {
+    color: #404040;
+    text-align: center;
+}
+
+.solid-box {
+    border-style: solid;
+    padding: 10px;
+}

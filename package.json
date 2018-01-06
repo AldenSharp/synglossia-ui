@@ -1,0 +1,14 @@
+{
+  "name": "synglossia",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Experimental comparative linguistics research webapp.",
+  "repository": "https://github.com/AldenSharp/synglossia.git",
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  },
+  "scripts": {
+    "prestart": "npm install",
+    "start": "http-server ./app -a 0.0.0.0 -p 8000 -c-1"
+  }
+}

@@ -1,0 +1,37 @@
+Accent rules work in the following way:
+The language class has a field called 'accent', which specifies the kind of accent. This is an object with a key 'type'.
+If accent type is '', then the language has no accent. An example is Japanese.
+If accent type is 'stress', then the language has stress.
+  An accent object of type 'stress' has a 'maxOrder' property. This is an integer value greater than 0.
+    If maxOrder is 1, then the language only has a primary stress.
+    If maxOrder is 2, then the language has primary stress and secondary stress.
+    Etc.
+  The stress rules of a stress language can be classified as 'absolute', 'conditional', or 'arbitrary'.
+  This classification of the language depends on its 'validity' condition object.
+  If the following are true:
+    1. The validity condition is of type 'and'.
+    2. The validity condition contains a conjunct condition of type 'stressed'.
+  Then the stress classification is 'absolute'.
+  Else, if the following are true:
+    1. The validity condition is of type 'and'.
+    2. The validity condition contains a conjunct condition of type 'stress paradigm'.
+    3. The final position of this 'stress paradigm' condition has default condition.
+  Then the stress classification is 'conditional'.
+  Else, the stress classification is 'arbitrary'.
+  Example language of each stress classification are the following:
+    * Germanic languages: absolute stress of value 0.
+    * French: absolute stress of value -1.
+    * Typical Romance languages: absolute stress of value -2.
+    * Old Chinese: absolute stress of value -1.
+    * Latin: conditional stress
+    * Arabic: conditional stress
+    * Greek: arbitrary stress
+  The above handles stress accents. Pitch accents would require additional functionality that can be implemented later.
+  Examples of pitch accent languages that would require this additional functionality:
+    * Ancient Greek
+    * Proto-Indo-European
+    * Mandarin
+If accent type is 'pitch', then the language has a pitch accent.
+  An accent object of type 'pitch' has an 'inventory' property. This is a collection of lists of integers. (One of these lists may be empty.)
+    Each integer is either -2, -1, 0, 1, or 2.
+    Each integer refers to a pitch level defined by the Unicode pitch characters.

@@ -1,0 +1,170 @@
+LL -> OS:
+
+1. Phoneme "z" is added to the inventory.
+2.
+  a. For syllable s of index i such that i>0, if w(i-1)(2)=w(i-1)(3)=w(i)(-3)=∅ and w(i)(-1)∈{∅,"l" ,"r" ,"u" }, then:
+    i. w(i)(-2)="p"  implies φ(w)(i)(-2)="b" .
+    ii. w(i)(-2)="t"  implies φ(w)(i)(-2)="d" .
+    iii. w(i)(-2)="ts"  implies φ(w)(i)(-2)="dz" .
+    iv. w(i)(-2)="k"  implies φ(w)(i)(-2)="g" .
+    v. w(i)(-2)="f"  and w(i)(-1)=∅ imply φ(w)(i)(-2)="ʋ" .
+  b. For syllable s of index i such that i>0, if w(i-1)(3)=w(i)(-3)=∅, and w(i-1)(2)=w(i)(-2) and w(i)(-2)∈{"p" ,"t" ,"k" ,"b" ,"d" ,"g" ,"m" }, w(i-1)(2)="k"  and w(i)(-2)="ts" , or w(i-1)(2)="g"  and w(i)(-2)="ɟ" , then φ(w)(i-1)(2)=w(i-1)(1) and φ(w)(i-1)(1)=∅.
+  c. For syllable s of index i such that i>0, if w(i-1)(2)!=∅ or w(i)(-2)!=∅, and w(i-1)(3)=w(i)(-3)="s" and "s" is not in cluster, then φ(w)(i)(-2)="z". All remaining double "s" collapses into a single "s".
+    ! This "s" transformation rule had been converted from a previous expression that treated "s" and "z" differently. Later mentions of "z" may also require, but lack, mentions of "s", or require that they be "s" instead.
+  d. If w(l_w-1)(1)=w(l_w-1)(3)=∅ and w(l_w-1)(2)="t" , then φ(w)(l_w-1)(2)="d" .
+3. For syllable s of index i such that i<l_w-1 and either l_w>3 or l_w=3 and x(w)≠i+1, if w(i)(0)="a" , w(i+1)(-2)∈{"j" ,"ʋ" }, w(i+1)(0)∈{"e" ,"i" }, and w(i)(1)=w(i)(2)=w(i)(3)=w(i+1)(-1)=w(i+1)(1)=∅, then for 2≤j≤3 φ(w)(i)(j)=w(i+1)(j), for i+1≤j≤l_w φ(w)(j)=w(j+1), i<x(w) implies x(φ(w))=x(w)-1, and l_(φ(w))=l_w-1.
+4. If w(0)(0)="z" and w(0)(1)≠∅, then l_(φ(w))=l_w+1, for all 1≤i<l_(φ(w)) φ(w)(i)=w(i-1), x(φ(w))=x(w)+1, φ(w)(0)(0)="e" , φ(w)(0)(2)="z" , and φ(w)(0)(-3)=φ(w)(0)(-2)=φ(w)(0)(-1)=φ(w)(0)(1)=φ(w)(0)(3)=φ(w)(1)(-3)=∅.
+5.
+  a. For syllable s of index i, if w(i)(-3)≠∅ and w(i)(-2)=∅, then φ(w)(i)(-2)=w(i)(-3) and φ(w)(i)(-3)=∅.
+  b. For syllable s of index i, if w(i)(-3)≠∅ and w(i)(-2)∈{"i" ,"u" }, then  φ(w)(i)(-1)=w(i)(-2), φ(w)(i)(-2)=w(i)(-3), and φ(w)(i)(-3)=∅, but if w(i)(-3)≠∅, w(i)(-2)∉{∅,"i" ,"u" }, and i>0, then φ(w)(i-1)(3)=w(i)(-3), and φ(w)(i)(-3)=∅.
+  c. For syllable s of index i, if w(i)(3)≠∅ and w(i)(2)∈{∅,"b" }, then φ(w)(i)(2)=w(i)(3) and φ(w)(i)(3)=∅.
+6. For syllable s of index i such that i≤x(w), if w(i)(0)="o" , w(i)(1)∈{"l" ,"n" } or w(i)(2)∈{"l" ,"n" }, and w(i)(2)≠w(i+1)(-2), then φ(w)(i)(0)="u" .
+7. If w(l_w-1)(2)="m" , then φ(w)(l_w-1)(2)="n" .
+8.
+  a. For syllable s of index i such that i<l_w-1, if w(i+1)(-1)="i"  and w(i)(2)=∅, then w(i)(0)="e"  implies φ(w)(i)(0)="i" , (i)(0)="o"  implies φ(w)(i)(0)="u" , w(i)(0)="ɛ"  implies φ(w)(i)(0)="e" , and (i)(0)="ɔ"  implies φ(w)(i)(0)="o" .
+  b. For syllable s of index i such that i<l_w-1, if w(i+1)(-2)="j" , then (i)(0)="o"  implies φ(w)(i)(0)="u" , w(i)(0)="ɛ"  implies φ(w)(i)(0)="e" , and (i)(0)="ɔ"  implies φ(w)(i)(0)="o" .
+  c. For syllable s of index i such that i<l_w-1, if w(i+1)(-2)∈{"ʎ" ,"ɲ" }, then w(i)(0)="ɛ"  implies φ(w)(i)(0)="e"  and (i)(0)="ɔ"  implies φ(w)(i)(0)="o" .
+9. Phonemes "ie" and "ue" are added to the inventory.
+10.
+  a. If w(i)(0)="ɛ" , then φ(w)(i)(0)="e" , and if (i)(0)="ɔ" , then φ(w)(i)(0)="o" .
+  b. For syllable s of index i such that i<l_w-1, if w(i)(0)="ie" , w(i)(2)="k" , and w(i+1)(-2)="t" , then φ(w)(i)(0)="e" , and if w(i)(0)="ie"  and w(i)(-2)="j" , then φ(w)(i)(0)="e" .
+11. Phonemes "ɛ" and "ɔ" are removed from the inventory.
+12. For syllable s of index i, if w(i)(-1)=∅, w(i)(0)="e" , and w(i)(1)="u" , then φ(w)(i)(-1)="i" , φ(w)(i)(0)="u" , and φ(w)(i)(1)=∅.
+13. If w(l_w-1)(0)="i" , w(l_w-1)(1)=∅, and x(w)≠l_w-1, then φ(w)(l_w-1)(0)="e" .
+14.
+  a. For syllable s of index i such that i>0, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i)(-2)="d" , w(i+1)(-2)="dz" , and w(i)(-1)=w(i)(2)=∅, then for i≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  b. For syllable s of index i such that i>0, i<l_w-1, i≠x(w), w(i)(0)≠"a", w(i)(-2)="m" , and w(i-1)(2)=w(i)(-1)=∅:
+    i. if w(i+1)(-2)∈{"l" ,"r"}, then φ(w)(i-1)(2)=w(i)(-2), φ(w)(i)(-2)="b" , φ(w)(i)(-1)=w(i+1)(-2), for 0≤j≤3 φ(w)(i)(j)=w(i+1)(j), for i+1≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+    ii. if w(i+1)(-2)="n", then φ(w)(i-1)(2)=w(i)(-2), φ(w)(i)(-2)="b" , φ(w)(i)(-1)="r" , for 0≤j≤3 φ(w)(i)(j)=w(i+1)(j), for i+1≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  c. Then, /n.dV.n/ becomes /n.dr/, and /n.gV.n/ and /n.guV.n/ become /n.gr/. For example, /ˈsan.ge.ne/ from CL sanguinem (accusative singular of sanguis) becomes /ˈsan.gre/
+15. For syllable s of index i such that i<l_w-1 and either w(i+1)(-3)≠∅ or w(i+1)(-2)≠∅, if w(i)(2)="l"≠w(i+1)(-2), w(i)(0)∉{"ɔ" ,"o" ,"u" }, and x(w)≠i, w(i+1)(-1)≠∅, or w(i+1)(-2)∉{"ts" ,"ɟ" }, then φ(w)(i)(1)="u" , and φ(w)(i)(2)=∅.
+16. If l_w>1, w(l_w-2)(1)∈{∅,"i" ,"u" }, w(l_w-2)(2)∈{∅,w(l_w-1)(-2)}, w(l_w-1)(-1)=w(l_w-1)(1)=w(l_w-1)(2)=∅, w(l_w-1)(0)="e" , and either w(l_w-1)(-2)∈{"m" ,"n" ,"l" ,"r" ,"z" ,"ts" ,"dz" } or w(l_w-1)(-2)="d"  and x(w)=l_w-1, then φ(w)(l_w-2)(2)=w(l_w-1)(-2), φ(w)(l_w-1)(-2)=φ(w)(l_w-1)(0)=∅, and l_(φ(w))=l_w-1.
+17.
+  a. For syllable s of index i such that i>0, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i-1)(2)=w(i)(2)=w(i)(3)=w(i+1)(-3)=∅, w(i)(-2)∈{"z" ,"s" }, w(i)(-1)∈{∅,"u" }, and w(i+1)(-2)∈{"p" ,"b" ,"t" ,"d" ,"k" ,"g" ,"n" }, then  φ(w)(i-1)(2)="z" , for -2≤j≤3 φ(w)(i)(j)=w(i+1)(j), w(i)(-2)="b"  implies φ(w)(i)(-2)="p" , w(i)(-2)="d"  implies φ(w)(i)(-2)="t" , w(i)(-2)="g"  implies φ(w)(i)(-2)="k" , for i+1≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  b. For syllable s of index i such that i>0 and i<l_w-1:
+    i. If w(i-1)(1)="n", w(i)(-2)="d" , and w(i-1)(2)=w(i)(-1)=w(i)(1)=w(i)(2)=∅, then for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+    ii. If i≠x(w), w(i)(0)≠"a", w(i)(-2)="dz" , w(i+1)(-2)="d" , and w(i-1)(2)=w(i)(-1)=w(i)(2)=∅, then φ(w)(i-1)(2)="dz" , for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+    iii. If i≠x(w), w(i)(0)≠"a", w(i)(-2)="ɟ" , w(i+1)(-2)="d" , and w(i)(-1)=w(i)(2)=∅, then for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, i<x(w) implies x(φ(w))=x(w)-1, and w(i-1)(2)≠∅ implies φ(w)(i)(-2)="t" .
+    iv. If i≠x(w), w(i)(0)≠"a", w(i)(-2)="d" , w(i+1)(-2)="g" , and w(i+1)(-1)=∅, then φ(w)(i-1)(2)="d" , for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+18.
+  a. If x(w)>0, w(x(w)-1)(2)=w(x(w))(-1)=∅, w(x(w))(-2)="d" , and w(x(w))(0)="e" , then φ(w)(x(w))(-2)=∅.
+  b. If x(w)=l_w-2, w(l_w-2)(0)="a", w(l_w-1)(-2)="d" , w(l_w-1)(0)="e" , and w(l_w-2)(2)=w(l_w-1)(-1)=∅, then φ(w)(l_w-1)(-2)=∅.
+  c. If l_w>1, x(w)=l_w-1, w(x(w)-1)(0)="e" , w(x(w))(-2)="g" , w(x(w))(0)="a" , and w(x(w)-1)(2)=w(x(w))(-1)=∅, then φ(w)(x(w))(-2)=∅.
+19.
+  a. For syllable s of index i such that i>0, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i)(-2)∈{"r" ,"l" ,"m" ,"n" }, w(i-1)(1)=w(i-1)(2)=w(i)(-1)=w(i)(1)=w(i)(2)=∅, and w(i+1)(-2)∈{"p" ,"t" ,"ts" ,"k" ,"b" ,"d" ,"dz" ,"g" ,"ɟ" }, then φ(w)(i-1)(2)=w(i)(-2), for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  b. For syllable s of index i such that i>0, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i)(-2)="d" , w(i+1)(-2)="z" , and w(i)(-1)=w(i)(2)=∅, then φ(w)(i)(-2)="dz" , for -1≤j≤3  φ(w)(i)(j)=w(i+1)(j),  for i+1≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+20.
+  a. For syllable s of index i such that i>0 and i<l_w, if w(i)(-2)="d" and w(i-1)(2)=w(i)(-1)=∅, then w(i-1)(0)=w(i)(0)≠"a"  implies φ(w)(i)(-2)=∅ and i-1≤x(w)≤i with either w(i)(0)="i"  or w(i-1)(0)="i"  imply φ(w)(i)(-2)=∅.
+  b. For syllable s of index i such that i<x(w), if w(i)(0)="i" , w(i+1)(-2)="g" , and w(i)(2)=w(i+1)(-1)=∅, then for 0≤j≤3  φ(w)(i)(j)=w(i+1)(j),  for i+1≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and x(φ(w))=x(w)-1.
+21.
+  a. For syllable s of index i such that 0<i, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i)(-2)∈{"l" ,"r" ,"n" }, w(i-1)(1)=w(i)(-1)=w(i)(1)=w(i)(2)=∅, and w(i-1)(2)∈{∅,w(i)(-2)}, then φ(w)(i)(-2), for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and x(φ(w))=x(w)-1.
+  b. For syllable s of index i such that 0<i, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i)(-2)∈{"b" ,"ʋ" }, w(i-1)(2)=w(i)(-1)=w(i)(2), and w(i+1)(-2)="d" , then φ(w)(i-1)(2)="b" , for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  c. For syllable s of index i such that 0<i, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i)(-2)="d" , w(i-1)(2)=w(i)(-1)=w(i)(2)=∅, and w(i+1)(-2)∈{"m" ,"n" }, then φ(w)(i-1)(2)="n" , for 0≤j≤3  φ(w)(i)(j)=w(i+1)(j), for i+1≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  d. For syllable s of index i such that 0<i, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i-1)(2)="k" , w(i)(-2)∈{"t" ,"z" }, w(i+1)(-2)="n" , and w(i-1)(1)=w(i-1)(3)=w(i)(1)=w(i)(2)=w(i)(3)=∅, then φ(w)(i-1)(3)=w(i)(-2), for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  e. For syllable s of index i such that 0<i, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i-1)(2)∈{"m" ,"n" }, w(i)(-2)∈{"p" ,"b" ,"t" ,"d" }, w(i+1)(-2)∈{"b" ,"d" ,"dz" ,"g" }, and w(i-1)(1)=w(i-1)(3)=w(i)(-3)=w(i)(-1)=w(i)(1)=w(i)(2)=w(i)(3)=w(i+1)(-3)=∅, then φ(w)(i-1)(1)=w(i-1)(2), φ(w)(i-1)(2)=w(i)(-2), for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  f. For syllable s of index i such that 0<i, i<l_w-1, i≠x(w), and w(i)(0)≠"a", if w(i-1)(2)="z", w(i)(-2)∈{"p" ,"t" ,"k" }, w(i+1)(-2)∈{"b" ,"d" ,"g" }, and w(i)(-1)=w(i)(1)=w(i)(2)=w(i)(3)=w(i+1)(-1)=∅, then φ(w)(i-1)(1)=w(i-1)(2), φ(w)(i-1)(2)=w(i-1)(-2), for i≤j<l_w  φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+22.
+  a. For syllable s of index i such that i<l_w-1, if w(i)(2)="dz", and w(i+1)(-2)="d", then φ(w)(i)(2)="z" and φ(w)(i+1)(-2)="t".
+  b. For syllable s of index i such that i<l_w-1 and w(i+1)(-2)="t":
+    i. if w(i)(0)∈{"i" ,"ie" ,"ue" }, w(i)(2)="k" , and w(i)(3)=∅, then φ(w)(i)(2)=∅.
+    ii. if w(i)(0)∉{"i" ,"ie" ,"ue" } and w(i)(1)=w(i)(3)=∅, then w(i)(2)="k"  implies φ(w)(i)(1)="i"  and φ(w)(i)(2)=∅, and w(i)(2)="l"  and w(i)(0)≠"a"  imply φ(w)(i)(1)="i"  and φ(w)(i)(2)=∅.
+  c. For syllable s of index i such that i<l_w-1, if w(i)(1)=∅, w(i)(2)="k" , w(i)(3)∈{"z" ,"t" }, and w(i+1)(-2)="n" , then φ(w)(i)(2)=w(i)(3), φ(w)(i)(2)=∅, and w(i)(0)∉{"i" ,"ie" ,"ue" } implies φ(w)(i)(1)="i" , and if w(i)(2)="t"  and w(i+1)(-2)="n" , then φ(w)(i)(2)=∅.
+  d. For syllable s of index i, if w(i)(2)="k"  and w(i)(3)="z" , then w(i)(0)="ie"  implies φ(w)(i)(0)="e" , w(i)(1)=∅ implies φ(w)(i)(1)="i" , φ(w)(i)(2)=w(i)(3), and φ(w)(i)(3)=∅.
+  e. For syllable s of index i such that i<l_w-1, if w(i)(1)="l"  and w(i)(2)="t" , then  φ(w)(1)="i"  and φ(w)(2)=∅, and if w(i)(2)="l" , w(i+1)(-2)="t" , and w(i+1)(-1)="r" , then  φ(w)(i)(1)="i"  and  φ(w)(i)(2)=∅.
+  f. For syllable s of index i such that i<l_w-1, if w(i)(1)="n" , w(i)(2)="d" , and w(i+1)(-2)∈{"g" ,"d" }, then φ(w)(i)(2)=w(i)(1) and φ(w)(i)(1)=∅.
+  g. For syllable s of index i such that i<l_w-1, if w(i)(2)="n"  and w(i+1)(-2)="m" , then φ(w)(i)(2)="l" .
+  h. For syllable s of index i such that i<l_w-1, if w(i)(2)="n"  and w(i+1)(-2)="r" , then φ(w)(i)(2)=w(i+1)(-2) and φ(w)(i+1)(-2)= w(i)(2).
+  i. For syllable s of index i such that i<l_w-1, if w(i)(2)="l"  and w(i+1)(-2)="r" , then φ(w)(i+1)(-1)=w(i+1)(-2) and φ(w)(i+1)(-2)="d" .
+  j. For syllable s of index i such that i<l_w-1, w(i)(1)∈{"m" ,"n" }, and w(i+1)(-2)∈{"p" ,"b" ,"t" ,"d" ,"ts" ,"dz" ,"k" ,"g" }:
+    i. if w(i)(2)∈{"p" ,"t" ,"k" }, then w(i+1)(-2)="b"  implies φ(w)(i+1)(-2)="p" , w(i+1)(-2)="d"  implies φ(w)(i+1)(-2)="t" , w(i+1)(-2)="dz"  implies φ(w)(i+1)(-2)="ts" , and w(i+1)(-2)="g"  implies φ(w)(i+1)(-2)="k" .
+    ii. if w(i+1)(-2)∈{"p" ,"b" }, then φ(w)(i)(2)="m" .
+    iii. if w(i+1)(-2)∈{"t" ,"d" ,"ts" ,"dz" ,"k" ,"g" }, then φ(w)(i)(2)="n" .
+    iv. in all cases including the above three, φ(w)(i)(1)=∅.
+  k. For syllable s of index i such that i<l_w-1, if w(i)(1)="z" , w(i)(2)∈{"p" ,"t" ,"k" }, w(i+1)(-2)∈{"b" ,"d" ,"g" }, then w(i+1)(-2)="b"  implies φ(w)(i+1)(-2)="p" , w(i+1)(-2)="d"  implies φ(w)(i+1)(-2)="t" , w(i+1)(-2)="g"  implies φ(w)(i+1)(-2)="k" , φ(w)(i)(2)=w(i)(1), and φ(w)(i)(1)=∅.
+23. Phoneme "ʒ" is added to the inventory.
+24.
+  a.
+    i. If w(0)(-1)="l"  and w(0)(-2)∈{"p" ,"k" }, then φ(w)(0)(-2)="ʎ"  and φ(w)(0)(-1)=∅.
+    ii. If w(0)(-1)="l" , w(0)(-2)="f" , w(0)(0)∉{"o" ,"u" ,"ue" }, and l_w>1, then l_w=2 and w(0)(2)=w(1)(-1)=∅ imply φ(w)(0)(-2)="ʎ"  and φ(w)(0)(-1)=∅, and all other cases imply φ(w)(0)(-2)="l"  and φ(w)(0)(-1)=∅.
+    iii. If w(0)(-1)="l"  and w(0)(-2)∈{"b" ,"g" }, then φ(w)(0)(-2)="l"  and φ(w)(0)(-1)=∅.
+  b. For syllable s of index i such that i>0, if w(i)(-2)="g"  and w(i)(-1)="l" , then φ(w)(i)(-2)="ʒ"  and φ(w)(i)(-1)=∅.
+25. Phoneme "tʃ" is added to the inventory.
+26. For syllable s of index i such that i>0, if w(i-1)(2)∈{∅,"m" ,"n" }, w(i)(-2)∈{"p" ,"f" ,"k" }, and w(i)(-1)="l" , then φ(w)(i)(-2)="tʃ" , φ(w)(i)(-1)=∅, and w(i-1)(2)="m"  implies φ(w)(i-1)(2)="n" .
+27. For syllable s of index i, if w(i)(0)∈{"o" ,"ue" } and w(i)(1)="u" , then φ(w)(i)(0)="u"  and φ(w)(i)(1)=∅.
+28. For syllable s of index i such that i>0, if w(i)(-2)="ʎ" , then φ(w)(i)(-2)="ʒ".
+29.
+  a. For syllable s of index i such that i>0, if w(i-1)(2)=w(i)(-2)="l" , then φ(w)(i)(-2)="ʎ"  and φ(w)(i-1)(2)=∅, if w(i-1)(2)=w(i)(-2)="n" , then φ(w)(i)(-2)="ɲ" , φ(w)(i-1)(2)=∅, and w(i)(-1)="i"  implies φ(w)(i)(-1)=∅, if w(i-1)(2)=w(i)(-2)="j" , then φ(w)(i-1)(2)=∅, and if w(i-1)(1)="i" , w(i-1)(2)=∅, and w(i)(-2)="j" , then φ(w)(i-1)(1)=∅.
+  b. For syllable s of index i such that i>0, if w(i-1)(2)=w(i)(-2)∈{"p" ,"f" ,"k" } and w(i)(-1)="l" , then φ(w)(i-1)(2)=φ(w)(i)(-1)=∅ and φ(w)(i)(-2)="ʎ" .
+30. For syllable s of index i such that i>0, if w(i-1)(2)=∅ and w(i)(-2)="j" , then w(i-1)(0)∈{"e" ,"i" } implies φ(w)(i)(-2)=∅, and w(i)(0)∈{"e" ,"i" } implies φ(w)(i)(-2)=∅.
+31. If x(w)+1<l_w, w(x(w))(0)="a" , w(x(w)+1)(0)="o" , and w(x(w))(2)=w(x(w)+1)(-2)=∅, then φ(x(w)+1)(-2)="j" . If x(w)+1<l_w, w(x(w))(0)="u" , w(x(w)+1)(0)∈{"e" ,"o" }, and w(x(w))(2)=w(x(w)+1)(-2)=∅, then φ(x(w)+1)(-2)="j" .
+32. For i<i_w such that i<l_w-1, if w(i)(1)=∅, w(i)(2)∈{"k" ,"g" }, and w(i+1)(-2)∈{"l" ,"z" ,"t" }, then φ(w)(i)(1)="i" , and φ(w)(i)(2)=∅.
+33. Phoneme "ʃ" is added to the inventory.
+34.
+  a. For syllable s of index i such that i<l_w-1, w(i)(1)="i", w(i)(2)=∅, and w(i+1)(-2)∈{"l" ,"z" ,"t" }, if w(i+1)(-1)=∅, then w(i+1)(-2)="l"  implies φ(w)(i+1)(-2)="ʒ" , w(i+1)(-2)="z"  implies φ(w)(i+1)(-2)="ʃ" , w(i+1)(-2)="t"  implies φ(w)(i+1)(-2)="tʃ" , and w(i)(0)≠"a"  implies φ(w)(i)(1)="∅" , and if w(i+1)(-1)="r" , w(i)(-2)∈{"p" ,"b" ,"t" ,"d" ,"k" ,"g" ,"f" }, and w(i)(i-1)=∅, then  φ(w)(i)(-1)=w(i+1)(-1) and φ(w)(i)(1)=φ(w)(i+1)(-1)="∅" .
+  b. For syllable s of index i such that i>0, if w(i-1)(2)="k"  and w(i)(-2)="z" , then φ(w)(i)(-2)="ʃ" , φ(w)(i-1)(2)=w(i-1)(1), and φ(w)(i-1)(1)=∅.
+  c. If w(l_w-1)(2)="t" , then in the case where w(l_w-1)(1)∈{"i" ,"u" } φ(w)(i-1)(2)=∅ and in all other cases φ(w)(l_w-1)(2)=w(l_w-1)(1) and φ(w)(i-1)(1)=∅.
+35.
+  a. For syllable s of index i, if w(i)(-2)="ɟ" , then i=0 implies φ(w)(i)(-2)=∅ and i>0 implies φ(w)(i)(-2)="ʒ" .
+  b. For syllable s of index i, if w(i)(-2)=∅ and w(i)(0)="ie" , then φ(w)(i)(-2)="j"  and φ(w)(i)(0)="e" .
+36. Phoneme "ɟ" is removed from the inventory.
+37. For syllable s of index i, if w(i)(-2)="ʒ"  and w(i)(0)="ie" , then φ(w)(i)(-2)="h" .
+38.
+  a. If x(w)>0, w(x(w)-1)(0)="i" , w(x(w)-1)(2)=∅, w(x(w))(-2)="ʒ" , and w(x(w))(0)∈{"e" ,"i" }, then φ(x(w)-1)(0)="e" , φ(x(w))(-2)=∅, and φ(x(w))(0)="i" .
+  b. For syllable s of index i such that i>0, if w(i-1)(2)="n"  and w(i)(-2)="ʒ" , then φ(w)(i)(-2)="ɲ"  and φ(w)(i-1)(2)=∅, and if w(i-1)(2)="l"  and w(i)(-2)="ʒ" , then φ(w)(i-1)(2)=∅.
+39. For syllable s of index i such that i>0, if w(i-1)(2)="n"  and w(i)(-2)="h" , then φ(w)(i)(-2)="dz" .
+40. For syllable s of index i such that i>0, if w(i-1)(2)="n" , w(i)(-2)∈{"d" ,"g" }, and w(i)(-1)="l" , then φ(w)(i)(-2)="ɲ"  and φ(w)(i-1)(2)=φ(w)(i)(-1)=∅, and if w(i-1)(1)="n" , w(i-1)(2)∈{"d" ,"g" }, and w(i)(-2)="l" , then φ(w)(i)(-2)="ɲ"  and φ(w)(i-1)(2)=φ(w)(i-1)(1)=∅.
+41. For syllable s of index i such that i<l_w-1, if w(i)(0)="u" , w(i)(2)="n" , w(i)(-2)∉{"j" ,"p" ,"b" ,"m" }, and w(i+1)(0)≠"i" , then φ(w)(i)(0)="o" .
+42. For syllable s of index i such that i>0, if w(i-1)(2)="r" , w(i)(-2)="ʒ" , and w(i)(-1)=∅, then φ(w)(i)(-2)="dz" .
+43. For syllable s of index i such that i>0, if w(i-1)(2)=w(i)(-1)=∅ and w(i)(-2)="ts" , then φ(w)(i)(-2)="dz" .
+44.
+  a. For syllable s of index i such that i>0, w(i)(-1)="i", and w(i-1)(2)=w(i-1)(1)=∅:
+    i. if w(i)(-2)∈{"p" ,"r" }, then w(i-1)(0)∉{"i" ,"u" } implies φ(w)(i-1)(1)=w(i)(-1) and φ(w)(i)(-1)=∅, and w(i-1)(0)="u"  implies φ(w)(i-1)(0)="ue"  and φ_("OS" 45) (w)(i)(-1)=∅.
+    ii. if w(i)(-2)="m" , then w(i-1)(0)∉{"i" ,"u,e" } implies φ(w)(i-1)(1)=w(i)(-1) and φ(w)(i)(-1)=∅, and w(i-1)(0)="u"  implies φ(w)(i-1)(0)="ue"  and φ(w)(i)(-1)=∅.
+    iii. if w(i)(-2)="z" , then φ(w)(i)(-2)="dz"  and φ(w)(i)(-1)=∅.
+  b. For syllable s of index i such that i>0 such that w(i)(-1)="i" , if w(i)(-2)="ts"  and w(i-1)(2)≠∅, then φ(w)(i)(-1)=∅.
+  c. For syllable s of index i such that i>0 and w(i)(-1)="i" , if either w(i-1)(2)≠∅ or w(i-1)(1)≠∅, then φ(w)(-1)=∅.
+45. For syllable s of index i such that i<l_w-1, if w(i)(0)="e"  and w(i)(1)="i" , then φ(w)(i)(1)=∅.
+46. For syllable s of index i such that i>0, if w(i-1)(2)="z"  and w(i)(-2)="ts" , then φ(w)(i-1)(2)=∅.
+47. For syllable s of index i such that i>0, if w(i-1)(2)="m" , w(i)(-2)="b" , and w(i)(-1)=∅, then φ(w)(i)(-2)="m"  and φ(w)(i-1)(2)=∅.
+48. For syllable s of index i, if w(i)(0)="a"  and w(i)(1)="i" , then φ(w)(i)(0)="e"  and φ(w)(i)(1)=∅, and if w(i)(0)="a"  and w(i)(1)="u" , then φ(w)(i)(0)="o"  and φ(w)(i)(1)=∅.
+
+OS -> MS:
+
+1.
+  a. For syllable s of index i such that i<l_w-1:
+    i. if w(i)(0)="ie"  and w(i+1)(-2)="ʎ" , then φ(w)(i)(0)="i" .
+    ii. if w(i)(0)="ue"  and w(i)(2)=w(i+1)(-2)=r, then φ(w)(i)(0)="u" .
+    iii. if w(i)(0)="ie" , w(i)(2)="z" , and w(i+1)(-2)="k" , then φ(w)(i)(0)="i" .
+  b. For syllable s of index i such that i<l_w-1, if w(i)(0)="u" , w(i+1)(0)="e" , and w(i)(1)=w(i)(2)=w(i+1)(-2)=w(i+1)(2)=∅, then φ(w)(i)(0)="ue" , for 1≤j≤2 φ(w)(i)(j)=w(i+1)(j), for i+1≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+2. For syllable s of index i, if w(i)(-2)≠∅, w(i)(-1)≠∅, and w(i)(0)="ue" , then φ(w)(i)(0)="e" .
+3.
+  a. For syllable s of index i such that i<l_w-1, if w(i)(1)=w(i)(2)=w(i+1)(-2)=∅, and w(i)(0)=w(i+1)(0), then for -1≤j≤2 φ(w)(i)(j)=w(i+1)(j), for i+1≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+  b. If x(w)>0, w(x(w)-1)(0)∈{"a" ,"e" }, w(x(w))(0)="i" , and w(x(w)-1)(1)=w(x(w)-1)(2)=w(x(w))(-2)=w(x(w))(1)=∅, then φ(w)(x(w)-1)(1)="i" , φ(w)(x(w)-1)(2)=w(x(w))(2), for x(w)≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and x(φ(w))=x(w)-1.
+  c. For syllable s of index i such that i<l_w-1 such that i≠x(w)-1, if w(i)(0)="a" , w(i+1)(0)="e" , and w(i)(1)=w(i)(2)=w(i+1)(-2)=∅, then φ(w)(i)(1)="i" , φ(w)(i)(2)=w(i+1)(2), for i+1≤j<l_w φ(w)(j)=w(j+1), l_(φ(w))=l_w-1, and i<x(w) implies x(φ(w))=x(w)-1.
+4.
+  a. If w(0)(-2)="f" , w(0)(-1)=∅, w(0)(0)≠"ue" , and l_w>1, then φ(w)(0)(-2)="h" . Additionally, For 1≤i<l_w, if w(i-1)(2)=∅, w(i)(0)="f" , w(0)(-1)=∅, and w(0)(0)≠"ue" , then φ(w)(0)(-2)="h" .
+  b. For syllable s of index i such that i>0, if w(i-1)(2)=w(i)(-2)="f" , then φ(w)(i-1)(2)=∅.
+5. For syllable s of index i, if w(i)(-2)="h" , then φ(w)(i)(-2)=∅.
+6. Phoneme "h" is removed from the inventory.
+7. For syllable s of index i, if w(i)(-2)=∅ and w(i)(0)="ie" , then φ(w)(i)(-2)="j"  and φ(w)(i)(0)="e" .
+8. If w(x(w))(0)="o" , w(x(w)+1)(-2)="ʋ" , and w(x(w))(1)=w(x(w))(2)=∅, then φ(w)(x(w))(0)="u" .
+9. For syllable s of index i:
+  a. w(i)(-2)="z"  implies φ(w)(i)(-2)="s"  and w(i)(2)="z"  implies φ(w)(i)(2)="s".
+  b. w(i)(-2)="dz"  implies φ(w)(i)(-2)="ts"  and w(i)(2)="dz"  implies φ(w)(i)(2)="ts".
+  c. w(i)(-2)="ʒ"  implies φ(w)(i)(-2)="ʃ"  and w(i)(2)="ʒ"  implies φ(w)(i)(2)="ʃ".
+10. Phonemes "z", "dz", and "ʒ" are removed from the inventory.
+11. For syllable s of index i such that i<l_w-1:
+  a. if w(i)(2)="m"  and w(i+1)(-2)∈{"d" ,"t" ,"ts" ,"k" ,"g" }, then φ(w)(i)(2)="n" .
+  b. if w(i)(2)="b"  and w(i+1)(-2)="d" , then φ(w)(i)(1)="u"  and φ(w)(i)(2)=∅.
+  c. if w(i)(2)="d"  and w(i+1)(-2)="g" , then φ(w)(i)(2)="dz" .
+12. For syllable s of index i such that i≠x(w), if w(i)(2)="d" , then φ(w)(i)(2)=∅. Additionally, if w(l_w-1)(2)="k" , then φ(w)(l_w-1)(2)=∅.
+13. For syllable s of index i, if w(i)(0)∈{"o" ,"u" } and w(i)(1)="u" , then φ(w)(i)(1)=∅, and if w(i)(0)="o"  and w(i)(1)="i" , then φ(w)(i)(0)="ue"  and φ(w)(i)(1)=∅.
+14. If w(0)(0)="a" , w(0)(2)="s" , w(0)(-2)=w(0)(1)=∅, and x(w)≠0, then φ(w)(0)(0)="e" . Additionally, if w(0)(0)="e" , w(1)(-2)="g" , w(1)(-1)="u" , and w(0)(-2)=w(0)(1)=w(0)(2)=∅, then φ(w)(0)(0)="i" .
+15. "ʃ" becomes "x".
+16. If x(w)=l_w-3, w(l_w-3)(0)=w(l_w-2)(0)="a" , w(l_w-2)(-2)="r" , and w(l_w-3)(1)=w(l_w-3)(2)=∅, then φ(w)(l_w-3)(1)="r" .
+17.
+  a. For syllable s of index i such that i<l_w-1, if w(i)(-2)="r" , w(i)(2)=∅, w(i+1)(-2)="g" , and w(i+1)(-1)="l" , then φ(w)(i)(-2)="l"  and φ(w)(i+1)(-1)="r" .
+  b. For syllable s of index i such that i<l_w-1, if w(i)(-2)="r" , w(i)(2)=∅, w(i+1)(-2)="b" , and w(i+1)(-1)="r" , then φ(w)(i+1)(-1)="l" .
+  c. If x(w)=l_w-2, and w(l_w-2)(2)=w(l_w-1)(2)="r" , then φ(w)(l_w-1)(2)="l" .
+  d. For syllable s of index i such that x(w)≤i and i<l_w-1, if w(i)(-2)=w(i+1)(-2)∈{"l" ,"r" }, then φ(w)(i)(-2)="l"  and φ(w)(i+1)(-1)="r" .
+  e. For syllable s of index i, if w(i)(-2)="d"  and w(i)(-1)="l" , then φ(w)(i)(-1)="r" , and i>0 and w(i-1)(2)=∅ imply φ(w)(i-1)(2)="l" .
