@@ -12,14 +12,14 @@
       <br>
       <table>
         <tr>
-          <th ng-repeat="syllablePosition in ctrl.parentLanguage.phonotactics">
-            {{ctrl.tableHeader(ctrl.parentLanguage.phonotactics.indexOf(syllablePosition))}}
+          <th ng-repeat="syllablePosition in ctrl.syngloss.phonotactics">
+            {{ctrl.tableHeader(ctrl.syngloss.phonotactics.indexOf(syllablePosition))}}
           </th>
         </tr>
         <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.word.syllables.length)">
-          <td ng-repeat="syllablePosition in ctrl.parentLanguage.phonotactics">
+          <td ng-repeat="syllablePosition in ctrl.syngloss.phonotactics">
             <select
-              ng-model="ctrl.word.syllables[syllableIndex].phonemes[ctrl.parentLanguage.phonotactics.indexOf(syllablePosition)]"
+              ng-model="ctrl.word.syllables[syllableIndex].phonemes[ctrl.syngloss.phonotactics.indexOf(syllablePosition)]"
               ng-options="phoneme.value as phoneme.presentation disable when phoneme.invalid(ctrl.word, syllableIndex) for phoneme in syllablePosition"
               ng-change="ctrl.updateWord()"
             >
@@ -30,9 +30,9 @@
     </form>
     <br><br>
     <div class="solid-box">
-      <p>{{ctrl.parentLanguage.name}}: /{{ctrl.write(ctrl.word, ctrl.parentLanguage, 'IPA')}}/</p>
-      <p ng-repeat="writingSystem in ctrl.parentLanguage.writingSystems">
-        {{writingSystem.name}}: {{ctrl.write(ctrl.word, ctrl.parentLanguage, writingSystem.name)}}
+      <p>{{ctrl.syngloss.name}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA')}}/</p>
+      <p ng-repeat="writingSystem in ctrl.syngloss.writingSystems">
+        {{writingSystem.name}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name)}}
       </p>
     </div>
     <br><br>

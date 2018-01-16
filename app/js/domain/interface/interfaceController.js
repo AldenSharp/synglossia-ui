@@ -4,16 +4,15 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
 
     let initializeController = function() {
       ctrl.syngloss = svc.syngloss
-      ctrl.parentLanguage = svc.parentLanguage
 
-      for (let position of ctrl.parentLanguage.phonotactics) {
+      for (let position of ctrl.syngloss.phonotactics) {
         for (let option of position) {
           option.presentation = svc.present(option.value)
         }
       }
 
-      ctrl.languageTree = svc.getLanguageTree(ctrl.parentLanguage)
-      ctrl.earliestDate = ctrl.parentLanguage.date
+      ctrl.languageTree = svc.getLanguageTree(ctrl.syngloss)
+      ctrl.earliestDate = ctrl.syngloss.date
       ctrl.latestDate = svc.getLatestDate(ctrl.languageTree, ctrl.earliestDate)
       ctrl.selectedDate = ctrl.latestDate
       ctrl.displayDate = ctrl.selectedDate < 0 ? -ctrl.selectedDate + ' BCE' : ctrl.selectedDate + ' CE'
@@ -21,7 +20,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       ctrl.wordMemory = svc.getWord()
       ctrl.wordLength = ctrl.wordMemory.syllables.length
       ctrl.word = svc.copyWord(ctrl.wordMemory)
-      svc.verifyWord(ctrl.word, ctrl.parentLanguage)
+      svc.verifyWord(ctrl.word, ctrl.syngloss)
       ctrl.wordMemory.syllables.push(svc.getRandomSyllable())
 
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
@@ -48,7 +47,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
     }
 
-    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.parentLanguage.vowelCore
+    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.syngloss.vowelCore
 
     this.restressWord = function () {
       ctrl.word = svc.restress(ctrl.word)
@@ -95,7 +94,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       }
       while (ctrl.word.syllables.length < ctrl.wordLength) {
         ctrl.word.syllables.push(ctrl.wordMemory.syllables[ctrl.word.syllables.length])
-        if (ctrl.parentLanguage.prosody.stressType === 'ABSOLUTE' || ctrl.parentLanguage.prosody.stressType === 'CONDITIONAL') {
+        if (ctrl.syngloss.prosody.stressType === 'ABSOLUTE' || ctrl.syngloss.prosody.stressType === 'CONDITIONAL') {
           ctrl.word = svc.restress(ctrl.word)
         }
       }

@@ -10,14 +10,13 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
-        svc.parentLanguage = svc.syngloss.parentLanguage
-        if (svc.parentLanguage.prosody.type === 'STRESS') {
-          svc.parentLanguage.prosody.stressType = []
-          for (let orderIndex = 0; orderIndex < svc.parentLanguage.maxOrder; orderIndex++) {
-            svc.parentLanguage.prosody.stressType[orderIndex] = determineStressType(svc.parentLanguage, orderIndex + 1)
+        if (svc.syngloss.prosody.type === 'STRESS') {
+          svc.syngloss.prosody.stressType = []
+          for (let orderIndex = 0; orderIndex < svc.syngloss.maxOrder; orderIndex++) {
+            svc.syngloss.prosody.stressType[orderIndex] = determineStressType(svc.syngloss, orderIndex + 1)
           }
         }
-        svc.parentLanguage.phonotactics.forEach((phonemePlace, phonemeIndex) =>
+        svc.syngloss.phonotactics.forEach((phonemePlace, phonemeIndex) =>
           phonemePlace.forEach(function (option) {
             option.invalid = (word, syllableIndex) => !svc.testAlterationValidity(word, {
               type: 'NEW_PHONEME',
@@ -31,12 +30,11 @@ angular.module('app').service('interfaceService',
 
       function checkSyngloss (syngloss) {
         validity.verifyNotNull(syngloss, 'Syngloss')
-        validity.verifyPropertiesExist(syngloss, 'Syngloss', ['name', 'parentLanguage'])
-        validity.verifyPropertiesExist(syngloss.parentLanguage, 'Parent language', [
+        validity.verifyPropertiesExist(syngloss, 'Syngloss', [
           'name', 'date', 'phonotactics', 'vowelCore', 'prosody', 'validity', 'writingSystems', 'descendentLanguages'
         ])
-        for (let phonemePositionIndex in syngloss.parentLanguage.phonotactics) {
-          let phonemePosition = syngloss.parentLanguage.phonotactics[phonemePositionIndex]
+        for (let phonemePositionIndex in syngloss.phonotactics) {
+          let phonemePosition = syngloss.phonotactics[phonemePositionIndex]
           validity.verifyNonemptyArray(phonemePosition, 'Parent language phonotactics: ' + phonemePositionIndex)
           for (let optionIndex in phonemePosition) {
             let option = phonemePosition[optionIndex]
@@ -46,14 +44,14 @@ angular.module('app').service('interfaceService',
             )
           }
         }
-        validity.verifyPropertiesExist(syngloss.parentLanguage.prosody, 'Parent language prosody', ['type'])
-        if (syngloss.parentLanguage.prosody.type === 'STRESS') {
-          validity.verifyPositive(syngloss.parentLanguage.prosody.maxOrder, 'Parent language prosody max order')
+        validity.verifyPropertiesExist(syngloss.prosody, 'Parent language prosody', ['type'])
+        if (syngloss.prosody.type === 'STRESS') {
+          validity.verifyPositive(syngloss.prosody.maxOrder, 'Parent language prosody max order')
         }
-        conditions.checkSyllableCondition(syngloss.parentLanguage, syngloss.parentLanguage.validity, 'Parent language validity')
+        conditions.checkSyllableCondition(syngloss, syngloss.validity, 'Parent language validity')
 
-        for (let writingSystemIndex in syngloss.parentLanguage.writingSystems) {
-          let writingSystem = syngloss.parentLanguage.writingSystems[writingSystemIndex]
+        for (let writingSystemIndex in syngloss.writingSystems) {
+          let writingSystem = syngloss.writingSystems[writingSystemIndex]
           validity.verifyPropertiesExist(
             writingSystem,
             'Parent language writing system ' + writingSystemIndex,
@@ -76,7 +74,7 @@ angular.module('app').service('interfaceService',
               for (let soundIndex in rule.sounds) {
                 let sound = rule.sounds[soundIndex]
                 validity.verifyValueSomewhereInPhonotactics(
-                  syngloss.parentLanguage, sound,
+                  syngloss, sound,
                   'Parent language writing system ' + writingSystemIndex +
                   ': Rule ' + ruleIndex + ': Sound ' + soundIndex
                 )
@@ -95,7 +93,7 @@ angular.module('app').service('interfaceService',
                   ['value', 'condition']
                 )
                 conditions.checkCondition(
-                  syngloss.parentLanguage, grapheme.condition,
+                  syngloss, grapheme.condition,
                   'Parent language writing system ' + writingSystemIndex +
                   ': Rule ' + ruleIndex + ': Grapheme ' + graphemeIndex
                 )
@@ -104,10 +102,10 @@ angular.module('app').service('interfaceService',
           }
         }
         validity.verifyNonemptyArray(
-          syngloss.parentLanguage.descendentLanguages, 'Parent language: Descendent languages'
+          syngloss.descendentLanguages, 'Parent language: Descendent languages'
         )
-        for (let descendentLanguageIndex in syngloss.parentLanguage.descendentLanguages) {
-          let descendentLanguage = syngloss.parentLanguage.descendentLanguages[descendentLanguageIndex]
+        for (let descendentLanguageIndex in syngloss.descendentLanguages) {
+          let descendentLanguage = syngloss.descendentLanguages[descendentLanguageIndex]
           checkDescendentLanguage(descendentLanguage, 'Parent language: Descendent language ' + descendentLanguageIndex)
         }
       }
@@ -195,8 +193,8 @@ angular.module('app').service('interfaceService',
 
       this.restress = function (word) {
         if (
-          svc.parentLanguage.prosody.type !== 'STRESS' ||
-          svc.parentLanguage.prosody.stressType.some((orderStressType) =>
+          svc.syngloss.prosody.type !== 'STRESS' ||
+          svc.syngloss.prosody.stressType.some((orderStressType) =>
             orderStressType !== 'ABSOLUTE' && orderStressType !== 'CONDITIONAL'
           )) {
           return word
@@ -206,7 +204,7 @@ angular.module('app').service('interfaceService',
         let validStressPermutationWords = []
         for (let stressPermutationWord of stressPermutationWords) {
           if (
-            conditions.meetsSyllableCondition(svc.parentLanguage, stressPermutationWord, 0, {
+            conditions.meetsSyllableCondition(svc.syngloss, stressPermutationWord, 0, {
               type: 'AND',
               conditions: stressRules
             }, false)
@@ -276,7 +274,7 @@ angular.module('app').service('interfaceService',
         evolution.generate(word, languageArray, steps)
 
       function parentLanguageStressRules () {
-        let validity = svc.parentLanguage.validity
+        let validity = svc.syngloss.validity
         if (validity.type !== 'AND') {
           return []
         }
@@ -293,7 +291,7 @@ angular.module('app').service('interfaceService',
           zeroStressWord.syllables[syllableIndex].accent = 0
         }
         let stressPermutationWords = [zeroStressWord]
-        for (let orderIndex = 1; orderIndex <= svc.parentLanguage.prosody.maxOrder; orderIndex++) {
+        for (let orderIndex = 1; orderIndex <= svc.syngloss.prosody.maxOrder; orderIndex++) {
           let stressPermutationWordsLength = stressPermutationWords.length
           for (let stressPermutationWordIndex = 0; stressPermutationWordIndex < stressPermutationWordsLength; stressPermutationWordIndex++) {
             let stressPermutationWord = stressPermutationWords[stressPermutationWordIndex]
@@ -335,7 +333,7 @@ angular.module('app').service('interfaceService',
 
       this.isValid = word => word.syllables.every(
         (syllable, syllableIndex) => conditions.meetsSyllableCondition(
-          svc.parentLanguage, word, syllableIndex, svc.parentLanguage.validity
+          svc.syngloss, word, syllableIndex, svc.syngloss.validity
         )
       )
 
@@ -391,7 +389,7 @@ angular.module('app').service('interfaceService',
 
       this.getWordEvolutions = function (word) {
         let wordEvolutions = []
-        for (let descendentLanguage of svc.parentLanguage.descendentLanguages) {
+        for (let descendentLanguage of svc.syngloss.descendentLanguages) {
           wordEvolutions.push({
             synglossName: descendentLanguage.synglossName,
             languageName: descendentLanguage.languageName,
