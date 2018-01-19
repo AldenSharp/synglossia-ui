@@ -3,13 +3,13 @@ angular.module('app').service('validityService', [ function () {
 
   this.verifyValueInPhonotactics = function (language, value, index, valueLocation) {
     if (language.phonotactics[index + language.vowelCore].every((option) => option.value !== value)) {
-      console.error(valueLocation + ': Value is not in the phonotactics at position index ' + index)
+      console.error(valueLocation + ': Value ' + value + ' is not in the phonotactics at position index ' + index)
     }
   }
 
   this.verifyValueSomewhereInPhonotactics = function (language, value, valueLocation) {
     if (language.phonotactics.every((position) => position.every((option) => option.value !== value))) {
-      console.error(valueLocation + ': Value is not in the phonotactics at any position.')
+      console.error(valueLocation + ': Value ' + value + ' is not in the phonotactics at any position.')
     }
   }
 

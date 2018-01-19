@@ -31,7 +31,7 @@ angular.module('app').service('interfaceService',
       function checkSyngloss (syngloss) {
         validity.verifyNotNull(syngloss, 'Syngloss')
         validity.verifyPropertiesExist(syngloss, 'Syngloss', [
-          'name', 'date', 'phonotactics', 'vowelCore', 'prosody', 'validity', 'writingSystems', 'descendentLanguages'
+          'name', 'date', 'phonotactics', 'vowelCore', 'prosody', 'validity', 'writingSystems', 'descendantLanguages'
         ])
         for (let phonemePositionIndex in syngloss.phonotactics) {
           let phonemePosition = syngloss.phonotactics[phonemePositionIndex]

@@ -560,8 +560,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        if (value.length !== language.phonotactics.length - 1) {
-          console.error(conditionLocation + ': Syllable condition of type \'WORD_MEDIAL_CLUSTERS\' has some \'value\' array of improper length in position: ' + valueIndex)
+        let expectedLength = language.phonotactics.length - 1
+        if (value.length !== expectedLength) {
+          console.error(conditionLocation + ': Syllable condition of type \'WORD_MEDIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
+          + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
         for (let phonemeIndex in value) {
           let phoneme = value[phonemeIndex]
@@ -592,8 +594,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        if (value.length !== language.vowelCore) {
-          console.error(conditionLocation + ': Syllable condition of type \'WORD_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position: ' + valueIndex)
+        let expectedLength = language.vowelCore
+        if (value.length !== expectedLength) {
+          console.error(conditionLocation + ': Syllable condition of type \'WORD_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
+          + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
         for (let phonemeIndex in value) {
           let phoneme = value[phonemeIndex]
@@ -625,8 +629,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        if (value.length !== language.phonotactics.length - language.vowelCore - 1) {
-          console.error(conditionLocation + ': Syllable condition of type \'WORD_FINAL_CLUSTERS\' has some \'value\' array of improper length in position: ' + valueIndex)
+        let expectedLength = language.phonotactics.length - language.vowelCore - 1
+        if (value.length !== expectedLength) {
+          console.error(conditionLocation + ': Syllable condition of type \'WORD_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
+          + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
         for (let phonemeIndex in value) {
           let phoneme = value[phonemeIndex]
@@ -665,8 +671,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        if (value.length !== language.vowelCore) {
-          console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position: ' + valueIndex)
+        let expectedLength = language.vowelCore
+        if (value.length !== expectedLength) {
+          console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
+          + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
         for (let phonemeIndex in value) {
           let phoneme = value[phonemeIndex]
@@ -706,8 +714,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        if (value.length !== language.phonotactics.length - language.vowelCore - 1) {
-          console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_FINAL_CLUSTERS\' has some \'value\' array of improper length in position: ' + valueIndex)
+        let expectedLength = language.phonotactics.length - language.vowelCore - 1
+        if (value.length !== expectedLength) {
+          console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
+          + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
         for (let phonemeIndex in value) {
           let phoneme = value[phonemeIndex]
