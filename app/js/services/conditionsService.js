@@ -565,10 +565,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           console.error(conditionLocation + ': Syllable condition of type \'WORD_MEDIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
-        for (let phonemeIndex in value) {
-          let phoneme = value[phonemeIndex]
-          validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
-        }
+        // for (let phonemeIndex in value) {
+        //   let phoneme = value[phonemeIndex]
+        //   validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
+        // }
       }
     }
 
@@ -599,10 +599,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           console.error(conditionLocation + ': Syllable condition of type \'WORD_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
-        for (let phonemeIndex in value) {
-          let phoneme = value[phonemeIndex]
-          validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
-        }
+        // for (let phonemeIndex in value) {
+        //   let phoneme = value[phonemeIndex]
+        //   validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
+        // }
       }
     }
 
@@ -634,10 +634,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           console.error(conditionLocation + ': Syllable condition of type \'WORD_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
-        for (let phonemeIndex in value) {
-          let phoneme = value[phonemeIndex]
-          validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
-        }
+        // for (let phonemeIndex in value) {
+        //   let phoneme = value[phonemeIndex]
+        //   validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
+        // }
       }
     }
 
@@ -676,10 +676,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
-        for (let phonemeIndex in value) {
-          let phoneme = value[phonemeIndex]
-          validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
-        }
+        // for (let phonemeIndex in value) {
+        //   let phoneme = value[phonemeIndex]
+        //   validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
+        // }
       }
     }
 
@@ -719,10 +719,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
         }
-        for (let phonemeIndex in value) {
-          let phoneme = value[phonemeIndex]
-          validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
-        }
+        // for (let phonemeIndex in value) {
+        //   let phoneme = value[phonemeIndex]
+        //   validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'values\', index ' + valueIndex + ', index ' + phonemeIndex)
+        // }
       }
     }
 
@@ -756,10 +756,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
       // values
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
-      for (let valueIndex in condition.values) {
-        let value = condition.values[valueIndex]
-        validity.verifyValueSomewhereInPhonotactics(language, value, conditionLocation + ': Field \'values\', index ' + valueIndex)
-      }
+      // for (let valueIndex in condition.values) {
+      //   let value = condition.values[valueIndex]
+      //   validity.verifyValueSomewhereInPhonotactics(language, value, conditionLocation + ': Field \'values\', index ' + valueIndex)
+      // }
     }
 
     /*
@@ -1042,10 +1042,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
       // array
       validity.verifyNonemptyArray(condition.array, conditionLocation + ': Field \'array\'')
-      for (let phonemeIndex in condition.array) {
-        let phoneme = condition.array[phonemeIndex]
-        validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'array\', index ' + phonemeIndex)
-      }
+      // for (let phonemeIndex in condition.array) {
+      //   let phoneme = condition.array[phonemeIndex]
+      //   validity.verifyValueSomewhereInPhonotactics(language, phoneme, conditionLocation + ': Field \'array\', index ' + phonemeIndex)
+      // }
     }
 
     /*
