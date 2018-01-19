@@ -1,17 +1,17 @@
 angular.module('app').service('evolutionService', [
   'writingService', 'conditionsService', 'phonologyService', 'arrayService', 'validityService',
   function (writing, conditions, phonology, array, validity) {
-    this.generateLanguageArray = function (language, descendentLanguage) {
+    this.generateLanguageArray = function (language, descendantLanguage) {
       let output = [{
-        name: descendentLanguage.name,
+        name: descendantLanguage.name,
         date: language.date,
         phonotactics: JSON.parse(JSON.stringify(language.phonotactics)),
         vowelCore: language.vowelCore,
         prosody: JSON.parse(JSON.stringify(language.prosody)),
         writingSystems: JSON.parse(JSON.stringify(language.writingSystems)),
-        descendentLanguages: descendentLanguage.descendentLanguages
+        descendantLanguages: descendantLanguage.descendantLanguages
       }]
-      let steps = descendentLanguage.evolution
+      let steps = descendantLanguage.evolution
       for (let stepIndex in steps) {
         let step = steps[stepIndex]
         let date = step.date

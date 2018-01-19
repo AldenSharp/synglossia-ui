@@ -45,10 +45,10 @@
       ng-change="ctrl.updateDate()"
     >
     <br><br>
-    <div ng-repeat="descendentWord in ctrl.descendentWords">
+    <div ng-repeat="descendantWord in ctrl.descendantWords">
       <div class="solid-box">
-        <p>{{descendentWord.languageName}}</p>
-        <p ng-repeat="writingSystem in descendentWord.writingSystems">
+        <p>{{descendantWord.languageName}}</p>
+        <p ng-repeat="writingSystem in descendantWord.writingSystems">
           {{writingSystem.name}}: {{writingSystem.word}}
         </p>
       </div>

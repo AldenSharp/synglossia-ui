@@ -24,7 +24,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       ctrl.wordMemory.syllables.push(svc.getRandomSyllable())
 
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
-      ctrl.descendentWords = svc.getDescendentWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
     }
 
     this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)
@@ -36,7 +36,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       } else {
         ctrl.displayDate = ctrl.selectedDate + ' CE'
       }
-      ctrl.descendentWords = svc.getDescendentWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
     }
 
     this.write = (word, language, writingSystemName) => 'word' in ctrl ?

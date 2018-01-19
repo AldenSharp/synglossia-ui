@@ -102,16 +102,16 @@ angular.module('app').service('interfaceService',
           }
         }
         validity.verifyNonemptyArray(
-          syngloss.descendentLanguages, 'Parent language: Descendent languages'
+          syngloss.descendantLanguages, 'Parent language: Descendant languages'
         )
-        for (let descendentLanguageIndex in syngloss.descendentLanguages) {
-          let descendentLanguage = syngloss.descendentLanguages[descendentLanguageIndex]
-          checkDescendentLanguage(descendentLanguage, 'Parent language: Descendent language ' + descendentLanguageIndex)
+        for (let descendantLanguageIndex in syngloss.descendantLanguages) {
+          let descendantLanguage = syngloss.descendantLanguages[descendantLanguageIndex]
+          checkDescendantLanguage(descendantLanguage, 'Parent language: Descendant language ' + descendantLanguageIndex)
         }
       }
 
-      function checkDescendentLanguage (language, languageLocation) {
-        validity.verifyPropertiesExist(language, languageLocation, ['name', 'evolution', 'descendentLanguages'])
+      function checkDescendantLanguage (language, languageLocation) {
+        validity.verifyPropertiesExist(language, languageLocation, ['name', 'evolution', 'descendantLanguages'])
         for (let stepIndex in language.evolution) {
           let step = language.evolution[stepIndex]
           validity.verifyPropertiesExist(
@@ -119,9 +119,9 @@ angular.module('app').service('interfaceService',
           )
           validity.verifyNonemptyArray(step.transformations, languageLocation + ': Evolution: Step ' + stepIndex + ': Transformations')
         }
-        for (let descendentLanguageIndex in language.descendentLanguages) {
-          let descendentLanguage = language.descendentLanguages[descendentLanguage]
-          checkDescendentLanguage(descendentLanguage, languageLocation + ': descendentLanguage ' + descendentLanguageIndex)
+        for (let descendantLanguageIndex in language.descendantLanguages) {
+          let descendantLanguage = language.descendantLanguages[descendantLanguage]
+          checkDescendantLanguage(descendantLanguage, languageLocation + ': descendantLanguage ' + descendantLanguageIndex)
         }
       }
 
@@ -225,12 +225,12 @@ angular.module('app').service('interfaceService',
 
       this.getLanguageTree = function (language) {
         let output = []
-        for (let descendentLanguage of language.descendentLanguages) {
+        for (let descendantLanguage of language.descendantLanguages) {
           output.push({
-            name: descendentLanguage.name,
-            evolution: descendentLanguage.evolution,
-            languageArray: evolution.generateLanguageArray(language, descendentLanguage),
-            descendentLanguages: svc.getLanguageTree(descendentLanguage)
+            name: descendantLanguage.name,
+            evolution: descendantLanguage.evolution,
+            languageArray: evolution.generateLanguageArray(language, descendantLanguage),
+            descendantLanguages: svc.getLanguageTree(descendantLanguage)
           })
         }
         return output
@@ -238,39 +238,39 @@ angular.module('app').service('interfaceService',
 
       this.getWordTree = function (word, languageTree) {
         let output = []
-        for (let descendentLanguage of languageTree) {
+        for (let descendantLanguage of languageTree) {
           let wordObject = {
-            name: descendentLanguage.name,
-            wordArray: getWordDescendents(word, descendentLanguage.languageArray, descendentLanguage.evolution)
+            name: descendantLanguage.name,
+            wordArray: getWordDescendants(word, descendantLanguage.languageArray, descendantLanguage.evolution)
           }
           let wordObjectArray = wordObject.wordArray
-          wordObject.daughterWords = svc.getWordTree(wordObjectArray[wordObjectArray.length - 1], descendentLanguage.descendentLanguages)
+          wordObject.daughterWords = svc.getWordTree(wordObjectArray[wordObjectArray.length - 1], descendantLanguage.descendantLanguages)
           output.push(wordObject)
         }
         return output
       }
 
-      this.getDescendentWordsForDate = function (date, wordTree) {
-        let descendentWords = []
-        collectDescendentWords(date, wordTree, descendentWords)
-        return descendentWords
+      this.getDescendantWordsForDate = function (date, wordTree) {
+        let descendantWords = []
+        collectDescendantWords(date, wordTree, descendantWords)
+        return descendantWords
       }
 
-      function collectDescendentWords (date, wordTree, descendentWords) {
+      function collectDescendantWords (date, wordTree, descendantWords) {
         for (let wordSubTree of wordTree) {
           let wordIndex = wordSubTree.wordArray.length - 1
           if (date <= wordSubTree.wordArray[wordIndex].date) {
             while (date < wordSubTree.wordArray[wordIndex].date) {
               wordIndex--
             }
-            descendentWords.push(wordSubTree.wordArray[wordIndex])
+            descendantWords.push(wordSubTree.wordArray[wordIndex])
           } else {
-            collectDescendentWords(date, wordSubTree.daughterWords, descendentWords)
+            collectDescendantWords(date, wordSubTree.daughterWords, descendantWords)
           }
         }
       }
 
-      let getWordDescendents = (word, languageArray, steps) =>
+      let getWordDescendants = (word, languageArray, steps) =>
         evolution.generate(word, languageArray, steps)
 
       function parentLanguageStressRules () {
@@ -389,11 +389,11 @@ angular.module('app').service('interfaceService',
 
       this.getWordEvolutions = function (word) {
         let wordEvolutions = []
-        for (let descendentLanguage of svc.syngloss.descendentLanguages) {
+        for (let descendantLanguage of svc.syngloss.descendantLanguages) {
           wordEvolutions.push({
-            synglossName: descendentLanguage.synglossName,
-            languageName: descendentLanguage.languageName,
-            evolution: evolution.generate(word, descendentLanguage.evolution)
+            synglossName: descendantLanguage.synglossName,
+            languageName: descendantLanguage.languageName,
+            evolution: evolution.generate(word, descendantLanguage.evolution)
           })
         }
         return wordEvolutions
@@ -407,7 +407,7 @@ angular.module('app').service('interfaceService',
           if (languageArrayLatestDate > latestDate) {
             latestDate = languageArrayLatestDate
           }
-          latestDate = svc.getLatestDate(languageBranch.descendentLanguages, latestDate)
+          latestDate = svc.getLatestDate(languageBranch.descendantLanguages, latestDate)
         }
         return latestDate
       }
