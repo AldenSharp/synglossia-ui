@@ -381,7 +381,7 @@ angular.module('app').service('evolutionService', [
         let absoluteFromPosition = language.vowelCore + migration.fromPosition
         let absoluteToPosition = language.vowelCore + migration.toPosition
         if (word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteFromPosition] === '' || transformation.overwrite) {
-          word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteFromPosition] = word.syllables[syllableIndex].phonemes[absoluteToPosition]
+          word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteToPosition] = word.syllables[syllableIndex].phonemes[absoluteFromPosition]
         }
       }
     }
