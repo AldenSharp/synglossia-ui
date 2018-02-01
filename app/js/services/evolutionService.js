@@ -25,12 +25,15 @@ angular.module('app').service('evolutionService', [
         let writingSystems = JSON.parse(JSON.stringify(language.writingSystems))
         for (let transformationIndex in step.transformations) {
           let transformation = step.transformations[transformationIndex]
-          checkTransformation(previousLanguage, transformation, stepIndex, transformationIndex)
+          checkTransformation(previousLanguage, date, transformation, transformationIndex)
           if (transformation.type === 'SOUND_CHANGE') {
             languageSoundChange(phonotactics, vowelCore, transformation)
           }
           if (transformation.type === 'SOUND_DELETION' && transformation.condition.type === 'DEFAULT') {
             languageSoundDeletion(phonotactics, vowelCore, transformation)
+          }
+          if (transformation.type === 'SOUND_INSERTION') {
+            languageSoundInsertion(phonotactics, vowelCore, transformation)
           }
           if (transformation.type === 'SOUND_MIGRATION') {
             languageSoundMigration(phonotactics, vowelCore, transformation)
@@ -97,11 +100,17 @@ angular.module('app').service('evolutionService', [
               if (transformation.type === 'SOUND_DELETION') {
                 soundDeletion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
+              if (transformation.type === 'SOUND_INSERTION') {
+                soundInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
+              }
               if (transformation.type === 'SOUND_MIGRATION') {
                 soundMigration(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
               if (transformation.type === 'SOUND_COPY') {
                 soundCopy(newWord, stepLanguage, shiftedSyllableIndex, transformation)
+              }
+              if (transformation.type === 'SOUND_SWAP') {
+                soundSwap(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
               if (transformation.type === 'CONSONANT_DEGEMINATION') {
                 consonantDegemination(newWord, stepLanguage, shiftedSyllableIndex, transformation)
@@ -162,18 +171,22 @@ angular.module('app').service('evolutionService', [
       }
     }
 
-    function checkTransformation (language, transformation, stepIndex, transformationIndex) {
-      let transformationLocation = 'StepIndex ' + stepIndex + ', transformationIndex ' + transformationIndex
+    function checkTransformation (language, date, transformation, transformationIndex) {
+      let transformationLocation = 'Step dated ' + date + ', transformationIndex ' + transformationIndex
       validity.verifyNotNull(transformation, transformationLocation)
       validity.verifyPropertiesExist(transformation, transformationLocation, ['type'])
       if (transformation.type === 'SOUND_CHANGE') {
         checkSoundChange(language, transformation, transformationLocation)
       } else if (transformation.type === 'SOUND_DELETION') {
         checkSoundDeletion(language, transformation, transformationLocation)
+      } else if (transformation.type === 'SOUND_INSERTION') {
+        checkSoundInsertion(language, transformationi, transformationLocation)
       } else if (transformation.type === 'SOUND_MIGRATION') {
         checkSoundMigration(language, transformation, transformationLocation)
       } else if (transformation.type === 'SOUND_COPY') {
         checkSoundCopy(language, transformation, transformationLocation)
+      } else if (transformation.type === 'SOUND_SWAP') {
+        checkSoundSwap(language, transformation, transformationLocation)
       } else if (transformation.type === 'CONSONANT_DEGEMINATION') {
         checkConsonantDegemination(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_COLLAPSE') {
@@ -289,6 +302,44 @@ angular.module('app').service('evolutionService', [
         let sound = transformation.sounds[soundIndex]
         validity.verifyValueSomewhereInPhonotactics(language, sound, transformationLocation + ': Field \'sounds\', index ' + soundIndex)
       }
+
+      // condition
+      conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
+    }
+
+    // Transformation object:
+    // {
+    //   type: 'SOUND_INSERTION',
+    //   position: <int>,
+    //   sound: <phoneme string>,
+    //   condition: <condition>
+    // }
+    // Instance of 'SOUND_CHANGE' in which the "fromSounds" value is zero.
+    function soundInsertion (word, language, syllableIndex, transformation) {
+      let absolutePosition = language.vowelCore + transformation.position
+      for (let change of transformation.changes) {
+        if (word.syllables[syllableIndex].phonemes[absolutePosition] === '') {
+          word.syllables[syllableIndex].phonemes[absolutePosition] = change.sound
+        }
+      }
+    }
+
+    function languageSoundInsertion (phonotactics, vowelCore, transformation) {
+      let absolutePosition = vowelCore + transformation.position
+      for (let change of transformation.changes) {
+        if (phonotactics[absolutePosition].every((option) => option.value !== change.sound)) {
+          phonotactics[absolutePosition].push({
+            value: change.sound
+          })
+        }
+      }
+    }
+
+    function checkSoundInsertion (language, transformation, transformationLocation) {
+      validity.verifyPropertiesExist(transformation, transformationLocation, ['position', 'sound', 'condition'])
+
+      // position
+      validity.verifyIndexInPhonotactics(language, transformation.position, transformation + ': Field \'position\'')
 
       // condition
       conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
@@ -420,10 +471,50 @@ angular.module('app').service('evolutionService', [
 
     // Transformation object:
     // {
+    //   type: 'SOUND_SWAP',
+    //   swap: {
+    //     fromPosition: <int>,
+    //     syllableShift: <int>,
+    //     toPosition: <int>
+    //   },
+    //   condition: <condition>
+    // }
+    // Phonemes are swapped.
+    function soundSwap (word, language, syllableIndex, transformation) {
+      let fromSyllableIndex = syllableIndex
+      let toSyllableIndex = parseInt(syllableIndex) + parseInt(transformation.swap.syllableShift)
+      if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
+        let fromPhonemeIndex = language.vowelCore + transformation.swap.fromPosition
+        let toPhonemeIndex = language.vowelCore + transformation.swap.toPosition
+        let reservePhoneme = word.syllables[toSyllableIndex].phonemes[toPhonemeIndex]
+        word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] = word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex]
+        word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex] = reservePhoneme
+      }
+    }
+
+    function checkSoundSwap (language, transformation, transformationLocation) {
+      validity.verifyPropertiesExist(transformation, transformationLocation, ['swap', 'condition'])
+
+      // swap
+      let swap = transformation.swap
+      validity.verifyPropertiesExist(swap, transformationLocation + ': Field \'swap\'' + migrationIndex, ['fromPosition', 'syllableShift', 'toPosition'])
+
+      // fromPosition
+      validity.verifyIndexInPhonotactics(language, swap.fromPosition, transformationLocation + ': Field \'swap\', index ' + migrationIndex + ', field \'fromPosition\'')
+
+      // toPosition
+      validity.verifyIndexInPhonotactics(language, swap.toPosition, transformationLocation + ': Field \'swap\', index ' + migrationIndex + ', field \'toPosition\'')
+
+      // condition
+      conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
+    }
+
+    // Transformation object:
+    // {
     //   type: 'CONSONANT_DEGEMINATION',
     //   condition: <condition>
     // }
-    // If a consonant in any coda position is immediately followed by the same sound value in some initial position in the next syllable, the consonant becomes zero.
+    // If a consonant in the coda position of the given syllable is immediately followed by the same sound value in some initial position in the next syllable, the consonant becomes zero.
     function consonantDegemination (word, language, syllableIndex, transformation) {
       if (syllableIndex !== word.syllables.length - 1) {
         let currentSyllableFinalSoundIndex = word.syllables[syllableIndex].phonemes.length - 1
@@ -492,6 +583,31 @@ angular.module('app').service('evolutionService', [
         console.error(transformationLocation + ': Transformation of type \'SYLLABLE_COLLAPSE\' has \'reiterate\' set and \'condition\' is merely \'FOLLOWS_FROM_LAST_STEP\'. This is not allowed.')
       }
       conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
+    }
+
+    // Transformation object:
+    // {
+    //   type: 'SYLLABLE_INSERTION'
+    //   phonemes: [<phoneme string>],
+    //   condition: <condition>
+    // }
+    // A new syllable is inserted somewhere in the word, before the current syllable position.
+    function syllableInsertion (word, language, syllableIndex, transformation) {
+      let phonemeObjects = transformation.phonemes.map(
+        phoneme => {value: phoneme}
+      )
+      word.syllables.splice(syllableIndex, 0,
+        { accent: 0, phonemes: phonemeObjects })
+    }
+
+    function checkSyllableInsertion (language, transformation, transformationLocation) {
+      validity.verifyPropertiesExist(transformation, transformationLocation, ['phonemes', 'condition'])
+      if (transformation.phonemes.length !== language.phonotactics.length) {
+        console.error(
+          transformationLocation + ': Phoneme array is the incorrect length. ' +
+          'Length must be ' + language.phonotactics.length + ', but found: ' + transformation.phonemes.length
+        )
+      }
     }
 
     // Transformation object:

@@ -371,8 +371,14 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       if (condition.type === 'SOUND_ARRAY_MATCH') {
         return meetsSoundArrayMatchSyllableCondition(language, word, signedSyllableIndex, condition)
       }
+      if (condition.type === 'LENGTH') {
+        return meetsLengthSyllableCondition(word, condition)
+      }
       if (condition.type === 'STRESSED') {
         return meetsStressedSyllableCondition(word, syllableIndex, condition)
+      }
+      if (condition.type === 'BEFORE_STRESS') {
+        return meetsBeforeStressSyllableCondition(word, syllableIndex, condition)
       }
       if (condition.type === 'STRESS_EXISTENCE') {
         return meetsStressExistenceSyllableCondition(language, word, condition)
@@ -432,8 +438,12 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         checkMatchSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'SOUND_ARRAY_MATCH') {
         checkSoundArrayMatchSyllableCondition(language, condition, conditionLocation)
+      } else if (condition.type === 'LENGTH') {
+        checkLengthSyllableCondition(condition, conditionLocation)
       } else if (condition.type === 'STRESSED') {
         checkStressedSyllableCondition(language, condition, conditionLocation)
+      } else if (condition.type === 'BEFORE_STRESS') {
+        checkBeforeStressSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'STRESS_EXISTENCE') {
         checkStressExistenceSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'STRESS_UNIQUENESS') {
@@ -1050,6 +1060,28 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
     /*
     {
+      type: 'LENGTH',
+      comparison: 'GREATER_THAN' / 'LESS_THAN' / 'EQUALS'
+      length: <int>,
+    }
+    Number of syllables in a word is greater than, less than, or equal to a certain length value.
+    */
+    function meetsLengthSyllableCondition (word, condition) {
+      if (condition.comparison === 'GREATER_THAN') {
+        return word.syllables.length > condition.length
+      } else if (condition.comparison === 'LESS_THAN') {
+        return word.syllables.length < condition.length
+      } else {
+        return word.syllables.length === condition.length
+      }
+    }
+
+    function checkLengthSyllableCondition (condition, conditionLocation) {
+      validity.verifyPropertiesExist(condition, conditionLocation, ,['length', 'comparison'])
+    }
+
+    /*
+    {
       type: 'STRESSED',
       order: <int>,
       syllablePosition: <int>,
@@ -1077,6 +1109,31 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       // order
       if (condition.order < 1 || condition.order > language.prosody.maxOrder) {
         console.error(conditionLocation + ': Syllable condition of type \'STRESSED\' has out-of-bounds \'order\' value.')
+      }
+    }
+
+    /*
+    {
+      type: 'BEFORE_STRESS',
+      order: <int>
+    }
+    Syllable is located before the first syllable with the given stress value.
+    */
+    function meetsBeforeStressSyllableCondition (word, syllableIndex, condition) {
+      return word.syllables.every(
+        (syllable, thisSyllableIndex) => thisSyllableIndex > syllableIndex || syllable.accent !== condition.order
+      )
+    }
+
+    function checkBeforeStressSyllableCondition (language, condition, conditionLocation) {
+      if (language.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
+      }
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'order', 'syllablePositionType'])
+
+      // order
+      if (condition.order < 1 || condition.order > language.prosody.maxOrder) {
+        console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' has out-of-bounds \'order\' value.')
       }
     }
 
