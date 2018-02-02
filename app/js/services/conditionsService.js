@@ -1077,7 +1077,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkLengthSyllableCondition (condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ,['length', 'comparison'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['length', 'comparison'])
     }
 
     /*
