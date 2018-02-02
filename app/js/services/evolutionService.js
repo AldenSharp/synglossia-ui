@@ -59,7 +59,7 @@ angular.module('app').service('evolutionService', [
         output.push(newLanguage)
       }
       for (let descendantDescendantLanguage of descendantLanguage.descendantLanguages) {
-        descendantDescendantLanguage.phonotactics = JSON.parse(JSON.stringify(phonotactics))
+        descendantDescendantLanguage.phonotactics = JSON.parse(JSON.stringify(output[output.length - 1].phonotactics))
       }
       return output
     }
