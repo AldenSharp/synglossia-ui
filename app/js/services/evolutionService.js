@@ -2,6 +2,8 @@ angular.module('app').service('evolutionService', [
   'writingService', 'conditionsService', 'phonologyService', 'arrayService', 'validityService',
   function (writing, conditions, phonology, array, validity) {
     this.generateLanguageArray = function (language, descendantLanguage) {
+      console.log('language: ' + JSON.stringify(language))
+      console.log('descendant language: ' + JSON.stringify(descendantLanguage))
       let output = [{
         name: descendantLanguage.name,
         date: language.date,
