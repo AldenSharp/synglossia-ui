@@ -120,7 +120,7 @@ angular.module('app').service('interfaceService',
           validity.verifyNonemptyArray(step.transformations, languageLocation + ': Evolution: Step ' + stepIndex + ': Transformations')
         }
         for (let descendantLanguageIndex in language.descendantLanguages) {
-          let descendantLanguage = language.descendantLanguages[descendantLanguage]
+          let descendantLanguage = language.descendantLanguages[descendantLanguageIndex]
           checkDescendantLanguage(descendantLanguage, languageLocation + ': descendantLanguage ' + descendantLanguageIndex)
         }
       }
