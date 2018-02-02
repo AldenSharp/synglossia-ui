@@ -232,7 +232,10 @@ angular.module('app').service('interfaceService',
             evolution: descendantLanguage.evolution,
             languageArray: descendantLanguageArray
           }
-          descendantLanguage.phonotactics = JSON.parse(JSON.stringify(descendantLanguageArray[descendantLanguageArray.length - 1].phonotactics))
+          let lastArrayLanguage = descendantLanguageArray[descendantLanguageArray.length - 1]
+          descendantLanguage.phonotactics = JSON.parse(JSON.stringify(lastArrayLanguage.phonotactics))
+          descendantLanguage.prosody = JSON.parse(JSON.stringify(lastArrayLanguage.prosody))
+          descendantLanguage.writingSystems = JSON.parse(JSON.stringify(lastArrayLanguage.writingSystems))
           descendantLanguageBranch.descendantLanguages = svc.getLanguageTree(descendantLanguage)
           output.push(descendantLanguageBranch)
         }
