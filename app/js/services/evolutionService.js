@@ -2,8 +2,6 @@ angular.module('app').service('evolutionService', [
   'writingService', 'conditionsService', 'phonologyService', 'arrayService', 'validityService',
   function (writing, conditions, phonology, array, validity) {
     this.generateLanguageArray = function (language, descendantLanguage) {
-      console.log('language: ' + JSON.stringify(language))
-      console.log('descendant language: ' + JSON.stringify(descendantLanguage))
       let output = [{
         name: descendantLanguage.name,
         date: language.date,
@@ -59,9 +57,6 @@ angular.module('app').service('evolutionService', [
           newLanguage.prosody.maxOrder = accentMaxOrder
         }
         output.push(newLanguage)
-      }
-      for (let descendantDescendantLanguage of descendantLanguage.descendantLanguages) {
-        descendantDescendantLanguage.phonotactics = JSON.parse(JSON.stringify(output[output.length - 1].phonotactics))
       }
       return output
     }

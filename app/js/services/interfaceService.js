@@ -226,12 +226,15 @@ angular.module('app').service('interfaceService',
       this.getLanguageTree = function (language) {
         let output = []
         for (let descendantLanguage of language.descendantLanguages) {
-          output.push({
+          let descendantLanguageArray = evolution.generateLanguageArray(language, descendantLanguage)
+          let descendantLanguageBranch = {
             name: descendantLanguage.name,
             evolution: descendantLanguage.evolution,
-            languageArray: evolution.generateLanguageArray(language, descendantLanguage),
-            descendantLanguages: svc.getLanguageTree(descendantLanguage)
-          })
+            languageArray: descendantLanguageArray
+          }
+          descendantLanguage.phonotactics = JSON.parse(JSON.stringify(descendantLanguageArray[descendantLanguageArray.length - 1].phonotactics))
+          descendantLanguageBranch.descendantLanguages = svc.getLanguageTree(descendantLanguage)
+          output.push(descendantLanguageBranch)
         }
         return output
       }
