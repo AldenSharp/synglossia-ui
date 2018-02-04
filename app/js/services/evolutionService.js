@@ -498,10 +498,10 @@ angular.module('app').service('evolutionService', [
       validity.verifyPropertiesExist(swap, transformationLocation + ': Field \'swap\'', ['fromPosition', 'syllableShift', 'toPosition'])
 
       // fromPosition
-      validity.verifyIndexInPhonotactics(language, swap.fromPosition, transformationLocation + ': Field \'swap\', index ' + migrationIndex + ', field \'fromPosition\'')
+      validity.verifyIndexInPhonotactics(language, swap.fromPosition, transformationLocation + ': Field \'swap\', field \'fromPosition\'')
 
       // toPosition
-      validity.verifyIndexInPhonotactics(language, swap.toPosition, transformationLocation + ': Field \'swap\', index ' + migrationIndex + ', field \'toPosition\'')
+      validity.verifyIndexInPhonotactics(language, swap.toPosition, transformationLocation + ': Field \'swap\', field \'toPosition\'')
 
       // condition
       conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
