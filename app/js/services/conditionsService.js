@@ -1129,7 +1129,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       if (language.prosody.type !== 'STRESS') {
         console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
       }
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'order', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['order'])
 
       // order
       if (condition.order < 1 || condition.order > language.prosody.maxOrder) {
