@@ -554,6 +554,7 @@ angular.module('app').service('evolutionService', [
     //   condition: <condition>
     // }
     // One syllable length of positions is deleted from the word, starting at a given "position" integer value within the syllable (inclusive), and the remaining syllables shifted up.
+    // If position is not positive (i.e. not coda), and syllable is word-final, then the entire syllable is deleted.
     function syllableCollapse (word, language, syllableIndex, transformation) {
       if (language.prosody.type === 'STRESS') {
         if (syllableIndex < word.syllables.length - 1) {
@@ -563,12 +564,19 @@ angular.module('app').service('evolutionService', [
         }
       }
       let absolutePosition = language.vowelCore + transformation.position
-      if (syllableIndex < word.syllables.length - 1) {
+      if (syllableIndex === word.syllables.length - 1) {
+        for (let phonemeIndex = absolutePosition; phonemeIndex < word.syllables[syllableIndex].phonemes.length; phonemeIndex++) {
+          word.syllables[syllableIndex].phonemes[phonemeIndex] = ''
+        }
+      } else {
         for (let phonemeIndex = absolutePosition; phonemeIndex < word.syllables[syllableIndex].phonemes.length; phonemeIndex++) {
           word.syllables[syllableIndex].phonemes[phonemeIndex] = word.syllables[syllableIndex + 1].phonemes[phonemeIndex]
         }
       }
       word.syllables.splice(syllableIndex + 1, 1)
+      if (word.syllables[word.syllables.length - 1].phonemes.every((phoneme, phonemeIndex) => phonemeIndex < language.vowelCore || phoneme === '')) {
+        word.syllables.splice(-1, 1)
+      }
     }
 
     function checkSyllableCollapse (language, transformation, transformationLocation) {
