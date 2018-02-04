@@ -180,7 +180,7 @@ angular.module('app').service('evolutionService', [
       } else if (transformation.type === 'SOUND_DELETION') {
         checkSoundDeletion(language, transformation, transformationLocation)
       } else if (transformation.type === 'SOUND_INSERTION') {
-        checkSoundInsertion(language, transformationi, transformationLocation)
+        checkSoundInsertion(language, transformation, transformationLocation)
       } else if (transformation.type === 'SOUND_MIGRATION') {
         checkSoundMigration(language, transformation, transformationLocation)
       } else if (transformation.type === 'SOUND_COPY') {
