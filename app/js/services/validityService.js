@@ -2,9 +2,6 @@ angular.module('app').service('validityService', [ function () {
   let svc = this
 
   this.verifyValueInPhonotactics = function (language, value, index, valueLocation) {
-    console.log('index: ' + index)
-    console.log('vowel core: ' + language.vowelCore)
-    console.log('phonotactics: ' + JSON.stringify(language.phonotactics))
     if (language.phonotactics[index + language.vowelCore].every((option) => option.value !== value)) {
       console.error(valueLocation + ': Value ' + value + ' is not in the phonotactics at position index ' + index)
     }
