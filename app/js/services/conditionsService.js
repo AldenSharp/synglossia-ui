@@ -981,9 +981,6 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     Phoneme sound value at these positions are all equal to each other.
     */
     function meetsMatchSyllableCondition (language, word, signedSyllableIndex, condition) {
-      console.log('condition: ' + JSON.stringify(condition))
-      console.log('word: ' + JSON.stringify(word))
-      console.log('signedSyllableIndex: ' + signedSyllableIndex)
       let firstAbsoluteSyllablePosition = parseInt(condition.positions[0].syllable) +
         (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
       if (firstAbsoluteSyllablePosition < 0 || firstAbsoluteSyllablePosition >= word.syllables.length) {
@@ -995,11 +992,12 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         .syllables[firstAbsoluteSyllablePosition]
         .phonemes[firstAbsoluteSoundPosition]
       for (let position of condition.positions.slice(1)) {
-        console.log('position: ' + JSON.stringify(position))
         let absoluteSyllablePosition = parseInt(position.syllable) +
           (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
+          return false
+        }
         let absoluteSoundPosition = parseInt(position.sound) + language.vowelCore
-        console.log('absoluteSyllablePosition: ' + absoluteSyllablePosition)
         if (
           firstAbsoluteSyllablePosition < 0 ||
           firstAbsoluteSyllablePosition >= word.syllables.length ||
