@@ -326,12 +326,10 @@ angular.module('app').service('evolutionService', [
 
     function languageSoundInsertion (phonotactics, vowelCore, transformation) {
       let absolutePosition = vowelCore + transformation.position
-      for (let change of transformation.changes) {
-        if (phonotactics[absolutePosition].every((option) => option.value !== change.sound)) {
-          phonotactics[absolutePosition].push({
-            value: change.sound
-          })
-        }
+      if (phonotactics[absolutePosition].every((option) => option.value !== transformation.sound)) {
+        phonotactics[absolutePosition].push({
+          value: transformation.sound
+        })
       }
     }
 
