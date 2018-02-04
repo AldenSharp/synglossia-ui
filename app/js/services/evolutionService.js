@@ -495,7 +495,7 @@ angular.module('app').service('evolutionService', [
 
       // swap
       let swap = transformation.swap
-      validity.verifyPropertiesExist(swap, transformationLocation + ': Field \'swap\'' + migrationIndex, ['fromPosition', 'syllableShift', 'toPosition'])
+      validity.verifyPropertiesExist(swap, transformationLocation + ': Field \'swap\'', ['fromPosition', 'syllableShift', 'toPosition'])
 
       // fromPosition
       validity.verifyIndexInPhonotactics(language, swap.fromPosition, transformationLocation + ': Field \'swap\', index ' + migrationIndex + ', field \'fromPosition\'')
