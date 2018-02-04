@@ -555,20 +555,20 @@ angular.module('app').service('evolutionService', [
     // }
     // One syllable length of positions is deleted from the word, starting at a given "position" integer value within the syllable (inclusive), and the remaining syllables shifted up.
     function syllableCollapse (word, language, syllableIndex, transformation) {
-      console.log('word: ' + JSON.stringify(word))
-      console.log('syllableIndex: ' + syllableIndex)
-      if (syllableIndex < word.syllables.length - 1) {
-        if (language.prosody.type === 'STRESS') {
+      if (language.prosody.type === 'STRESS') {
+        if (syllableIndex < word.syllables.length - 1) {
           if (word.syllables[syllableIndex].accent === 0) {
             word.syllables[syllableIndex].accent = word.syllables[syllableIndex + 1].accent
           }
         }
-        let absolutePosition = language.vowelCore + transformation.position
+      }
+      let absolutePosition = language.vowelCore + transformation.position
+      if (syllableIndex < word.syllables.length - 1) {
         for (let phonemeIndex = absolutePosition; phonemeIndex < word.syllables[syllableIndex].phonemes.length; phonemeIndex++) {
           word.syllables[syllableIndex].phonemes[phonemeIndex] = word.syllables[syllableIndex + 1].phonemes[phonemeIndex]
         }
-        word.syllables.splice(syllableIndex + 1, 1)
       }
+      word.syllables.splice(syllableIndex + 1, 1)
     }
 
     function checkSyllableCollapse (language, transformation, transformationLocation) {
