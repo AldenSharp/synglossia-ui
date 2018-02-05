@@ -10,7 +10,7 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
-        generateLanguageDisplayNames(syngloss)
+        generateLanguageDisplayNames(svc.syngloss)
         if (svc.syngloss.prosody.type === 'STRESS') {
           svc.syngloss.prosody.stressType = []
           for (let orderIndex = 0; orderIndex < svc.syngloss.maxOrder; orderIndex++) {
