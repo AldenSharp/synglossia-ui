@@ -425,10 +425,12 @@ angular.module('app').service('evolutionService', [
     // Like "sound migration," except the "fromPosition" sounds are not deleted.
     function soundCopy (word, language, syllableIndex, transformation) {
       for (let migration of transformation.migrations) {
-        let absoluteFromPosition = language.vowelCore + migration.fromPosition
-        let absoluteToPosition = language.vowelCore + migration.toPosition
-        if (word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteFromPosition] === '' || transformation.overwrite) {
-          word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteToPosition] = word.syllables[syllableIndex].phonemes[absoluteFromPosition]
+        if (syllableIndex + migration.syllableShift >= 0 && syllableIndex + migration.syllableShift < word.syllables.length) {
+          let absoluteFromPosition = language.vowelCore + migration.fromPosition
+          let absoluteToPosition = language.vowelCore + migration.toPosition
+          if (word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteFromPosition] === '' || transformation.overwrite) {
+            word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteToPosition] = word.syllables[syllableIndex].phonemes[absoluteFromPosition]
+          }
         }
       }
     }
