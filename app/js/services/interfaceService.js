@@ -36,7 +36,9 @@ angular.module('app').service('interfaceService',
         if (language.writingSystems !== undefined) {
           language.writingSystems.forEach(writingSystem => writingSystem.displayName = display(writingSystem.name))
         }
-        language.descendantLanguages.forEach(descendantLanguage => generateLanguageDisplayNames(descendantLanguage))
+        for (let descendantLanguage of language.descendantLanguages) {
+          generateLanguageDisplayNames(descendantLanguage)
+        }
       }
 
       function checkSyngloss (syngloss) {
