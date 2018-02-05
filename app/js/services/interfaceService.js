@@ -3,6 +3,8 @@ angular.module('app').service('interfaceService',
     function (evolution, writing, conditions, phonology, array, validity, $http) {
       let svc = this
 
+      let display = name => name.replace('_', ' ')
+
       this.getSyngloss = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName)
         .then((httpResponse) => initializeSyngloss(httpResponse))
@@ -32,13 +34,9 @@ angular.module('app').service('interfaceService',
       function generateLanguageDisplayNames(language) {
         language.displayName = display(language.name)
         if (language.writingSystems !== undefined) {
-          language.writingSystems.forEach((writingSystem) => writingSystem.displayName = display(writingSystem.name))
+          language.writingSystems.forEach(writingSystem => writingSystem.displayName = display(writingSystem.name))
         }
-        language.descendantLanguages.forEach((descendantLanguage) => generateLanguageDisplayNames(descendantLanguage))
-      }
-
-      function display (name) {
-        return name.replace('_', ' ')
+        language.descendantLanguages.forEach(descendantLanguage => generateLanguageDisplayNames(descendantLanguage))
       }
 
       function checkSyngloss (syngloss) {
