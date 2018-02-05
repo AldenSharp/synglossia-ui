@@ -3,8 +3,6 @@ angular.module('app').service('interfaceService',
     function (evolution, writing, conditions, phonology, array, validity, $http) {
       let svc = this
 
-      let display = name => name.replace('_', ' ')
-
       this.getSyngloss = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName)
         .then((httpResponse) => initializeSyngloss(httpResponse))
@@ -12,7 +10,6 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
-        generateLanguageDisplayNames(svc.syngloss)
         if (svc.syngloss.prosody.type === 'STRESS') {
           svc.syngloss.prosody.stressType = []
           for (let orderIndex = 0; orderIndex < svc.syngloss.maxOrder; orderIndex++) {
@@ -29,16 +26,6 @@ angular.module('app').service('interfaceService',
             })
           })
         )
-      }
-
-      function generateLanguageDisplayNames(language) {
-        language.displayName = display(language.name)
-        if (language.writingSystems !== undefined) {
-          language.writingSystems.forEach(writingSystem => writingSystem.displayName = display(writingSystem.name))
-        }
-        for (let descendantLanguage of language.descendantLanguages) {
-          generateLanguageDisplayNames(descendantLanguage)
-        }
       }
 
       function checkSyngloss (syngloss) {
@@ -260,7 +247,7 @@ angular.module('app').service('interfaceService',
         let output = []
         for (let descendantLanguage of languageTree) {
           let wordObject = {
-            name: descendantLanguage.displayName,
+            name: descendantLanguage.name,
             wordArray: getWordDescendants(word, descendantLanguage.languageArray, descendantLanguage.evolution)
           }
           let wordObjectArray = wordObject.wordArray
@@ -411,7 +398,7 @@ angular.module('app').service('interfaceService',
         let wordEvolutions = []
         for (let descendantLanguage of svc.syngloss.descendantLanguages) {
           wordEvolutions.push({
-            languageName: descendantLanguage.displayName,
+            languageName: descendantLanguage.name,
             evolution: evolution.generate(word, descendantLanguage.evolution)
           })
         }

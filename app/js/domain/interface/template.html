@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="col-md-10 col-md-offset-1">
     <div class="jumbotron">
-      <h1>Syngloss: {{ctrl.syngloss.displayName}}</h1>
+      <h1>Syngloss: {{ctrl.display(ctrl.syngloss.name)}}</h1>
     </div>
     <form>
       <div>
@@ -30,9 +30,9 @@
     </form>
     <br><br>
     <div class="solid-box">
-      <p>{{ctrl.syngloss.displayName}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA')}}/</p>
+      <p>{{ctrl.display(ctrl.syngloss.name)}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA')}}/</p>
       <p ng-repeat="writingSystem in ctrl.syngloss.writingSystems">
-        {{writingSystem.displayName}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name)}}
+        {{ctrl.display(writingSystem.name)}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name)}}
       </p>
     </div>
     <br><br>
@@ -47,9 +47,9 @@
     <br><br>
     <div ng-repeat="descendantWord in ctrl.descendantWords">
       <div class="solid-box">
-        <p>{{descendantWord.languageName}}</p>
+        <p>{{ctrl.display(descendantWord.languageName)}}</p>
         <p ng-repeat="writingSystem in descendantWord.writingSystems">
-          {{writingSystem.displayName}}: {{writingSystem.word}}
+          {{ctrl.display(writingSystem.name)}}: {{writingSystem.word}}
         </p>
       </div>
     </div>

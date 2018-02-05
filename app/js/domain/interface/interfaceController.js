@@ -103,6 +103,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       }
     }
 
+    this.display = name => name.replace('_', ' ')
     this.getCardinal = (number) => svc.getCardinal(number)
   }])
   // Attempt to fix the issue with the slider initalizing at 100 instead of the maximum value:
