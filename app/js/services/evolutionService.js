@@ -317,10 +317,8 @@ angular.module('app').service('evolutionService', [
     // Instance of 'SOUND_CHANGE' in which the "fromSounds" value is zero.
     function soundInsertion (word, language, syllableIndex, transformation) {
       let absolutePosition = language.vowelCore + transformation.position
-      for (let change of transformation.changes) {
-        if (word.syllables[syllableIndex].phonemes[absolutePosition] === '') {
-          word.syllables[syllableIndex].phonemes[absolutePosition] = change.sound
-        }
+      if (word.syllables[syllableIndex].phonemes[absolutePosition] === '') {
+        word.syllables[syllableIndex].phonemes[absolutePosition] = transformation.sound
       }
     }
 
