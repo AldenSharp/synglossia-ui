@@ -10,6 +10,7 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
+        generateLanguageDisplayNames(syngloss)
         if (svc.syngloss.prosody.type === 'STRESS') {
           svc.syngloss.prosody.stressType = []
           for (let orderIndex = 0; orderIndex < svc.syngloss.maxOrder; orderIndex++) {
@@ -26,6 +27,18 @@ angular.module('app').service('interfaceService',
             })
           })
         )
+      }
+
+      function generateLanguageDisplayNames(language) {
+        language.displayName = display(language.name)
+        if (language.writingSystems !== undefined) {
+          language.writingSystems.forEach((writingSystem) => writingSystem.displayName = display(writingSystem.name))
+        }
+        language.descendantLanguages.forEach((descendantLanguage) => generateLanguageDisplayNames(descendantLanguage))
+      }
+
+      function display (name) {
+        return name.replace('_', ' ')
       }
 
       function checkSyngloss (syngloss) {
@@ -398,8 +411,7 @@ angular.module('app').service('interfaceService',
         let wordEvolutions = []
         for (let descendantLanguage of svc.syngloss.descendantLanguages) {
           wordEvolutions.push({
-            synglossName: descendantLanguage.synglossName,
-            languageName: descendantLanguage.languageName,
+            languageName: descendantLanguage.displayName,
             evolution: evolution.generate(word, descendantLanguage.evolution)
           })
         }
