@@ -260,7 +260,7 @@ angular.module('app').service('interfaceService',
         let output = []
         for (let descendantLanguage of languageTree) {
           let wordObject = {
-            name: descendantLanguage.name,
+            name: descendantLanguage.displayName,
             wordArray: getWordDescendants(word, descendantLanguage.languageArray, descendantLanguage.evolution)
           }
           let wordObjectArray = wordObject.wordArray
