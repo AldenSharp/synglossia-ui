@@ -16,8 +16,8 @@ angular.module('app').service('phonologyService', ['arrayService',
       )
 
     this.isShortSyllable = (syllable, language) =>
-      syllable.phonemes.every((phoneme, phonemeIndex) => phonemeIndex <= language.vowelCore || phoneme === '') &&
-      svc.isShortVowel(syllable.phonemes[language.vowelCore])
+      syllable.phonemes.every((phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === '') &&
+      svc.isShortVowel(syllable.phonemes[language.phonology.vowelCore])
 
     this.nextPhoneme = function (word, syllableIndex, thisPhonemeIndex) {
       if (svc.wordFinal(word, syllableIndex, thisPhonemeIndex)) {
@@ -113,7 +113,7 @@ angular.module('app').service('phonologyService', ['arrayService',
       let output = ''
 
       word.syllables.forEach(function (syllable, syllableIndex) {
-        if (language.prosody.type === 'STRESS') {
+        if (language.phonology.prosody.type === 'STRESS') {
           if (word.syllables.length > 1) {
             if (syllable.accent === 1) output += '\u02C8'
           }
@@ -123,12 +123,12 @@ angular.module('app').service('phonologyService', ['arrayService',
         }
         syllable.phonemes.forEach(function (phoneme, phonemeIndex) {
           output = output += phoneme
-          if (phonemeIndex !== language.vowelCore && isVowel(phoneme[0])) {
+          if (phonemeIndex !== language.phonology.vowelCore && isVowel(phoneme[0])) {
             output += '\u032F'
           }
         })
-        if (language.prosody.type === 'PITCH') {
-          language.prosody.inventory[syllable.accent].forEach(function (pitchValue) {
+        if (language.phonology.prosody.type === 'PITCH') {
+          language.phonology.prosody.inventory[syllable.accent].forEach(function (pitchValue) {
             if (pitchValue === 2) output += '\u02E5'
             if (pitchValue === 1) output += '\u02E6'
             if (pitchValue === 0) output += '\u02E7'
@@ -136,12 +136,12 @@ angular.module('app').service('phonologyService', ['arrayService',
             if (pitchValue === -2) output += '\u02E9'
           })
         }
-        if (language.prosody.type === 'STRESS') {
+        if (language.phonology.prosody.type === 'STRESS') {
           if (syllableIndex < word.syllables.length - 1 && word.syllables[syllableIndex + 1].accent !== 1 && word.syllables[syllableIndex + 1].accent !== 2) {
             output += '.'
           }
-        } else if (language.prosody.type === 'PITCH') {
-          if (language.prosody.inventory[syllable.accent].length === 0) {
+        } else if (language.phonology.prosody.type === 'PITCH') {
+          if (language.phonology.prosody.inventory[syllable.accent].length === 0) {
             output += '.'
           }
         } else {

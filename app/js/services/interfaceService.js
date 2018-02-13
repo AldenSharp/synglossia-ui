@@ -10,13 +10,13 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
-        if (svc.syngloss.prosody.type === 'STRESS') {
-          svc.syngloss.prosody.stressType = []
-          for (let orderIndex = 0; orderIndex < svc.syngloss.maxOrder; orderIndex++) {
-            svc.syngloss.prosody.stressType[orderIndex] = determineStressType(svc.syngloss, orderIndex + 1)
+        if (svc.syngloss.phonology.prosody.type === 'STRESS') {
+          svc.syngloss.phonology.prosody.stressType = []
+          for (let orderIndex = 0; orderIndex < svc.syngloss.phonology.prosody.maxOrder; orderIndex++) {
+            svc.syngloss.phonology.prosody.stressType[orderIndex] = determineStressType(svc.syngloss, orderIndex + 1)
           }
         }
-        svc.syngloss.phonotactics.forEach((phonemePlace, phonemeIndex) =>
+        svc.syngloss.phonology.phonotactics.forEach((phonemePlace, phonemeIndex) =>
           phonemePlace.forEach(function (option) {
             option.invalid = (word, syllableIndex) => !svc.testAlterationValidity(word, {
               type: 'NEW_PHONEME',
@@ -31,10 +31,11 @@ angular.module('app').service('interfaceService',
       function checkSyngloss (syngloss) {
         validity.verifyNotNull(syngloss, 'Syngloss')
         validity.verifyPropertiesExist(syngloss, 'Syngloss', [
-          'name', 'date', 'phonotactics', 'vowelCore', 'prosody', 'validity', 'writingSystems', 'descendantLanguages'
+          'name', 'date', 'phonology', 'validity', 'writingSystems', 'descendantLanguages'
         ])
-        for (let phonemePositionIndex in syngloss.phonotactics) {
-          let phonemePosition = syngloss.phonotactics[phonemePositionIndex]
+        validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'vowelCore', 'prosody'])
+        for (let phonemePositionIndex in syngloss.phonology.phonotactics) {
+          let phonemePosition = syngloss.phonology.phonotactics[phonemePositionIndex]
           validity.verifyNonemptyArray(phonemePosition, 'Parent language phonotactics: ' + phonemePositionIndex)
           for (let optionIndex in phonemePosition) {
             let option = phonemePosition[optionIndex]
@@ -44,9 +45,9 @@ angular.module('app').service('interfaceService',
             )
           }
         }
-        validity.verifyPropertiesExist(syngloss.prosody, 'Parent language prosody', ['type'])
-        if (syngloss.prosody.type === 'STRESS') {
-          validity.verifyPositive(syngloss.prosody.maxOrder, 'Parent language prosody max order')
+        validity.verifyPropertiesExist(syngloss.phonology.prosody, 'Parent language prosody', ['type'])
+        if (syngloss.phonology.prosody.type === 'STRESS') {
+          validity.verifyPositive(syngloss.phonology.prosody.maxOrder, 'Parent language prosody max order')
         }
         conditions.checkSyllableCondition(syngloss, syngloss.validity, 'Parent language validity')
 

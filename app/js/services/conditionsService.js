@@ -145,7 +145,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let actualAdjacentPhoneme = phonology.nextPhoneme(word, syllableIndex, phonemeIndex)
       return (
         actualAdjacentPhoneme.value === condition.adjacentSound.value &&
-        (condition.adjacentSound.type !== 'CONSONANT' || actualAdjacentPhoneme.index !== language.vowelCore)
+        (condition.adjacentSound.type !== 'CONSONANT' || actualAdjacentPhoneme.index !== language.phonology.vowelCore)
       )
     }
 
@@ -172,7 +172,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let actualAdjacentPhoneme = phonology.previousPhoneme(word, syllableIndex, phonemeIndex)
       return (
         actualAdjacentPhoneme.value === condition.adjacentSound.value &&
-        (condition.adjacentSound.type !== 'CONSONANT' || actualAdjacentPhoneme.index !== language.vowelCore)
+        (condition.adjacentSound.type !== 'CONSONANT' || actualAdjacentPhoneme.index !== language.phonology.vowelCore)
       )
     }
 
@@ -193,7 +193,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     Phoneme is not located in the vowel core of the syllable.
     */
     function meetsConsonantalCondition (language, phonemeIndex, condition) {
-      return phonemeIndex !== language.vowelCore
+      return phonemeIndex !== language.phonology.vowelCore
     }
 
     /*
@@ -203,7 +203,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     Phoneme is located in the vowel core of the syllable.
     */
     function meetsSyllabicCondition (language, phonemeIndex, condition) {
-      return phonemeIndex === language.vowelCore
+      return phonemeIndex === language.phonology.vowelCore
     }
 
     /*
@@ -547,7 +547,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       }
       for (let medialString of condition.values) {
         let thisSyllablePosition = absoluteSyllablePosition
-        let thisSoundPosition = language.vowelCore + 1
+        let thisSoundPosition = language.phonology.vowelCore + 1
         let match = true
         for (let phoneme of medialString) {
           if (word.syllables[thisSyllablePosition].phonemes[thisSoundPosition] !== phoneme) {
@@ -570,7 +570,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonotactics.length - 1
+        let expectedLength = language.phonology.phonotactics.length - 1
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'WORD_MEDIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -604,7 +604,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.vowelCore
+        let expectedLength = language.phonology.vowelCore
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'WORD_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -627,7 +627,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       return condition.values.some(
         (finalValue) => finalValue.every(
           (final, finalIndex) =>
-            word.syllables[word.syllables.length - 1].phonemes[language.vowelCore + 1 + finalIndex] === final
+            word.syllables[word.syllables.length - 1].phonemes[language.phonology.vowelCore + 1 + finalIndex] === final
         )
       )
     }
@@ -639,7 +639,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonotactics.length - language.vowelCore - 1
+        let expectedLength = language.phonology.phonotactics.length - language.phonology.vowelCore - 1
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'WORD_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -681,7 +681,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.vowelCore
+        let expectedLength = language.phonology.vowelCore
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -712,7 +712,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       return condition.values.some(
         (finalValue) => finalValue.every(
           (final, finalIndex) =>
-            word.syllables[absoluteSyllablePosition].phonemes[language.vowelCore + 1 + finalIndex] === final
+            word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore + 1 + finalIndex] === final
         )
       )
     }
@@ -724,7 +724,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonotactics.length - language.vowelCore - 1
+        let expectedLength = language.phonology.phonotactics.length - language.phonology.vowelCore - 1
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -754,7 +754,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       }
       return condition.values.some((value) =>
         word.syllables[absoluteSyllablePosition]
-        .phonemes[language.vowelCore + condition.position.sound] === value
+        .phonemes[language.phonology.vowelCore + condition.position.sound] === value
       )
     }
 
@@ -787,7 +787,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         return false
       }
       return word.syllables[absoluteSyllablePosition]
-        .phonemes[language.vowelCore + condition.position.sound] === ''
+        .phonemes[language.phonology.vowelCore + condition.position.sound] === ''
     }
 
     function checkEmptySyllableCondition (language, condition, conditionLocation) {
@@ -816,7 +816,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           absoluteSyllablePosition < 0 ||
           absoluteSyllablePosition >= word.syllables.length ||
           word.syllables[absoluteSyllablePosition]
-          .phonemes[language.vowelCore + position.sound] !== ''
+          .phonemes[language.phonology.vowelCore + position.sound] !== ''
         ) { return false }
       }
       return true
@@ -851,7 +851,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           absoluteSyllablePosition >= 0 &&
           absoluteSyllablePosition < word.syllables.length &&
           word.syllables[absoluteSyllablePosition]
-          .phonemes[language.vowelCore + position.sound] === ''
+          .phonemes[language.phonology.vowelCore + position.sound] === ''
         ) {
           return true
         }
@@ -879,7 +879,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     */
     function meetsOpenSyllableCondition (language, word, syllableIndex, condition) {
       return word.syllables[syllableIndex].phonemes.every(
-        (phoneme, phonemeIndex) => phonemeIndex <= language.vowelCore || phoneme === ''
+        (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === ''
       )
     }
 
@@ -904,9 +904,9 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       }
       return (
         (word.syllables[absoluteSyllablePosition].phonemes.every(
-          (phoneme, phonemeIndex) => phonemeIndex <= language.vowelCore || phoneme === '')) &&
+          (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === '')) &&
         (word.syllables[absoluteSyllablePosition + 1].phonemes.every(
-          (phoneme, phonemeIndex) => phonemeIndex >= language.vowelCore || phoneme === ''))
+          (phoneme, phonemeIndex) => phonemeIndex >= language.phonology.vowelCore || phoneme === ''))
       )
     }
 
@@ -942,7 +942,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
         (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
       return phonology.isShortVowel(
-        word.syllables[absoluteSyllablePosition].phonemes[language.vowelCore]
+        word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore]
       )
     }
 
@@ -962,7 +962,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
         (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
       return !phonology.isShortVowel(
-        word.syllables[absoluteSyllablePosition].phonemes[language.vowelCore]
+        word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore]
       )
     }
 
@@ -987,7 +987,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         return false
       }
       let firstAbsoluteSoundPosition = parseInt(condition.positions[0].sound) +
-        language.vowelCore
+        language.phonology.vowelCore
       let sharedPhoneme = word
         .syllables[firstAbsoluteSyllablePosition]
         .phonemes[firstAbsoluteSoundPosition]
@@ -997,7 +997,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
           return false
         }
-        let absoluteSoundPosition = parseInt(position.sound) + language.vowelCore
+        let absoluteSoundPosition = parseInt(position.sound) + language.phonology.vowelCore
         if (
           firstAbsoluteSyllablePosition < 0 ||
           firstAbsoluteSyllablePosition >= word.syllables.length ||
@@ -1029,7 +1029,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsSoundArrayMatchSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.initialPosition.syllable) +
         (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
-      let absoluteSoundPosition = language.vowelCore + parseInt(condition.initialPosition.sound)
+      let absoluteSoundPosition = language.phonology.vowelCore + parseInt(condition.initialPosition.sound)
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return false
       }
@@ -1104,13 +1104,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkStressedSyllableCondition (language, condition, conditionLocation) {
-      if (language.prosody.type !== 'STRESS') {
-        console.error(conditionLocation + ': Syllable condition of type \'STRESSED\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
+      if (language.phonology.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'STRESSED\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
       }
       validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'order', 'syllablePositionType'])
 
       // order
-      if (condition.order < 1 || condition.order > language.prosody.maxOrder) {
+      if (condition.order < 1 || condition.order > language.phonology.prosody.maxOrder) {
         console.error(conditionLocation + ': Syllable condition of type \'STRESSED\' has out-of-bounds \'order\' value.')
       }
     }
@@ -1129,13 +1129,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkBeforeStressSyllableCondition (language, condition, conditionLocation) {
-      if (language.prosody.type !== 'STRESS') {
-        console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
+      if (language.phonology.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
       }
       validity.verifyPropertiesExist(condition, conditionLocation, ['order'])
 
       // order
-      if (condition.order < 1 || condition.order > language.prosody.maxOrder) {
+      if (condition.order < 1 || condition.order > language.phonology.prosody.maxOrder) {
         console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' has out-of-bounds \'order\' value.')
       }
     }
@@ -1154,8 +1154,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkStressExistenceSyllableCondition (language, condition, conditionLocation) {
-      if (language.prosody.type !== 'STRESS') {
-        console.error(conditionLocation + ': Syllable condition of type \'STRESS_EXISTENCE\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
+      if (language.phonology.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'STRESS_EXISTENCE\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
       }
       validity.verifyPropertiesExist(condition, conditionLocation, ['orders'])
 
@@ -1164,7 +1164,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
       for (let orderIndex in condition.orders) {
         let order = condition.orders[orderIndex]
-        if (order <= 0 || order > language.prosody.maxOrder) {
+        if (order <= 0 || order > language.phonology.prosody.maxOrder) {
           console.error(conditionLocation + ': Syllable condition of type \'STRESS_EXISTENCE\' has some \'orders\' value out of bounds.')
         }
       }
@@ -1184,8 +1184,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkStressUniquenessSyllableCondition (language, condition, conditionLocation) {
-      if (language.prosody.type !== 'STRESS') {
-        console.error(conditionLocation + ': Syllable condition of type \'STRESS_UNIQUENESS\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
+      if (language.phonology.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'STRESS_UNIQUENESS\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
       }
       validity.verifyPropertiesExist(condition, conditionLocation, ['orders'])
 
@@ -1194,7 +1194,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
       for (let orderIndex in condition.orders) {
         let order = condition.orders[orderIndex]
-        if (order <= 0 || order > language.prosody.maxOrder) {
+        if (order <= 0 || order > language.phonology.prosody.maxOrder) {
           console.error(conditionLocation + ': Syllable condition of type \'STRESS_UNIQUENESS\' has some \'orders\' value out of bounds.')
         }
       }
@@ -1229,13 +1229,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkStressParadigmSyllableCondition (language, condition, conditionLocation) {
-      if (language.prosody.type !== 'STRESS') {
-        console.error(conditionLocation + ': Syllable condition of type \'STRESS_PARADIGM\' is incompatible with language of accent type \'' + language.prosody.type + '\'; type must be \'STRESS\'.')
+      if (language.phonology.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'STRESS_PARADIGM\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
       }
       validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'order'])
 
       // order
-      if (condition.order < 1 || condition.order > language.prosody.maxOrder) {
+      if (condition.order < 1 || condition.order > language.phonology.prosody.maxOrder) {
         console.error(conditionLocation + ': Syllable condition of type \'STRESS_PARADIGM\' has out-of-bounds \'order\' value.')
       }
 

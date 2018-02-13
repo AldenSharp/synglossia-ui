@@ -5,9 +5,7 @@ angular.module('app').service('evolutionService', [
       let output = [{
         name: descendantLanguage.name,
         date: language.date,
-        phonotactics: JSON.parse(JSON.stringify(language.phonotactics)),
-        vowelCore: language.vowelCore,
-        prosody: JSON.parse(JSON.stringify(language.prosody)),
+        phonology: JSON.parse(JSON.stringify(language.phonology)),
         writingSystems: JSON.parse(JSON.stringify(language.writingSystems)),
         descendantLanguages: descendantLanguage.descendantLanguages
       }]
@@ -16,11 +14,11 @@ angular.module('app').service('evolutionService', [
         let step = steps[stepIndex]
         let date = step.date
         let previousLanguage = JSON.parse(JSON.stringify(output[stepIndex]))
-        let phonotactics = previousLanguage.phonotactics
-        let vowelCore = previousLanguage.vowelCore
-        let prosodyType = previousLanguage.prosody.type
+        let phonotactics = previousLanguage.phonology.phonotactics
+        let vowelCore = previousLanguage.phonology.vowelCore
+        let prosodyType = previousLanguage.phonology.prosody.type
         if (prosodyType === 'STRESS') {
-          var accentMaxOrder = previousLanguage.prosody.maxOrder
+          var accentMaxOrder = previousLanguage.phonology.prosody.maxOrder
         }
         let writingSystems = JSON.parse(JSON.stringify(language.writingSystems))
         for (let transformationIndex in step.transformations) {
@@ -46,15 +44,17 @@ angular.module('app').service('evolutionService', [
         let newLanguage = {
           name: output[0].name,
           date: date,
-          phonotactics: phonotactics,
-          vowelCore: vowelCore,
-          prosody: {
-            type: prosodyType
+          phonology: {
+            phonotactics: phonotactics,
+            vowelCore: vowelCore,
+            prosody: {
+              type: prosodyType
+            }
           },
           writingSystems: writingSystems
         }
         if (prosodyType === 'STRESS') {
-          newLanguage.prosody.maxOrder = accentMaxOrder
+          newLanguage.phonology.prosody.maxOrder = accentMaxOrder
         }
         output.push(newLanguage)
       }
@@ -210,7 +210,7 @@ angular.module('app').service('evolutionService', [
     // }
     // At the position in the syllable, each sound value in the "fromSounds" array becomes the corresponding sound value in the "toSounds" array.
     function soundChange (word, language, syllableIndex, transformation) {
-      let absolutePosition = language.vowelCore + transformation.position
+      let absolutePosition = language.phonology.vowelCore + transformation.position
       for (let change of transformation.changes) {
         if (word.syllables[syllableIndex].phonemes[absolutePosition] === change.fromSound) {
           word.syllables[syllableIndex].phonemes[absolutePosition] = change.toSound
@@ -266,7 +266,7 @@ angular.module('app').service('evolutionService', [
     // Instance of 'SOUND_CHANGE' in which the "toSounds" array is implicit, and are all zero.
     function soundDeletion (word, language, syllableIndex, transformation) {
       for (let position of transformation.positions) {
-        let absolutePosition = language.vowelCore + position
+        let absolutePosition = language.phonology.vowelCore + position
         for (let sound of transformation.sounds) {
           if (word.syllables[syllableIndex].phonemes[absolutePosition] === sound) {
             word.syllables[syllableIndex].phonemes[absolutePosition] = ''
@@ -316,7 +316,7 @@ angular.module('app').service('evolutionService', [
     // }
     // Instance of 'SOUND_CHANGE' in which the "fromSounds" value is zero.
     function soundInsertion (word, language, syllableIndex, transformation) {
-      let absolutePosition = language.vowelCore + transformation.position
+      let absolutePosition = language.phonology.vowelCore + transformation.position
       if (word.syllables[syllableIndex].phonemes[absolutePosition] === '') {
         word.syllables[syllableIndex].phonemes[absolutePosition] = transformation.sound
       }
@@ -361,8 +361,8 @@ angular.module('app').service('evolutionService', [
         let fromSyllableIndex = syllableIndex
         let toSyllableIndex = parseInt(syllableIndex) + parseInt(migration.syllableShift)
         if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
-          let fromPhonemeIndex = language.vowelCore + migration.fromPosition
-          let toPhonemeIndex = language.vowelCore + migration.toPosition
+          let fromPhonemeIndex = language.phonology.vowelCore + migration.fromPosition
+          let toPhonemeIndex = language.phonology.vowelCore + migration.toPosition
           if (word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] === '' || transformation.overwrite) {
             word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] = word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex]
             word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex] = ''
@@ -426,8 +426,8 @@ angular.module('app').service('evolutionService', [
     function soundCopy (word, language, syllableIndex, transformation) {
       for (let migration of transformation.migrations) {
         if (syllableIndex + migration.syllableShift >= 0 && syllableIndex + migration.syllableShift < word.syllables.length) {
-          let absoluteFromPosition = language.vowelCore + migration.fromPosition
-          let absoluteToPosition = language.vowelCore + migration.toPosition
+          let absoluteFromPosition = language.phonology.vowelCore + migration.fromPosition
+          let absoluteToPosition = language.phonology.vowelCore + migration.toPosition
           if (word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteFromPosition] === '' || transformation.overwrite) {
             word.syllables[syllableIndex + migration.syllableShift].phonemes[absoluteToPosition] = word.syllables[syllableIndex].phonemes[absoluteFromPosition]
           }
@@ -482,8 +482,8 @@ angular.module('app').service('evolutionService', [
       let fromSyllableIndex = syllableIndex
       let toSyllableIndex = parseInt(syllableIndex) + parseInt(transformation.swap.syllableShift)
       if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
-        let fromPhonemeIndex = language.vowelCore + transformation.swap.fromPosition
-        let toPhonemeIndex = language.vowelCore + transformation.swap.toPosition
+        let fromPhonemeIndex = language.phonology.vowelCore + transformation.swap.fromPosition
+        let toPhonemeIndex = language.phonology.vowelCore + transformation.swap.toPosition
         let reservePhoneme = word.syllables[toSyllableIndex].phonemes[toPhonemeIndex]
         word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] = word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex]
         word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex] = reservePhoneme
@@ -530,7 +530,7 @@ angular.module('app').service('evolutionService', [
         ) {
           nextSyllableInitialSoundIndex++
         }
-        if (currentSyllableFinalSoundIndex > language.vowelCore && nextSyllableInitialSoundIndex < language.vowelCore) {
+        if (currentSyllableFinalSoundIndex > language.phonology.vowelCore && nextSyllableInitialSoundIndex < language.phonology.vowelCore) {
           if (
             word.syllables[syllableIndex].phonemes[currentSyllableFinalSoundIndex] ===
             word.syllables[syllableIndex + 1].phonemes[nextSyllableInitialSoundIndex]
@@ -556,14 +556,14 @@ angular.module('app').service('evolutionService', [
     // One syllable length of positions is deleted from the word, starting at a given "position" integer value within the syllable (inclusive), and the remaining syllables shifted up.
     // If position is not positive (i.e. not coda), and syllable is word-final, then the entire syllable is deleted.
     function syllableCollapse (word, language, syllableIndex, transformation) {
-      if (language.prosody.type === 'STRESS') {
+      if (language.phonology.prosody.type === 'STRESS') {
         if (syllableIndex < word.syllables.length - 1) {
           if (word.syllables[syllableIndex].accent === 0) {
             word.syllables[syllableIndex].accent = word.syllables[syllableIndex + 1].accent
           }
         }
       }
-      let absolutePosition = language.vowelCore + transformation.position
+      let absolutePosition = language.phonology.vowelCore + transformation.position
       if (syllableIndex === word.syllables.length - 1) {
         for (let phonemeIndex = absolutePosition; phonemeIndex < word.syllables[syllableIndex].phonemes.length; phonemeIndex++) {
           word.syllables[syllableIndex].phonemes[phonemeIndex] = ''
@@ -574,7 +574,7 @@ angular.module('app').service('evolutionService', [
         }
       }
       word.syllables.splice(syllableIndex + 1, 1)
-      if (word.syllables[word.syllables.length - 1].phonemes.every((phoneme, phonemeIndex) => phonemeIndex < language.vowelCore || phoneme === '')) {
+      if (word.syllables[word.syllables.length - 1].phonemes.every((phoneme, phonemeIndex) => phonemeIndex < language.phonology.vowelCore || phoneme === '')) {
         word.syllables.splice(-1, 1)
       }
     }
@@ -612,10 +612,10 @@ angular.module('app').service('evolutionService', [
 
     function checkSyllableInsertion (language, transformation, transformationLocation) {
       validity.verifyPropertiesExist(transformation, transformationLocation, ['phonemes', 'condition'])
-      if (transformation.phonemes.length !== language.phonotactics.length) {
+      if (transformation.phonemes.length !== language.phonology.phonotactics.length) {
         console.error(
           transformationLocation + ': Phoneme array is the incorrect length. ' +
-          'Length must be ' + language.phonotactics.length + ', but found: ' + transformation.phonemes.length
+          'Length must be ' + language.phonology.phonotactics.length + ', but found: ' + transformation.phonemes.length
         )
       }
     }
@@ -646,7 +646,7 @@ angular.module('app').service('evolutionService', [
       validity.verifyPropertiesExist(transformation, transformationLocation, ['order', 'shift', 'condition'])
 
       // order
-      if (transformation.order <= 0 || transformation.order > language.prosody.maxOrder) {
+      if (transformation.order <= 0 || transformation.order > language.phonology.prosody.maxOrder) {
         console.error(transformationLocation + ': Transformation of type \'STRESS_SHIFT\' has \'order\' value out of bounds. Found value: ' + transformation.order)
       }
 

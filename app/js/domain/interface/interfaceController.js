@@ -5,7 +5,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
     let initializeController = function() {
       ctrl.syngloss = svc.syngloss
 
-      for (let position of ctrl.syngloss.phonotactics) {
+      for (let position of ctrl.syngloss.phonology.phonotactics) {
         for (let option of position) {
           option.presentation = svc.present(option.value)
         }
@@ -47,7 +47,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
     }
 
-    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.syngloss.vowelCore
+    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.syngloss.phonology.vowelCore
 
     this.restressWord = function () {
       ctrl.word = svc.restress(ctrl.word)
@@ -94,7 +94,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$r
       }
       while (ctrl.word.syllables.length < ctrl.wordLength) {
         ctrl.word.syllables.push(ctrl.wordMemory.syllables[ctrl.word.syllables.length])
-        if (ctrl.syngloss.prosody.stressType === 'ABSOLUTE' || ctrl.syngloss.prosody.stressType === 'CONDITIONAL') {
+        if (ctrl.syngloss.phonology.prosody.stressType === 'ABSOLUTE' || ctrl.syngloss.phonology.prosody.stressType === 'CONDITIONAL') {
           ctrl.word = svc.restress(ctrl.word)
         }
       }
