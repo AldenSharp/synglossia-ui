@@ -194,8 +194,8 @@ angular.module('app').service('interfaceService',
 
       this.restress = function (word) {
         if (
-          svc.syngloss.prosody.type !== 'STRESS' ||
-          svc.syngloss.prosody.stressType.some((orderStressType) =>
+          svc.syngloss.phonology.prosody.type !== 'STRESS' ||
+          svc.syngloss.phonology.prosody.stressType.some((orderStressType) =>
             orderStressType !== 'ABSOLUTE' && orderStressType !== 'CONDITIONAL'
           )) {
           return word
@@ -297,7 +297,7 @@ angular.module('app').service('interfaceService',
           zeroStressWord.syllables[syllableIndex].accent = 0
         }
         let stressPermutationWords = [zeroStressWord]
-        for (let orderIndex = 1; orderIndex <= svc.syngloss.prosody.maxOrder; orderIndex++) {
+        for (let orderIndex = 1; orderIndex <= svc.syngloss.phonology.prosody.maxOrder; orderIndex++) {
           let stressPermutationWordsLength = stressPermutationWords.length
           for (let stressPermutationWordIndex = 0; stressPermutationWordIndex < stressPermutationWordsLength; stressPermutationWordIndex++) {
             let stressPermutationWord = stressPermutationWords[stressPermutationWordIndex]
@@ -366,24 +366,24 @@ angular.module('app').service('interfaceService',
         for (let syllableIndex in word.syllables) {
           let syllable = word.syllables[syllableIndex]
           validity.verifyPropertiesExist(syllable, 'Word: Syllable ' + syllableIndex, ['accent', 'phonemes'])
-          if (language.prosody.type === 'STRESS') {
-            if (syllable.accent < 0 || syllable.accent > language.prosody.maxOrder) {
+          if (language.phonology.prosody.type === 'STRESS') {
+            if (syllable.accent < 0 || syllable.accent > language.phonology.prosody.maxOrder) {
               console.error(
                 'Word: Syllable ' + syllableIndex + ': Accent value out of bounds. ' +
-                'Value must be between 0 and ' + language.prosody.maxOrder +
+                'Value must be between 0 and ' + language.phonology.prosody.maxOrder +
                 ', but found: ' + syllable.accent
               )
             }
           }
-          if (syllable.phonemes.length !== language.phonotactics.length) {
+          if (syllable.phonemes.length !== language.phonology.phonotactics.length) {
             console.error(
               'Word: Syllable ' + syllableIndex + ': Phoneme array is the incorrect length. ' +
-              'Length must be ' + language.phonotactics.length + ', but found: ' + syllable.phonemes.length
+              'Length must be ' + language.phonology.phonotactics.length + ', but found: ' + syllable.phonemes.length
             )
           }
           for (let phonemeIndex in syllable.phonemes) {
             let phoneme = syllable.phonemes[phonemeIndex]
-            if (language.phonotactics[phonemeIndex].every((option) => option.value !== phoneme)) {
+            if (language.phonology.phonotactics[phonemeIndex].every((option) => option.value !== phoneme)) {
               console.error(
                 'Word: Syllable ' + syllableIndex + ': Phoneme ' + phonemeIndex +
                 ': Value is not found in the language phonotactics options at that index.'
