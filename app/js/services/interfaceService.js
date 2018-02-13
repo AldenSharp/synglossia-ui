@@ -142,10 +142,10 @@ angular.module('app').service('interfaceService',
             condition.positions[condition.positions.length - 1].condition.type === 'DEFAULT'
           ) && validityCondition.conditions.some((condition) =>
             condition.type === 'STRESS_EXISTENCE' &&
-            order in condition.order
+            order in condition.orders
           ) && validityCondition.conditions.some((condition) =>
             condition.type === 'STRESS_UNIQUENESS' &&
-            order in condition.order
+            order in condition.orders
           )) {
             return 'CONDITIONAL'
           }
