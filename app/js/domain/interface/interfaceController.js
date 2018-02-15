@@ -1,6 +1,10 @@
-angular.module('app').controller('interfaceController', ['interfaceService', '$route', '$routeParams',
-  function interfaceController (svc, $route, $routeParams) {
+angular.module('app').controller('interfaceController', ['interfaceService', '$scope', '$route', '$routeParams',
+  function interfaceController (svc, $scope, $route, $routeParams) {
     let ctrl = this
+
+    $scope.tab = 1
+    $scope.setTab = tab => $scope.tab = tab
+    $scope.isSet = tab => $scope.tab === tab
 
     let initializeController = function() {
       ctrl.syngloss = svc.syngloss

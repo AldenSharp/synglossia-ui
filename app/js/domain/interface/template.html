@@ -3,55 +3,76 @@
     <div class="jumbotron">
       <h1>Syngloss: {{ctrl.display(ctrl.syngloss.name)}}</h1>
     </div>
-    <form>
-      <div>
-        Select the number of syllables: {{ctrl.wordLength}}
-        <button ng-click="ctrl.decrementWord()" ng-disabled="ctrl.decrementedWordInvalid()">-</button>
-        <button ng-click="ctrl.incrementWord()" ng-disabled="ctrl.incrementedWordInvalid()">+</button>
-      </div>
-      <br>
-      <table>
-        <tr>
-          <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
-            {{ctrl.tableHeader(ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))}}
-          </th>
-        </tr>
-        <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.word.syllables.length)">
-          <td ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
-            <select
-              ng-model="ctrl.word.syllables[syllableIndex].phonemes[ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
-              ng-options="phoneme.value as phoneme.presentation disable when phoneme.invalid(ctrl.word, syllableIndex) for phoneme in syllablePosition"
-              ng-change="ctrl.updateWord()"
-            >
-            </select>
-          </td>
-        </tr>
-      </table>
-    </form>
-    <br><br>
-    <div class="solid-box">
-      <p>{{ctrl.display(ctrl.syngloss.name)}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA')}}/</p>
-      <p ng-repeat="writingSystem in ctrl.syngloss.writingSystems">
-        {{ctrl.display(writingSystem.name)}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name)}}
-      </p>
-    </div>
-    <br><br>
-    <p>Select date: {{ctrl.displayDate}}</p>
-    <input type="range"
-      min="{{ctrl.earliestDate}}"
-      max="{{ctrl.latestDate}}"
-      ng-init="ctrl.latestDate"
-      ng-model="ctrl.selectedDate"
-      ng-change="ctrl.updateDate()"
-    >
-    <br><br>
-    <div ng-repeat="descendantWord in ctrl.descendantWords">
+    <div>
+  		<ul class="nav nav-pills">
+       	<li>
+          	<a href ng-click="setTab(1)">Phonology</a>
+       	</li>
+       	<li>
+          	<a href ng-click="setTab(2)">Nouns</a>
+       	</li>
+       	<li>
+          	<a href ng-click="setTab(3)">Verbs</a>
+       	</li>
+     	</ul>
+  	</div>
+    <div ng-show="isSet(1)">
+      <form>
+        <div>
+          Select the number of syllables: {{ctrl.wordLength}}
+          <button ng-click="ctrl.decrementWord()" ng-disabled="ctrl.decrementedWordInvalid()">-</button>
+          <button ng-click="ctrl.incrementWord()" ng-disabled="ctrl.incrementedWordInvalid()">+</button>
+        </div>
+        <br>
+        <table>
+          <tr>
+            <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
+              {{ctrl.tableHeader(ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))}}
+            </th>
+          </tr>
+          <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.word.syllables.length)">
+            <td ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
+              <select
+                ng-model="ctrl.word.syllables[syllableIndex].phonemes[ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
+                ng-options="phoneme.value as phoneme.presentation disable when phoneme.invalid(ctrl.word, syllableIndex) for phoneme in syllablePosition"
+                ng-change="ctrl.updateWord()"
+              >
+              </select>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <br><br>
       <div class="solid-box">
-        <p>{{ctrl.display(descendantWord.languageName)}}</p>
-        <p ng-repeat="writingSystem in descendantWord.writingSystems">
-          {{ctrl.display(writingSystem.name)}}: {{writingSystem.word}}
+        <p>{{ctrl.display(ctrl.syngloss.name)}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA')}}/</p>
+        <p ng-repeat="writingSystem in ctrl.syngloss.writingSystems">
+          {{ctrl.display(writingSystem.name)}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name)}}
         </p>
       </div>
+      <br><br>
+      <p>Select date: {{ctrl.displayDate}}</p>
+      <input type="range"
+        min="{{ctrl.earliestDate}}"
+        max="{{ctrl.latestDate}}"
+        ng-init="ctrl.latestDate"
+        ng-model="ctrl.selectedDate"
+        ng-change="ctrl.updateDate()"
+      >
+      <br><br>
+      <div ng-repeat="descendantWord in ctrl.descendantWords">
+        <div class="solid-box">
+          <p>{{ctrl.display(descendantWord.languageName)}}</p>
+          <p ng-repeat="writingSystem in descendantWord.writingSystems">
+            {{ctrl.display(writingSystem.name)}}: {{writingSystem.word}}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div ng-show="isSet(2)">
+      <p>This is the nouns tab.</p>
+    </div>
+    <div ng-show="isSet(3)">
+      <p>This is the verbs tab.</p>
     </div>
   </div>
 </div>
