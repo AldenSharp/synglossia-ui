@@ -149,8 +149,24 @@ angular.module('app').service('interfaceService',
           )) {
             return 'CONDITIONAL'
           }
+          console.log('Stress type is neither ABSOLUTE nor CONDITIONAL. It must be ARBITRARY.')
+          console.log('validity.conditions = ' + JSON.stringify(validityCondition.conditions))
+          console.log('Validity condition contains STRESS_PARADIGM condition? ' + validityCondition.conditions.some((condition) =>
+            condition.type === 'STRESS_PARADIGM' &&
+            condition.order === order &&
+            condition.positions[condition.positions.length - 1].condition.type === 'DEFAULT'
+          ))
+          console.log('Validity condition contains STRESS_EXISTENCE condition? ' + validityCondition.conditions.some((condition) =>
+            condition.type === 'STRESS_EXISTENCE' &&
+            order in condition.orders
+          ))
+          console.log('Validity condition contains STRESS_UNIQUENESS condition? ' + validityCondition.conditions.some((condition) =>
+            condition.type === 'STRESS_UNIQUENESS' &&
+            order in condition.orders
+          ))
           return 'ARBITRARY'
         }
+        return 'ARBITRARY'
       }
 
       /*
@@ -193,13 +209,11 @@ angular.module('app').service('interfaceService',
       }
 
       this.restress = function (word) {
-        console.log('prosody object: ' + JSON.stringify(svc.syngloss.phonology.prosody))
         if (
           svc.syngloss.phonology.prosody.type !== 'STRESS' ||
           svc.syngloss.phonology.prosody.stressType.some((orderStressType) =>
             orderStressType !== 'ABSOLUTE' && orderStressType !== 'CONDITIONAL'
           )) {
-          console.log('Initial prosody type conditions not met. Returning identical word object.')
           return word
         }
         let stressRules = parentLanguageStressRules()
