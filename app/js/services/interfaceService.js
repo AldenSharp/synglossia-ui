@@ -155,13 +155,14 @@ angular.module('app').service('interfaceService',
 
           let stressExistenceConditionOrders = validityCondition.conditions[5].orders
           console.log('stressExistenceConditionOrders: ' + JSON.stringify(stressExistenceConditionOrders))
-          console.log('Condition contains order? ' + (order in stressExistenceConditionOrders))
+          console.log('Condition contains order? ' + (stressExistenceConditionOrders.includes(order)))
 
           let stressUniquenessConditionOrders = validityCondition.conditions[6].orders
           console.log('stressUniquenessConditionOrders: ' + JSON.stringify(stressUniquenessConditionOrders))
-          console.log('Condition contains order? ' + (order in stressUniquenessConditionOrders))
+          console.log('Condition contains order? ' + (stressUniquenessConditionOrders.includes(order)))
 
           console.log('1 in [1]? ' + (1 in [1]))
+          console.log('[1].includes(1)? ' + [1].includes(1))
 
           return 'ARBITRARY'
         }
