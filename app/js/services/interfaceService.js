@@ -174,9 +174,7 @@ angular.module('app').service('interfaceService',
         let testWord = phonology.copyWord(word)
         if (alteration.type === 'NEW_PHONEME') {
           testWord.syllables[alteration.syllableIndex].phonemes[alteration.phonemeIndex] = alteration.value
-          console.log('Restressing word: ' + JSON.stringify(testWord))
           testWord = svc.restress(testWord)
-          console.log('Restressed word: ' + JSON.stringify(testWord))
           return svc.isValid(testWord)
         }
         if (alteration.type === 'SYLLABLE_INCREMENT') {
@@ -195,11 +193,13 @@ angular.module('app').service('interfaceService',
       }
 
       this.restress = function (word) {
+        console.log('prosody object: ' + JSON.stringify(svc.syngloss.phonology.prosody))
         if (
           svc.syngloss.phonology.prosody.type !== 'STRESS' ||
           svc.syngloss.phonology.prosody.stressType.some((orderStressType) =>
             orderStressType !== 'ABSOLUTE' && orderStressType !== 'CONDITIONAL'
           )) {
+          console.log('Initial prosody type conditions not met. Returning identical word object.')
           return word
         }
         let stressRules = parentLanguageStressRules()
