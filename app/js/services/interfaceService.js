@@ -153,23 +153,16 @@ angular.module('app').service('interfaceService',
           console.log('Stress type is neither ABSOLUTE nor CONDITIONAL. It must be ARBITRARY.')
           console.log('Order: ' + order)
 
-          let stressExistenceCondition = validityCondition.conditions[5]
-          console.log('stressExistenceCondition: ' + JSON.stringify(stressExistenceCondition))
-          console.log('Type is STRESS_EXISTENCE? ' + (stressExistenceCondition.type === 'STRESS_EXISTENCE'))
-          console.log('Condition contains order? ' + (order in stressExistenceCondition.orders))
-          console.log('Validity condition contains STRESS_EXISTENCE condition? ' + validityCondition.conditions.some((condition) =>
-            condition.type === 'STRESS_EXISTENCE' &&
-            order in condition.orders
-          ))
+          let stressExistenceConditionOrders = validityCondition.conditions[5].orders
+          console.log('stressExistenceConditionOrders: ' + JSON.stringify(stressExistenceConditionOrders))
+          console.log('Condition contains order? ' + (order in stressExistenceConditionOrders))
 
-          let stressUniquenessCondition = validityCondition.conditions[6]
-          console.log('stressUniquenessCondition: ' + JSON.stringify(stressUniquenessCondition))
-          console.log('Type is STRESS_UNIQUENESS? ' + (stressUniquenessCondition.type === 'STRESS_UNIQUENESS'))
-          console.log('Condition contains order? ' + (order in stressUniquenessCondition.orders))
-          console.log('Validity condition contains STRESS_UNIQUENESS condition? ' + validityCondition.conditions.some((condition) =>
-            condition.type === 'STRESS_UNIQUENESS' &&
-            order in condition.orders
-          ))
+          let stressUniquenessConditionOrders = validityCondition.conditions[6].orders
+          console.log('stressUniquenessConditionOrders: ' + JSON.stringify(stressUniquenessConditionOrders))
+          console.log('Condition contains order? ' + (order in stressUniquenessConditionOrders))
+
+          console.log('1 in [1]? ' + (1 in [1]))
+
           return 'ARBITRARY'
         }
         return 'ARBITRARY'
