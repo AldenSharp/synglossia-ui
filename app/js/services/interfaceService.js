@@ -142,28 +142,13 @@ angular.module('app').service('interfaceService',
             condition.positions[condition.positions.length - 1].condition.type === 'DEFAULT'
           ) && validityCondition.conditions.some((condition) =>
             condition.type === 'STRESS_EXISTENCE' &&
-            order in condition.orders
+            condition.orders.includes(order)
           ) && validityCondition.conditions.some((condition) =>
             condition.type === 'STRESS_UNIQUENESS' &&
-            order in condition.orders
+            condition.orders.includes(order)
           )) {
             return 'CONDITIONAL'
           }
-
-          console.log('Stress type is neither ABSOLUTE nor CONDITIONAL. It must be ARBITRARY.')
-          console.log('Order: ' + order)
-
-          let stressExistenceConditionOrders = validityCondition.conditions[5].orders
-          console.log('stressExistenceConditionOrders: ' + JSON.stringify(stressExistenceConditionOrders))
-          console.log('Condition contains order? ' + (stressExistenceConditionOrders.includes(order)))
-
-          let stressUniquenessConditionOrders = validityCondition.conditions[6].orders
-          console.log('stressUniquenessConditionOrders: ' + JSON.stringify(stressUniquenessConditionOrders))
-          console.log('Condition contains order? ' + (stressUniquenessConditionOrders.includes(order)))
-
-          console.log('1 in [1]? ' + (1 in [1]))
-          console.log('[1].includes(1)? ' + [1].includes(1))
-
           return 'ARBITRARY'
         }
         return 'ARBITRARY'
