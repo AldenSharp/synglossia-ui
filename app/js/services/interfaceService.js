@@ -174,14 +174,14 @@ angular.module('app').service('interfaceService',
         let testWord = phonology.copyWord(word)
         if (alteration.type === 'NEW_PHONEME') {
           testWord.syllables[alteration.syllableIndex].phonemes[alteration.phonemeIndex] = alteration.value
+          console.log('Restressing word: ' + JSON.stringify(testWord))
           testWord = svc.restress(testWord)
+          console.log('Restressed word: ' + JSON.stringify(testWord))
           return svc.isValid(testWord)
         }
         if (alteration.type === 'SYLLABLE_INCREMENT') {
           testWord.syllables.push(alteration.newSyllable)
-          console.log('Restressing word: ' + JSON.stringify(testWord))
           testWord = svc.restress(testWord)
-          console.log('Restressed word: ' + JSON.stringify(testWord))
           return svc.isValid(testWord)
         }
         if (alteration.type === 'SYLLABLE_DECREMENT') {
