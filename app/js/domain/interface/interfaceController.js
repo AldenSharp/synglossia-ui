@@ -30,7 +30,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
 
-      console.log('Nominal morphology: ' + JSON.stringify(ctrl.syngloss.morphology.nominals))
+      console.log('Syngloss: ' + JSON.stringify(ctrl.syngloss))
       ctrl.nounStem = [
         ['', '', 'm', 'e\u02d0', 'n', '', ''],
         ['s', '']
