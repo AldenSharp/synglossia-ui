@@ -71,6 +71,38 @@
     </div>
     <div ng-show="isSet(2)">
       <p>This is the nouns tab.</p>
+      <form>
+        <table>
+          <tr>
+            <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
+              {{ctrl.tableHeader(ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))}}
+            </th>
+          </tr>
+          <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.nounStem.length)">
+            <td ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
+              <select
+                ng-model="ctrl.nounStem[syllableIndex][ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
+                ng-options="phoneme.value as phoneme.presentation for phoneme in syllablePosition"
+              >
+              </select>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <br><br>
+      <div>
+        <table>
+          <tr>
+            <th></th>
+            <th ng-repeat="number in ctrl.syngloss.morphology.nominals.numbers">
+              {{number}}
+            </th>
+          </tr>
+          <tr ng-repeat="case in ctrl.syngloss.morphology.nominals.cases">
+            <td>{{case}}</td>
+          </tr>
+        </table>
+      </div>
     </div>
     <div ng-show="isSet(3)">
       <p>This is the verbs tab.</p>

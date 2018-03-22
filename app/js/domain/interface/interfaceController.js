@@ -29,6 +29,11 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+
+      ctrl.nounStem = [
+        ['', '', 'm', 'e\u02d0', 'n', '', ''],
+        ['s', '']
+      ]
     }
 
     this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)
