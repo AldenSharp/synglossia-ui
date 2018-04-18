@@ -93,13 +93,13 @@
         <table>
           <tr>
             <th></th>
-            <th ng-repeat="number in ctrl.syngloss.morphology.nominals.numbers">
+            <th class="text-table" ng-repeat="number in ctrl.syngloss.morphology.nominals.numbers">
               {{number}}
             </th>
           </tr>
           <tr ng-repeat="case in ctrl.syngloss.morphology.nominals.cases">
-            <td>{{case}}</td>
-            <td ng-repeat="number in ctrl.syngloss.morphology.nominals.numbers">
+            <td class="text-table">{{case}}</td>
+            <td class="text-table" ng-repeat="number in ctrl.syngloss.morphology.nominals.numbers">
               WORD <!-- TODO: Compute word for this case, number, class, and gender -->
             </td>
           </tr>

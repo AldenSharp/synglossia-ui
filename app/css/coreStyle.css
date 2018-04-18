@@ -24,8 +24,9 @@ p, table {
     color: #606060;
 }
 
-table {
-  padding: 5px;
+.text-table {
+  padding: 15px;
+  border: 2px solid black;
 }
 
 th, .data-header {
