@@ -5,15 +5,9 @@
     </div>
     <div>
   		<ul class="nav nav-pills">
-       	<li>
-          	<a href ng-click="setTab(1)">Phonology</a>
-       	</li>
-       	<li>
-          	<a href ng-click="setTab(2)">Nouns</a>
-       	</li>
-       	<li>
-          	<a href ng-click="setTab(3)">Verbs</a>
-       	</li>
+       	<li><a href ng-click="setTab(1)">Phonology</a></li>
+       	<li><a href ng-click="setTab(2)">Nouns</a></li>
+       	<li><a href ng-click="setTab(3)">Verbs</a></li>
      	</ul>
   	</div>
     <br><br>
@@ -71,6 +65,8 @@
     </div>
     <div ng-show="isSet(2)">
       <form>
+        Select the noun declension class:
+        <select ng-model="ctrl.selectedNounClass" ng-options="ctrl.nounClasses"></select>
         <table>
           <tr>
             <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">

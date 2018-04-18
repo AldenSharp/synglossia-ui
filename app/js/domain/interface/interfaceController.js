@@ -35,6 +35,9 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
         ['', '', 'm', 'e\u02d0', 'n', '', ''],
         ['s', '']
       ]
+      ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
+        .filter((nounClass) => nounClass.type === 'DEFAULT')
+      ctrl.selectedNounClass = ctrl.nounClasses[0]
     }
 
     this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)
