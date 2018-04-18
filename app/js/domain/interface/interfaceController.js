@@ -6,6 +6,11 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     $scope.setTab = tab => $scope.tab = tab
     $scope.isSet = tab => $scope.tab === tab
 
+    this.setGender = function () {
+      ctrl.nounGenders = ctrl.selectedNounClass.genders
+      ctrl.selectedNounGender = ctrl.nounGenders[0]
+    }
+
     let initializeController = function() {
       ctrl.syngloss = svc.syngloss
 
@@ -38,6 +43,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
         .filter((nounClass) => nounClass.type === 'DEFAULT')
       ctrl.selectedNounClass = ctrl.nounClasses[0]
+      ctrl.setGender()
     }
 
     this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)
