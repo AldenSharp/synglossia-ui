@@ -24,6 +24,10 @@ p, table {
     color: #606060;
 }
 
+table {
+  padding: 5px;
+}
+
 th, .data-header {
     color: #404040;
     text-align: center;
