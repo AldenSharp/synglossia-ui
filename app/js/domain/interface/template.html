@@ -66,7 +66,7 @@
     <div ng-show="isSet(2)">
       <form>
         Select the noun declension class:
-        <select ng-model="ctrl.selectedNounClass" ng-options="ctrl.nounClasses"></select>
+        <select ng-model="ctrl.selectedNounClass" ng-options="nounClass.name for nounClass in ctrl.nounClasses"></select>
         <table>
           <tr>
             <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
