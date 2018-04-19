@@ -6,10 +6,15 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     $scope.setTab = tab => $scope.tab = tab
     $scope.isSet = tab => $scope.tab === tab
 
-    this.setGender = function () {
+    this.setGender = function() {
       ctrl.nounGenders = ctrl.selectedNounClass.genders
       ctrl.selectedNounGender = ctrl.nounGenders[0]
+      ctrl.nounEndingStartPosition = ctrl.selectedNounClass.endingStartPosition
     }
+
+    this.outOfStemScope = (syllableIndex, syllablePositionIndex) =>
+      syllableIndex === ctrl.nounStem.length - 1 &&
+      syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.vowelCore
 
     let initializeController = function() {
       ctrl.syngloss = svc.syngloss
