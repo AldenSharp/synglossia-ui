@@ -89,7 +89,7 @@
               <select
                 ng-model="ctrl.nounStem[syllableIndex][ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
                 ng-options="phoneme.value as phoneme.presentation for phoneme in syllablePosition"
-                ng-disable="ctrl.outOfStemScope(syllableIndex, ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))"
+                ng-disabled="ctrl.outOfStemScope(syllableIndex, ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))"
               ></select>
             </td>
           </tr>

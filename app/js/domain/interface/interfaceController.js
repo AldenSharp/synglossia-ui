@@ -43,7 +43,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       console.log('Syngloss: ' + JSON.stringify(ctrl.syngloss))
       ctrl.nounStem = [
         ['', '', 'm', 'e\u02d0', 'n', '', ''],
-        ['s', '']
+        ['s', '', '']
       ]
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
         .filter((nounClass) => nounClass.type === 'DEFAULT')
