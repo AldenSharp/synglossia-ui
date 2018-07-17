@@ -31,17 +31,20 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.selectedDate = ctrl.latestDate
       ctrl.displayDate = ctrl.selectedDate < 0 ? -ctrl.selectedDate + ' BCE' : ctrl.selectedDate + ' CE'
 
-      this.getWordPromise = svc.getWord($routeParams.languageName)
-        .then(() => ctrl.wordMemory = svc.word)
-      ctrl.wordLength = ctrl.wordMemory.spokenForm.length
-      ctrl.word = svc.copyWord(ctrl.wordMemory)
-      svc.verifyWord(ctrl.word, ctrl.syngloss)
-      ctrl.wordMemory.spokenForm.push(svc.getRandomSyllable())
+      let initalizeWord = function() {
+        ctrl.wordMemory = svc.word
+        ctrl.wordLength = ctrl.wordMemory.spokenForm.length
+        ctrl.word = svc.copyWord(ctrl.wordMemory)
+        svc.verifyWord(ctrl.word, ctrl.syngloss)
+        ctrl.wordMemory.spokenForm.push(svc.getRandomSyllable())
+        ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
+        ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      }
 
-      ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
-      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      ctrl.getWordPromise = svc.getWord($routeParams.languageName)
+        .then(initalizeWord)
 
-      this.getNounPromise = svc.getNoun($routeParams.languageName)
+      ctrl.getNounPromise = svc.getNoun($routeParams.languageName)
         .then(() => ctrl.nounStem = svc.noun)
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
         .filter((nounClass) => nounClass.type === 'DEFAULT')
