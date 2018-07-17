@@ -351,11 +351,11 @@ angular.module('app').service('interfaceService',
 
       this.getWord = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/word")
-        .then(httpResponse => console.log(JSON.stringify(httpResponse)))
+        .then(httpResponse => httpResponse.data)
 
       this.getNoun = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/noun")
-        .then(httpResponse => console.log(JSON.stringify(httpResponse)))
+        .then(httpResponse => httpResponse.data)
 
       this.verifyWord = function (word, language) {
         validity.verifyNotNull(word, 'Word')
