@@ -33,10 +33,10 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
       let initalizeWord = function() {
         ctrl.wordMemory = svc.word
-        ctrl.wordLength = ctrl.wordMemory.spokenForm.length
-        ctrl.word = svc.copyWord(ctrl.wordMemory)
+        ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
+        ctrl.word = svc.copyWord(ctrl.wordMemory.spokenForm)
         svc.verifyWord(ctrl.word, ctrl.syngloss)
-        ctrl.wordMemory.spokenForm.push(svc.getRandomSyllable())
+        ctrl.wordMemory.spokenForm.syllables.push(svc.getRandomSyllable())
         ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
         ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
       }
@@ -100,7 +100,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       if ('word' in ctrl) {
         return !svc.testAlterationValidity(ctrl.word, {
           type: 'SYLLABLE_INCREMENT',
-          newSyllable: ctrl.wordMemory.spokenForm[ctrl.wordLength]
+          newSyllable: ctrl.wordMemory.spokenForm.syllables[ctrl.wordLength]
         })
       }
       return true
@@ -114,17 +114,17 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     }
 
     function changeWordLength () {
-      while (ctrl.wordMemory.spokenForm.length <= ctrl.wordLength) {
-        ctrl.wordMemory.spokenForm.push(svc.getRandomSyllable(ctrl.wordMemory))
+      while (ctrl.wordMemory.spokenForm.syllables.length <= ctrl.wordLength) {
+        ctrl.wordMemory.spokenForm.syllables.push(svc.getRandomSyllable(ctrl.wordMemory))
       }
-      while (ctrl.word.spokenForm.length < ctrl.wordLength) {
-        ctrl.word.spokenForm.push(ctrl.wordMemory.spokenForm[ctrl.word.spokenForm.length])
+      while (ctrl.word.spokenForm.syllables.length < ctrl.wordLength) {
+        ctrl.word.spokenForm.syllables.push(ctrl.wordMemory.spokenForm.syllables[ctrl.word.spokenForm.syllables.length])
         if (ctrl.syngloss.phonology.prosody.stressType === 'ABSOLUTE' || ctrl.syngloss.phonology.prosody.stressType === 'CONDITIONAL') {
           ctrl.word = svc.restress(ctrl.word)
         }
       }
-      while (ctrl.word.spokenForm.length > ctrl.wordLength) {
-        ctrl.word.spokenForm.pop()
+      while (ctrl.word.spokenForm.syllables.length > ctrl.wordLength) {
+        ctrl.word.spokenForm.syllables.pop()
       }
     }
 
