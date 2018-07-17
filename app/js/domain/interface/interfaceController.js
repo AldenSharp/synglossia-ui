@@ -31,7 +31,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.selectedDate = ctrl.latestDate
       ctrl.displayDate = ctrl.selectedDate < 0 ? -ctrl.selectedDate + ' BCE' : ctrl.selectedDate + ' CE'
 
-      ctrl.wordMemory = svc.getWord($routeParams.languageName)
+      this.getWordPromise = svc.getWord($routeParams.languageName)
+        .then(() => ctrl.wordMemory = svc.word)
       ctrl.wordLength = ctrl.wordMemory.spokenForm.length
       ctrl.word = svc.copyWord(ctrl.wordMemory)
       svc.verifyWord(ctrl.word, ctrl.syngloss)
@@ -40,7 +41,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
 
-      ctrl.nounStem = svc.getNoun($routeParams.languageName)
+      this.getNounPromise = svc.getNoun($routeParams.languageName)
+        .then(() => ctrl.nounStem = svc.noun)
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
         .filter((nounClass) => nounClass.type === 'DEFAULT')
       ctrl.selectedNounClass = ctrl.nounClasses[0]
