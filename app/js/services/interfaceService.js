@@ -349,16 +349,13 @@ angular.module('app').service('interfaceService',
 
       this.getCardinal = (number) => Array.from({length: number}, (object, index) => index)
 
-      // TODO Temporarily hard-coded. Should be accessed from database at random using an $http GET method.
-      this.getWord = () => ({
-        syllables: [
-          { accent: 0, phonemes: ['h', '', '', 'i', '', '', ''] },
-          { accent: 0, phonemes: ['', '', '', '\u025b', '', '', ''] },
-          { accent: 1, phonemes: ['', '', 'r', 'o\u02d0', '', '', ''] },
-          { accent: 0, phonemes: ['', '', 'n', '\u026a', '', '', ''] },
-          { accent: 0, phonemes: ['', '', 'm', '\u028a', '\u0303', '', ''] }
-        ]
-      })
+      this.getWord = languageName =>
+        $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/word")
+        .then(httpResponse => httpResponse.data)
+
+      this.getNoun = languageName =>
+          $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/noun")
+          .then(httpResponse => httpResponse.data)
 
       this.verifyWord = function (word, language) {
         validity.verifyNotNull(word, 'Word')
