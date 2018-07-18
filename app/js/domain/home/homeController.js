@@ -3,12 +3,11 @@ angular.module('app').controller('homeController', [ '$http', function homeContr
 
   let setLanguageNames = (languageNamesData) =>
     ctrl.languageNames = languageNamesData.map((languageName) => {
-      href = '#/interface/' + languageName,
-      displayName = languageName.replace('_', ' ')
+      href: '#/interface/' + languageName,
+      displayName: languageName.replace('_', ' ')
     })
 
   $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/languages")
-  .then(console.log(JSON.stringify(httpResponse)))
-  // .then((httpResponse) => setLanguageNames(httpResponse.data))
+  .then((httpResponse) => setLanguageNames(httpResponse.data))
 
 }])
