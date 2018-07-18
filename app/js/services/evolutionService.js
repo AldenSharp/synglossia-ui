@@ -199,7 +199,7 @@ angular.module('app').service('evolutionService', [
     // Transformation object:
     // {
     //   type: 'SOUND_CHANGE',
-    //   position: <int>,
+    //   positions: [<int>],
     //   changes: [
     //       {
     //         fromSound: <phoneme string>,
@@ -210,37 +210,45 @@ angular.module('app').service('evolutionService', [
     // }
     // At the position in the syllable, each sound value in the "fromSounds" array becomes the corresponding sound value in the "toSounds" array.
     function soundChange (word, language, syllableIndex, transformation) {
-      let absolutePosition = language.phonology.vowelCore + transformation.position
-      for (let change of transformation.changes) {
-        if (word.syllables[syllableIndex].phonemes[absolutePosition] === change.fromSound) {
-          word.syllables[syllableIndex].phonemes[absolutePosition] = change.toSound
+      for (let position of transformation.positions) {
+        let absolutePosition = language.phonology.vowelCore + position
+        for (let change of transformation.changes) {
+          if (word.syllables[syllableIndex].phonemes[absolutePosition] === change.fromSound) {
+            word.syllables[syllableIndex].phonemes[absolutePosition] = change.toSound
+          }
         }
       }
     }
 
     function languageSoundChange (phonotactics, vowelCore, transformation) {
-      let absolutePosition = vowelCore + transformation.position
-      for (let change of transformation.changes) {
-        if (phonotactics[absolutePosition].every((option) => option.value !== change.toSound)) {
-          phonotactics[absolutePosition].push({
-            value: change.toSound
-          })
-        }
-      }
-      if (transformation.condition.type === 'DEFAULT') {
+      for (let position of transformation.positions) {
+        let absolutePosition = vowelCore + position
         for (let change of transformation.changes) {
-          phonotactics[absolutePosition] = phonotactics[absolutePosition].filter(
-            (option) => option.value !== change.fromSound
-          )
+          if (phonotactics[absolutePosition].every((option) => option.value !== change.toSound)) {
+            phonotactics[absolutePosition].push({
+              value: change.toSound
+            })
+          }
+        }
+        if (transformation.condition.type === 'DEFAULT') {
+          for (let change of transformation.changes) {
+            phonotactics[absolutePosition] = phonotactics[absolutePosition].filter(
+              (option) => option.value !== change.fromSound
+            )
+          }
         }
       }
     }
 
     function checkSoundChange (language, transformation, transformationLocation) {
-      validity.verifyPropertiesExist(transformation, transformationLocation, ['position', 'changes', 'condition'])
+      validity.verifyPropertiesExist(transformation, transformationLocation, ['positions', 'changes', 'condition'])
 
-      // position
-      validity.verifyIndexInPhonotactics(language, transformation.position, transformation + ': Field \'position\'')
+      // positions
+      validity.verifyNonemptyArray(transformation.positions, transformationLocation + ': Field \'positions\'')
+      for (let positionIndex in transformation.positions) {
+        let position = transformation.positions[positionIndex]
+        validity.verifyIndexInPhonotactics(language, position, transformation + ': Field \'positions\', index ' + positionIndex)
+      }
 
       // changes
       validity.verifyNonemptyArray(transformation.changes, transformationLocation + ': Field \'changes\'')
