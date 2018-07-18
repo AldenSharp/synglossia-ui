@@ -8,6 +8,7 @@ angular.module('app').controller('homeController', [ '$http', function homeContr
     })
 
   $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/languages")
-  .then((httpResponse) => setLanguageNames(httpResponse.data))
+  .then(console.log(JSON.stringify(httpResponse)))
+  // .then((httpResponse) => setLanguageNames(httpResponse.data))
 
 }])
