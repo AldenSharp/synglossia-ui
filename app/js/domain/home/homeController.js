@@ -1,5 +1,13 @@
-angular.module('app').controller('homeController', [ function homeController () {
+angular.module('app').controller('homeController', [ '$http', function homeController ($http) {
+  let ctrl = this
 
-  this.display = name => name.replace('_', ' ')
+  let setLanguageNames = (languageNamesData) =>
+    ctrl.languageNames = languageNamesData.map((languageName) => {
+      href = '#/interface/' + languageName,
+      displayName = languageName.replace('_', ' ')
+    })
+
+  $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/languages")
+  .then(setLanguageNames(httpResponse.data))
 
 }])
