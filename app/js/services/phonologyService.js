@@ -113,7 +113,7 @@ angular.module('app').service('phonologyService', ['arrayService',
       let output = ''
 
       word.syllables.forEach(function (syllable, syllableIndex) {
-        if (language.phonology.prosody.type === 'STRESS') {
+        if (language.phonology.prosody.type === 'STRESS' || language.phonology.prosody.type === 'NONE') {
           if (word.syllables.length > 1) {
             if (syllable.accent === 1) output += '\u02C8'
           }
@@ -136,7 +136,7 @@ angular.module('app').service('phonologyService', ['arrayService',
             if (pitchValue === -2) output += '\u02E9'
           })
         }
-        if (language.phonology.prosody.type === 'STRESS') {
+        if (language.phonology.prosody.type === 'STRESS' || language.phonology.prosody.type === 'NONE') {
           if (syllableIndex < word.syllables.length - 1 && word.syllables[syllableIndex + 1].accent !== 1 && word.syllables[syllableIndex + 1].accent !== 2) {
             output += '.'
           }
@@ -269,7 +269,7 @@ angular.module('app').service('phonologyService', ['arrayService',
       TODO The following arrays are temporarily hard-coded.
       They should be accessed from the database using $http GET methods.
       These should all be stored into a single table, with the following rows:
-      id(int), unicodeId(int), consonant(bool), vowel(bool),
+      value(string)(primary key), consonant(bool), vowel(bool),
       descending(bool), consonantModifier(bool), vowelModifier(bool),
       modifierBelow(bool), descenderFriendly(int)
     */
