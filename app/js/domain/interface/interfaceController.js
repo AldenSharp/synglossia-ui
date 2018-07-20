@@ -117,14 +117,14 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       while (ctrl.wordMemory.spokenForm.syllables.length <= ctrl.wordLength) {
         ctrl.wordMemory.spokenForm.syllables.push(svc.getRandomSyllable(ctrl.wordMemory))
       }
-      while (ctrl.word.spokenForm.syllables.length < ctrl.wordLength) {
-        ctrl.word.spokenForm.syllables.push(ctrl.wordMemory.spokenForm.syllables[ctrl.word.spokenForm.syllables.length])
+      while (ctrl.word.syllables.length < ctrl.wordLength) {
+        ctrl.word.syllables.push(ctrl.wordMemory.spokenForm.syllables[ctrl.word.syllables.length])
         if (ctrl.syngloss.phonology.prosody.stressType === 'ABSOLUTE' || ctrl.syngloss.phonology.prosody.stressType === 'CONDITIONAL') {
           ctrl.word = svc.restress(ctrl.word)
         }
       }
-      while (ctrl.word.spokenForm.syllables.length > ctrl.wordLength) {
-        ctrl.word.spokenForm.syllables.pop()
+      while (ctrl.word.syllables.length > ctrl.wordLength) {
+        ctrl.word.syllables.pop()
       }
     }
 
