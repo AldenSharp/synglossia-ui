@@ -2,6 +2,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
   function interfaceController (svc, $scope, $route, $routeParams) {
     let ctrl = this
 
+    this.showJson = object => JSON.stringify(object)
+
     $scope.tab = 1
     $scope.setTab = tab => $scope.tab = tab
     $scope.isSet = tab => $scope.tab === tab
