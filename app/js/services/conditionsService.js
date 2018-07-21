@@ -877,8 +877,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
     Syllable has all coda consonant positions take zero sound value.
     */
-    function meetsOpenSyllableCondition (language, word, syllableIndex, condition) {
-      return word.syllables[syllableIndex].phonemes.every(
+    function meetsOpenSyllableCondition (language, word, signedSyllableIndex, condition) {
+      let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
+        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+      if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
+        return false
+      }
+      return word.syllables[absoluteSyllablePosition].phonemes.every(
         (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === ''
       )
     }
