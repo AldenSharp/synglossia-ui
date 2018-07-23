@@ -4,6 +4,7 @@ angular.module('app').service('evolutionService', [
     this.generateLanguageArray = function (language, descendantLanguage) {
       let output = [{
         name: descendantLanguage.name,
+        parent: language.name,
         date: language.date,
         phonology: JSON.parse(JSON.stringify(language.phonology)),
         writingSystems: JSON.parse(JSON.stringify(language.writingSystems)),
@@ -43,6 +44,7 @@ angular.module('app').service('evolutionService', [
         }
         let newLanguage = {
           name: output[0].name,
+          parent: output[0].parent,
           date: date,
           phonology: {
             phonotactics: phonotactics,
@@ -64,6 +66,7 @@ angular.module('app').service('evolutionService', [
     this.generate = function (word, languageArray, steps) {
       let firstWord = phonology.copyWord(word)
       firstWord.languageName = languageArray[0].name
+      firstWord.parentLanguageName = languageArray[0].parent
       firstWord.date = languageArray[0].date
       let output = [firstWord]
       for (let stepIndex in steps) {
@@ -127,6 +130,7 @@ angular.module('app').service('evolutionService', [
               previousStepRun = true
             }
             newWord.languageName = stepLanguage.name
+            newWord.parentLanguageName = stepLanguage.parent
             newWord.date = step.date
             previousTransformationWord = phonology.copyWord(newWord)
           }
