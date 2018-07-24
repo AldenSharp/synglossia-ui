@@ -380,7 +380,10 @@ angular.module('app').service('evolutionService', [
       for (let migration of transformation.migrations) {
         let fromSyllableIndex = syllableIndex
         let toSyllableIndex = parseInt(syllableIndex) + parseInt(migration.syllableShift)
-        if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
+        if (
+            toSyllableIndex < word.syllables.length && toSyllableIndex >= 0
+            && fromSyllableIndex < word.syllables.length && fromSyllableIndex >= 0
+          ) {
           let fromPhonemeIndex = language.phonology.vowelCore + migration.fromPosition
           let toPhonemeIndex = language.phonology.vowelCore + migration.toPosition
           if (word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] === '' || transformation.overwrite) {

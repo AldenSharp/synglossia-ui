@@ -57,7 +57,7 @@
       <div ng-repeat="descendantWord in ctrl.descendantWords">
         <div class="solid-box">
           <p>{{ctrl.display(descendantWord.parentLanguageName)}} to {{ctrl.display(descendantWord.languageName)}}</p>
-          <p>{{ctrl.showJson(descendantWord.syllables)}}</p>
+          <!-- <p>{{ctrl.showJson(descendantWord.syllables)}}</p> -->
           <p ng-repeat="writingSystem in descendantWord.writingSystems">
             {{ctrl.display(writingSystem.name)}}: {{writingSystem.word}}
           </p>
