@@ -617,11 +617,8 @@ angular.module('app').service('evolutionService', [
     // }
     // A new syllable is inserted somewhere in the word, before the current syllable position.
     function syllableInsertion (word, language, syllableIndex, transformation) {
-      let phonemeObjects = transformation.phonemes.map(
-        phoneme => {value: phoneme}
-      )
-      word.syllables.splice(syllableIndex, 0,
-        { accent: 0, phonemes: phonemeObjects })
+      // let phonemeObjects = transformation.phonemes.map(phoneme => {value: phoneme})
+      word.syllables.splice(syllableIndex, 0, { accent: 0, phonemes: transformation.phonemes })
     }
 
     function checkSyllableInsertion (language, transformation, transformationLocation) {
