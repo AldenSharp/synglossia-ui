@@ -200,7 +200,7 @@ angular.module('app').service('evolutionService', [
       } else if (transformation.type === 'SYLLABLE_COLLAPSE') {
         checkSyllableCollapse(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_INSERTION') {
-        checkSyllableInsertion(langauge, transformation, transformationLocation)
+        checkSyllableInsertion(language, transformation, transformationLocation)
       } else if (transformation.type === 'STRESS_SHIFT') {
         checkStressShift(language, transformation, transformationLocation)
       }
