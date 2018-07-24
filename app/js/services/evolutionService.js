@@ -122,6 +122,10 @@ angular.module('app').service('evolutionService', [
                 syllableCollapse(newWord, stepLanguage, shiftedSyllableIndex, transformation)
                 wordLength--
               }
+              if (transformation.type === 'SYLLABLE_INSERTION') {
+                syllableInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
+                wordLength++
+              }
               if (transformation.type === 'STRESS_SHIFT') {
                 stressShift(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
@@ -195,6 +199,8 @@ angular.module('app').service('evolutionService', [
         checkConsonantDegemination(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_COLLAPSE') {
         checkSyllableCollapse(language, transformation, transformationLocation)
+      } else if (transformation.type === 'SYLLABLE_INSERTION') {
+        checkSyllableInsertion(langauge, transformation, transformationLocation)
       } else if (transformation.type === 'STRESS_SHIFT') {
         checkStressShift(language, transformation, transformationLocation)
       }
@@ -617,7 +623,6 @@ angular.module('app').service('evolutionService', [
     // }
     // A new syllable is inserted somewhere in the word, before the current syllable position.
     function syllableInsertion (word, language, syllableIndex, transformation) {
-      // let phonemeObjects = transformation.phonemes.map(phoneme => {value: phoneme})
       word.syllables.splice(syllableIndex, 0, { accent: 0, phonemes: transformation.phonemes })
     }
 
