@@ -23,6 +23,9 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       if (condition.type === 'OR') {
         return meetsOrCondition(language, word, syllableIndex, phonemeIndex, condition)
       }
+      if (condition.type === 'NOT') {
+        return meetsNotCondition(language, word, syllableIndex, phonemeIndex, condition)
+      }
       if (condition.type === 'BEFORE') {
         return meetsBeforeCondition(language, word, syllableIndex, phonemeIndex, condition)
       }
@@ -65,6 +68,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         checkAndCondition(language, condition, conditionLocation)
       } else if (condition.type === 'OR') {
         checkOrCondition(language, condition, conditionLocation)
+      } else if (condition.type === 'NOT') {
+        checkNotCondition(language, condition, conditionLocation)
       } else if (condition.type === 'BEFORE') {
         checkBeforeCondition(language, condition, conditionLocation)
       } else if (condition.type === 'AFTER') {
@@ -130,6 +135,24 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         let disjunctCondition = condition.conditions[conditionIndex]
         svc.checkCondition(language, disjunctCondition, conditionLocation + ': Disjunct condition #' + conditionIndex)
       }
+    }
+
+    /*
+    {
+      type: 'NOT',
+      condition: <condition>
+    }
+    Negation of condition.
+    */
+    function meetsNotCondition(language, word, syllableIndex, phonemeIndex, condition) {
+      return !svc.meetsCondition(language, word, syllableIndex, phonemeIndex, condition.condition)
+    }
+
+    function checkNotCondition (language, condition, conditionLocation) {
+      validity.verifyPropertiesExist(condition, conditionLocation, ['condition'])
+
+      // condition
+      svc.checkCondition(language, condition.condition, conditionLocation + 'Negated condition')
     }
 
     /*
