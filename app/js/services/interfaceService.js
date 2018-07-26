@@ -132,7 +132,7 @@ angular.module('app').service('interfaceService',
           if (validityCondition.conditions.some((condition) =>
             condition.type === 'STRESSED' &&
             condition.order === order &&
-            condition.syllablePositionType === 'ABSOLUTE'
+            condition.syllablePositionAbsolute
           )) {
             return 'ABSOLUTE'
           }

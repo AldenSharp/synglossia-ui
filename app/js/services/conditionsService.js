@@ -557,14 +557,14 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'WORD_MEDIAL_CLUSTERS',
       syllablePosition: <int>,
       values: [[<phoneme string>]],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbolute: <Boolean>
     }
     ! At final syllable, this throws true vacuously.
     ! It is not recommended to use 'SYLLABLE_INITIAL_CLUSTERS' and 'SYLLABLE_FINAL_CLUSTERS' in conjunction with 'WORD_MEDIAL_CLUSTERS', as these are redundant.
     */
     function meetsWordMedialClustersSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (absoluteSyllablePosition === word.syllables.length - 1) {
         return true
       }
@@ -587,7 +587,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkWordMedialClustersSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'values', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'values', 'syllablePositionAbsolute'])
 
       // values
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
@@ -679,14 +679,14 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'SYLLABLE_INITIAL_CLUSTERS',
       syllablePosition: <int>,
       values: [[<phoneme string>]],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Syllable-initial clusters are one of the values in 'values'.
     ! It is not recommended to use 'SYLLABLE_INITIAL_CLUSTERS' and 'SYLLABLE_FINAL_CLUSTERS' in conjunction with 'WORD_MEDIAL_CLUSTERS', as these are redundant.
     */
     function meetsSyllableInitialClustersSyllableCondition (word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return true
       }
@@ -698,7 +698,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkSyllableInitialClustersSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'values', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'values', 'syllablePositionAbsolute'])
 
       // values
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
@@ -721,14 +721,14 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'SYLLABLE_FINAL_CLUSTERS',
       syllablePosition: <int>,
       values: [[<phoneme string>]],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Syllable-final clusters are one of the values in 'values'.
     ! It is not recommended to use 'SYLLABLE_INITIAL_CLUSTERS' and 'SYLLABLE_FINAL_CLUSTERS' in conjunction with 'WORD_MEDIAL_CLUSTERS', as these are redundant.
     */
     function meetsSyllableFinalClustersSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return true
       }
@@ -741,7 +741,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkSyllableFinalClustersSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'values', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'values', 'syllablePositionAbsolute'])
 
       // values
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
@@ -764,13 +764,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'SOUND_VALUES',
       position: { syllable: <int>, sound: <int> },
       values: [<phoneme string>],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Phoneme sound value at the position in the syllable is something in the array.
     */
     function meetsSoundValuesSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let output = null
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return output
@@ -782,7 +782,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkSoundValuesSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['position', 'values', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['position', 'values', 'syllablePositionAbsolute'])
 
       // position
       verifyPropertiesExistInPosition(language, condition, conditionLocation)
@@ -799,13 +799,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     {
       type: 'EMPTY',
       position: { syllable: <int>, sound: <int> },
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Phoneme sound value at this position in the syllable is empty.
     */
     function meetsEmptySyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return false
       }
@@ -814,7 +814,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkEmptySyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['position', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['position', 'syllablePositionAbsolute'])
 
       // position
       verifyPropertiesExistInPosition(language, condition, conditionLocation)
@@ -826,7 +826,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       positions: [
         { syllable: <int>, sound: <int> }
       ],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Phoneme sound value at each position in the array in the syllable is empty.
     (It's recommended to use 'EMPTY' if positions array has only one value.)
@@ -834,7 +834,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsEmptyAtAllSyllableCondition (language, word, signedSyllableIndex, condition) {
       for (let position of condition.positions) {
         let absoluteSyllablePosition = parseInt(position.syllable) +
-          (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+          (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
         if (
           absoluteSyllablePosition < 0 ||
           absoluteSyllablePosition >= word.syllables.length ||
@@ -846,7 +846,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkEmptyAtAllSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'syllablePositionAbsolute'])
 
       // positions
       verifyPropertiesExistInAllPositions(language, condition, conditionLocation)
@@ -861,7 +861,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       positions: [
         { syllable: <int>, sound: <int> }
       ],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Phoneme sound value at some one position in the array in the syllable is empty.
     (It's recommended to use 'EMPTY' if positions array has only one value.)
@@ -869,7 +869,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsEmptyAtSomeSyllableCondition (language, word, signedSyllableIndex, condition) {
       for (let position of condition.positions) {
         let absoluteSyllablePosition = parseInt(position.syllable) +
-          (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+          (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
         if (
           absoluteSyllablePosition >= 0 &&
           absoluteSyllablePosition < word.syllables.length &&
@@ -883,7 +883,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkEmptyAtSomeSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'syllablePositionAbsolute'])
 
       // positions
       verifyPropertiesExistInAllPositions(language, condition, conditionLocation)
@@ -896,13 +896,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     {
       type: 'OPEN',
       syllablePosition: <int>,
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Syllable has all coda consonant positions take zero sound value.
     */
     function meetsOpenSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return false
       }
@@ -912,21 +912,21 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkOpenSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionAbsolute'])
     }
 
     /*
     {
       type: 'BEFORE_HIATUS',
       syllablePosition: <int>,
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Syllable has all consonant positions between its vowel and the vowel of the next syllable take zero sound value.
     Throws false if the syllable is the last syllable in the word.
     */
     function meetsBeforeHiatusSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length - 1) {
         return false
       }
@@ -939,7 +939,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkBeforeHiatusSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionAbsolute'])
     }
 
     /*
@@ -962,40 +962,40 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     {
       type: 'SHORT_VOWEL',
       syllablePosition: <int>,
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Vowel of the syllable is short.
     */
     function meetsShortVowelSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       return phonology.isShortVowel(
         word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore]
       )
     }
 
     function checkShortVowelSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionAbsolute'])
     }
 
     /*
     {
       type: 'LONG_VOWEL',
       syllablePosition: <int>,
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Vowel of the syllable is long.
     */
     function meetsLongVowelSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       return !phonology.isShortVowel(
         word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore]
       )
     }
 
     function checkLongVowelSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'syllablePositionAbsolute'])
     }
 
     /*
@@ -1004,13 +1004,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       positions: [
         { syllable: <int>, sound: <int> }
       ],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Phoneme sound value at these positions are all equal to each other.
     */
     function meetsMatchSyllableCondition (language, word, signedSyllableIndex, condition) {
       let firstAbsoluteSyllablePosition = parseInt(condition.positions[0].syllable) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       if (firstAbsoluteSyllablePosition < 0 || firstAbsoluteSyllablePosition >= word.syllables.length) {
         return false
       }
@@ -1021,7 +1021,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         .phonemes[firstAbsoluteSoundPosition]
       for (let position of condition.positions.slice(1)) {
         let absoluteSyllablePosition = parseInt(position.syllable) +
-          (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+          (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
         if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
           return false
         }
@@ -1036,7 +1036,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkMatchSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['positions', 'syllablePositionAbsolute'])
 
       // positions
       verifyPropertiesExistInAllPositions(language, condition, conditionLocation)
@@ -1050,13 +1050,13 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'SOUND_ARRAY_MATCH',
       initialPosition: { syllable: <int>, sound: <int> },
       array: [<phoneme strings>],
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     A certain string starting at the argument phoneme place (inclusive) in the current syllable is the following particular array of arrays of sound values.
     */
     function meetsSoundArrayMatchSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.initialPosition.syllable) +
-        (condition.syllablePositionType === 'RELATIVE' ? parseInt(signedSyllableIndex) : 0)
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let absoluteSoundPosition = language.phonology.vowelCore + parseInt(condition.initialPosition.sound)
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return false
@@ -1076,7 +1076,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function checkSoundArrayMatchSyllableCondition (language, condition, conditionLocation) {
-      validity.verifyPropertiesExist(condition, conditionLocation, ['initialPosition', 'array', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['initialPosition', 'array', 'syllablePositionAbsolute'])
 
       // initialPosition
       validity.verifyPropertiesExist(condition.initialPosition, conditionLocation + ': Field \'initialPosition\'', ['syllable', 'sound'])
@@ -1116,15 +1116,12 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'STRESSED',
       order: <int>,
       syllablePosition: <int>,
-      syllablePositionType: 'RELATIVE'/'ABSOLUTE'
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
     }
     Syllable is stressed.
     */
     function meetsStressedSyllableCondition (word, syllableIndex, condition) {
-      let actualSyllableIndex = condition.syllablePosition
-      if (condition.syllablePositionType === 'RELATIVE') {
-        actualSyllableIndex += syllableIndex
-      }
+      let actualSyllableIndex = condition.syllablePosition + (condition.syllablePositionAbsolute ? 0 : syllableIndex)
       if (actualSyllableIndex < 0 || actualSyllableIndex >= word.syllables.length) {
         return false
       }
@@ -1135,7 +1132,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       if (language.phonology.prosody.type !== 'STRESS') {
         console.error(conditionLocation + ': Syllable condition of type \'STRESSED\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
       }
-      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'order', 'syllablePositionType'])
+      validity.verifyPropertiesExist(condition, conditionLocation, ['syllablePosition', 'order', 'syllablePositionAbsolute'])
 
       // order
       if (condition.order < 1 || condition.order > language.phonology.prosody.maxOrder) {
@@ -1249,7 +1246,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
             type: 'STRESSED',
             order: condition.order,
             syllablePosition: 0,
-            syllablePositionType: 'RELATIVE'
+            syllablePositionAbsolute: false
           })
         }
       }
