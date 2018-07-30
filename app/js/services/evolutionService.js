@@ -216,7 +216,7 @@ angular.module('app').service('evolutionService', [
     //         toSound: <phoneme string>
     //       }
     //   ],
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // At the position in the syllable, each sound value in the "fromSounds" array becomes the corresponding sound value in the "toSounds" array.
     function soundChange (word, language, syllableIndex, transformation) {
@@ -281,7 +281,7 @@ angular.module('app').service('evolutionService', [
     //   type: 'SOUND_DELETION',
     //   positions: [<int>],
     //   sounds: [<phoneme string>],
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // Instance of 'SOUND_CHANGE' in which the "toSounds" array is implicit, and are all zero.
     function soundDeletion (word, language, syllableIndex, transformation) {
@@ -332,7 +332,7 @@ angular.module('app').service('evolutionService', [
     //   type: 'SOUND_INSERTION',
     //   position: <int>,
     //   sound: <phoneme string>,
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // Instance of 'SOUND_CHANGE' in which the "fromSounds" value is zero.
     function soundInsertion (word, language, syllableIndex, transformation) {
@@ -372,7 +372,7 @@ angular.module('app').service('evolutionService', [
     //     }
     //   ],
     //   overwrite: <Boolean>,
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // In each value of the "fromPositions" array, phonemes are migrated into a syllable decided by the corresponding value in the "syllableShift" array, and into the corresponding value in the "toPositions" array, leaving zero in the original place.
     // If the target position is out of bounds of the word, then the migration does not take place.
@@ -443,7 +443,7 @@ angular.module('app').service('evolutionService', [
     //     }
     //   ],
     //   overwrite: <Boolean>,
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // Like "sound migration," except the "fromPosition" sounds are not deleted.
     function soundCopy (word, language, syllableIndex, transformation) {
@@ -498,7 +498,7 @@ angular.module('app').service('evolutionService', [
     //     syllableShift: <int>,
     //     toPosition: <int>
     //   },
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // Phonemes are swapped.
     function soundSwap (word, language, syllableIndex, transformation) {
@@ -533,7 +533,7 @@ angular.module('app').service('evolutionService', [
     // Transformation object:
     // {
     //   type: 'CONSONANT_DEGEMINATION',
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // If a consonant in the coda position of the given syllable is immediately followed by the same sound value in some initial position in the next syllable, the consonant becomes zero.
     function consonantDegemination (word, language, syllableIndex, transformation) {
@@ -574,7 +574,7 @@ angular.module('app').service('evolutionService', [
     //   type: 'SYLLABLE_COLLAPSE',
     //   position: <int>,
     //   reiterate: <Boolean>,
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // One syllable length of positions is deleted from the word, starting at a given "position" integer value within the syllable (inclusive), and the remaining syllables shifted up.
     // If position is not positive (i.e. not coda), and syllable is word-final, then the entire syllable is deleted.
@@ -622,7 +622,7 @@ angular.module('app').service('evolutionService', [
     // {
     //   type: 'SYLLABLE_INSERTION'
     //   phonemes: [<phoneme string>],
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // A new syllable is inserted somewhere in the word, before the current syllable position.
     function syllableInsertion (word, language, syllableIndex, transformation) {
@@ -644,7 +644,7 @@ angular.module('app').service('evolutionService', [
     //   type: 'STRESS_SHIFT',
     //   order: <int>,
     //   shift: <int>,
-    //   condition: <condition>
+    //   condition: <condition> (optional: default is DEFAULT type)
     // }
     // The "stress" index of a certain order of stress (primary, secondary, etc.) is incremented or decremented by a fixed value.
     function stressShift (word, language, syllableIndex, transformation) {

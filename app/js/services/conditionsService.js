@@ -361,6 +361,12 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       if (condition.type === 'SYLLABLE_FINAL_CLUSTERS') {
         return meetsSyllableFinalClustersSyllableCondition(language, word, signedSyllableIndex, condition)
       }
+      if (condition.type === 'BEFORE') {
+        return meetsBeforeCondition(language, word, signedSyllableIndex, condition)
+      }
+      if (condition.type === 'AFTER') {
+        return meetsAfterCondition(language, word, signedSyllableIndex, condition)
+      }
       if (condition.type === 'SOUND_VALUES') {
         return meetsSoundValuesSyllableCondition(language, word, signedSyllableIndex, condition)
       }
@@ -439,6 +445,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         checkSyllableInitialClustersSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'SYLLABLE_FINAL_CLUSTERS') {
         checkSyllableFinalClustersSyllableCondition(language, condition, conditionLocation)
+      } else if (condition.type === 'BEFORE' || condition.type === 'AFTER') {
+        checkBeforeOrAfterSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'SOUND_VALUES') {
         checkSoundValuesSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'EMPTY') {
@@ -761,6 +769,61 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
     /*
     {
+      type: 'BEFORE',
+      position: { syllable: <int>, sound: <int> },
+      adjacentSound: {
+        type: 'CONSONANT' / 'VOWEL' / 'ANY',
+        value: <phoneme string>
+      },
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
+    }
+    */
+    function meetsBeforeSyllableCondition (language, word, signedSyllableIndex, condition) {
+      let absoluteSyllablePosition = parseInt(condition.position.syllable) +
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
+      let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound)
+      return (
+        actualAdjacentPhoneme.value === condition.adjacentSound.value &&
+        (condition.adjacentSound.type !== 'CONSONANT' || actualAdjacentPhoneme.index !== language.phonology.vowelCore)
+      )
+    }
+
+    /*
+    {
+      type: 'AFTER',
+      position: { syllable: <int>, sound: <int> },
+      adjacentSound: {
+        type: 'CONSONANT' / 'VOWEL' / 'ANY',
+        value: <phoneme string>
+      },
+      syllablePositionAbsolute: <Boolean> (optional: default value is false)
+    }
+    */
+    function meetsAfterSyllableCondition (language, word, signedSyllableIndex, condition) {
+      let absoluteSyllablePosition = parseInt(condition.position.syllable) +
+        (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
+      let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound)
+      return (
+        actualAdjacentPhoneme.value === condition.adjacentSound.value &&
+        (condition.adjacentSound.type !== 'CONSONANT' || actualAdjacentPhoneme.index !== language.phonology.vowelCore)
+      )
+    }
+
+    function checkBeforeOrAfterSyllableCondition(language, condition, conditionLocation) {
+      validity.verifyPropertiesExist(condition, conditionLocation, ['position', 'adjacentSound', 'syllablePositionAbsolute'])
+
+      // position
+      verifyPropertiesExistInPosition(language, condition, conditionLocation)
+
+      // adjacentSound
+      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'value'])
+
+        // value
+        validity.verifyIndexInPhonotactics(language, condition.adjacentSound.value, conditionLocation + ': Field \'adjacentSound\', field \'value\'')
+    }
+
+    /*
+    {
       type: 'SOUND_VALUES',
       position: { syllable: <int>, sound: <int> },
       values: [<phoneme string>],
@@ -947,7 +1010,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       type: 'SYLLABLE_POSITION',
       position: <int>
     }
-    This syllable is at the specified position value.
+    This syllable is at the specified position value. It is always absolute.
     Position value is Python-style - it can be negative.
     */
     function meetsSyllablePositionSyllableCondition (word, syllableIndex, condition) {
