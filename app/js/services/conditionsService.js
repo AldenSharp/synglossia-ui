@@ -828,7 +828,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       verifyPropertiesExistInPosition(language, condition, conditionLocation)
 
       // adjacentSound
-      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'value'])
+      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'values'])
 
       // adjacentSound.values
       for (let value of condition.adjacentSound.values) {
