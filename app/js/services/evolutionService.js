@@ -267,9 +267,7 @@ angular.module('app').service('evolutionService', [
         validity.verifyPropertiesExist(change, transformationLocation + ': Field \'changes\', index ' + changeIndex, ['fromSound', 'toSound'])
 
         // fromSound
-        for (let position of transformation.positions) {
-          validity.verifyValueInPhonotactics(language, change.fromSound, position, transformationLocation + ': Field \'changes\', index ' + changeIndex + ', field \'fromSound\'')
-        }
+        validity.verifyValueSomewhereInPhonotactics(language, change.fromSound, transformationLocation + ': Field \'changes\', index ' + changeIndex + ', field \'fromSound\'')
       }
 
       // condition
