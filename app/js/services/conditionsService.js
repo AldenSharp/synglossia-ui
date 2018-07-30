@@ -181,7 +181,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'values'])
 
       // adjacentSound.values
-      for (let value of condition.adjacentSound.value) {
+      for (let value of condition.adjacentSound.values) {
         validity.verifyValueSomewhereInPhonotactics(language, value, conditionLocation + ': Field \'adjacentSound\', field \'value\' of value ' + value)
       }
     }
