@@ -714,7 +714,7 @@ angular.module('app').service('evolutionService', [
       }
       if (
         transformation.position < -language.phonology.vowelCore - 1 ||
-        transformation.position > language.phonology.phonotactics.length - langauge.phonology.vowelCore
+        transformation.position > language.phonology.phonotactics.length - language.phonology.vowelCore
       ) {
         console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_INSERTION\' has \'position\' value out of bounds.')
       }
@@ -748,7 +748,7 @@ angular.module('app').service('evolutionService', [
       }
       if (
         transformation.position < -language.phonology.vowelCore ||
-        transformation.position > language.phonology.phonotactics.length - langauge.phonology.vowelCore - 1
+        transformation.position > language.phonology.phonotactics.length - language.phonology.vowelCore - 1
       ) {
         console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_DELETION\' has \'position\' value out of bounds.')
       }
