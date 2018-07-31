@@ -706,7 +706,7 @@ angular.module('app').service('evolutionService', [
       let absolutePosition = transformation.position + language.phonology.vowelCore
         + (transformation.position < 0 ? 1 : 0)
       phonotactics.splice(absolutePosition, 0, [''])
-      if (transformation.postion < 0) { vowelCore = vowelCore + 1 }
+      if (transformation.position < 0) { vowelCore = vowelCore + 1 }
     }
 
     function checkSyllablePositionInsertion (language, transformation, transformationLocation) {
@@ -739,8 +739,14 @@ angular.module('app').service('evolutionService', [
     }
 
     function languageSyllablePositionDeletion (phonotactics, vowelCore, transformation) {
+      console.log('Entered languageSyllablePositionDeletion')
       phonotactics.splice(transformation.position + vowelCore, 1)
-      if (transformation.position < 0) { vowelCore = vowelCore - 1 }
+      if (transformation.position < 0) {
+        console.log('Successfully passed the transformation.position < 0 check.')
+        console.log('vowelCore: ' + vowelCore)
+        vowelCore = vowelCore - 1
+        console.log('vowelCore: ' + vowelCore)
+      }
     }
 
     function checkSyllablePositionDeletion (language, transformation, transformationLocation) {
