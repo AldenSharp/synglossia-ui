@@ -704,7 +704,7 @@ angular.module('app').service('evolutionService', [
     }
 
     function languageSyllablePositionInsertion (phonotactics, vowelCore, transformation) {
-      let absolutePosition = transformation.position + language.phonology.vowelCore
+      let absolutePosition = transformation.position + vowelCore
         + (transformation.position < 0 ? 1 : 0)
       phonotactics.splice(absolutePosition, 0, [''])
     }
