@@ -150,7 +150,6 @@ angular.module('app').service('evolutionService', [
             newWord.languageName = stepLanguage.name
             newWord.parentLanguageName = stepLanguage.parent
             newWord.date = step.date
-            console.log('date: ' + newWord.date)
             previousTransformationWord = phonology.copyWord(newWord)
           }
         }

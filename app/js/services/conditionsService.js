@@ -787,13 +787,9 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
     */
     function meetsBeforeSyllableCondition (language, word, signedSyllableIndex, condition) {
-      console.log('Entered meetsBeforeSyllableCondition function')
-      console.log('Position: ' + JSON.stringify(condition.position))
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
-      console.log('Phoneme at this position: ' + word.syllables[absoluteSyllablePosition].phonemes[condition.position.sound])
-      let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound)
-      console.log('actualAdjacentPhoneme: ' + JSON.stringify(actualAdjacentPhoneme))
+      let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.vowelCore)
       if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
@@ -816,7 +812,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsAfterSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
-      let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound)
+      let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.vowelCore)
       if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
