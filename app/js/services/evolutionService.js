@@ -40,6 +40,12 @@ angular.module('app').service('evolutionService', [
           if (transformation.type === 'SOUND_COPY') {
             languageSoundCopy(phonotactics, vowelCore, transformation)
           }
+          if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
+            languageSyllablePositionInsertion(phonotactics, vowelCore, transformation)
+          }
+          if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
+            languageSyllablePositionDeletion(phonotactics, vowelCore, transformation)
+          }
           writingSystems = [] // TODO: Evolve writing systems.
         }
         let newLanguage = {
@@ -129,6 +135,12 @@ angular.module('app').service('evolutionService', [
               if (transformation.type === 'STRESS_SHIFT') {
                 stressShift(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
+              if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
+                syllablePositionInsertion(newWord, stepLanguage, transformation)
+              }
+              if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
+                syllablePositionDeletion(newWord, stepLanguage, transformation)
+              }
             }
             if (!phonology.isSameWord(previousTransformationWord, newWord)) {
               previousStepRun = true
@@ -203,6 +215,10 @@ angular.module('app').service('evolutionService', [
         checkSyllableInsertion(language, transformation, transformationLocation)
       } else if (transformation.type === 'STRESS_SHIFT') {
         checkStressShift(language, transformation, transformationLocation)
+      } else if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
+        checkSyllablePositionInsertion(language, transformation, transformationLocation)
+      } else if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
+        checkSyllablePositionDeletion(language, transformation, transformationLocation)
       }
     }
 
@@ -669,6 +685,70 @@ angular.module('app').service('evolutionService', [
 
       // condition
       conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
+    }
+
+    // Transformation object:
+    // {
+    //   type: 'SYLLABLE_POSITION_INSERTION',
+    //   position: <int>
+    // }
+    // Insert a new syllable position at the specified position, and shift all farther positions away from the vowel core.
+    // The position value cannot be 0. But it can be one unit past the current extremities.
+    // This transformation cannot take conditions.
+    function syllablePositionInsertion (word, language, transformation) {
+      let absolutePosition = transformation.position + language.vowelCore
+        + (transformation.position < 0 ? 1 : 0)
+      word.syllables.forEach((syllable) => syllable.phonemes.splice(absolutePosition, 0, ''))
+    }
+
+    function languageSyllablePositionInsertion (phonotactics, vowelCore, transformation) {
+      let absolutePosition = transformation.position + language.vowelCore
+        + (transformation.position < 0 ? 1 : 0)
+      phonotactics.splice(absolutePosition, 0, [''])
+      if (transformation.postion < 0) { vowelCore++ }
+    }
+
+    function checkSyllablePositionInsertion (language, transformation, transformationLocation) {
+      if (transformation.position === 0) {
+        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_INSERTION\' has zero \'position\' value. It must be nonzero.')
+      }
+      if (transformation.position < -language.vowelCore - 1 || transformation.position > language.phonotactics.length - langauge.vowelCore) {
+        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_INSERTION\' has \'position\' value out of bounds.')
+      }
+      if (transformation.condition.type !== 'DEFAULT') {
+        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_INSERTION\' has non-default condition. It must be default.')
+      }
+    }
+
+    // Transformation object:
+    // {
+    //   type: 'SYLLABLE_POSITION_DELETION',
+    //   position: <int>
+    // }
+    // Delete the syllable position value at the specified position, including any value occupying that position.
+    // The position value cannot be 0, and it must be confined to the current extremities.
+    // This transformation cannot take conditions.
+    function syllablePositionDeletion (word, language, transformation) {
+      word.syllables.forEach((syllable) => syllable.phonemes.splice(
+        transformation.position + language.vowelCore, 1
+      ))
+    }
+
+    function languageSyllablePositionDeletion (phonotactics, vowelCore, transformation) {
+      phonotactics.splice(transformation.position + vowelCore, 1)
+      if (transformation.position < 0) { vowelCore-- }
+    }
+
+    function checkSyllablePositionDeletion (language, transformation, transformationLocation) {
+      if (transformation.position === 0) {
+        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_DELETION\' has zero \'position\' value. It must be nonzero.')
+      }
+      if (transformation.position < -language.vowelCore || transformation.position > language.phonotactics.length - langauge.vowelCore - 1) {
+        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_DELETION\' has \'position\' value out of bounds.')
+      }
+      if (transformation.condition.type !== 'DEFAULT') {
+        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_DELETION\' has non-default condition. It must be default.')
+      }
     }
 
   }])
