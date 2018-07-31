@@ -42,20 +42,14 @@ angular.module('app').service('evolutionService', [
           }
           if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
             languageSyllablePositionInsertion(phonotactics, vowelCore, transformation)
-            if (transformation.position < 0) { vowelCore = vowelCore + 1 }
+            if (transformation.position < 0) { vowelCore++ }
           }
           if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
             languageSyllablePositionDeletion(phonotactics, vowelCore, transformation)
-            if (transformation.position < 0) {
-              console.log('Successfully passed the transformation.position < 0 check.')
-              console.log('vowelCore: ' + vowelCore)
-              vowelCore = vowelCore - 1
-              console.log('vowelCore: ' + vowelCore)
-            }
+            if (transformation.position < 0) { vowelCore-- }
           }
           writingSystems = [] // TODO: Evolve writing systems.
         }
-        console.log('vowelCore: ' + vowelCore)
         let newLanguage = {
           name: output[0].name,
           parent: output[0].parent,
