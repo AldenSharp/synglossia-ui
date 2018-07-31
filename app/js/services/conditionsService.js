@@ -790,7 +790,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound)
-      if (condition.adjacentSound.type === 'CONSONANT' || actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
       return (
@@ -813,7 +813,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound)
-      if (condition.adjacentSound.type === 'CONSONANT' || actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
       return (
