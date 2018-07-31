@@ -2,6 +2,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
   function interfaceController (svc, $scope, $route, $routeParams) {
     let ctrl = this
 
+    this.showSyllables = false
+
     this.showJson = object => JSON.stringify(object)
 
     $scope.tab = 1
