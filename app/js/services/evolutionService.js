@@ -734,12 +734,12 @@ angular.module('app').service('evolutionService', [
     // This transformation cannot take conditions.
     function syllablePositionDeletion (word, language, transformation) {
       word.syllables.forEach((syllable) => syllable.phonemes.splice(
-        transformation.position + language.phonology.vowelCore, 1
+        transformation.position + language.phonology.vowelCore, 0
       ))
     }
 
     function languageSyllablePositionDeletion (phonotactics, vowelCore, transformation) {
-      phonotactics.splice(transformation.position + vowelCore, 1)
+      phonotactics.splice(transformation.position + vowelCore, 0)
     }
 
     function checkSyllablePositionDeletion (language, transformation, transformationLocation) {
