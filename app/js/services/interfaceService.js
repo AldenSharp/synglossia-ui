@@ -140,7 +140,7 @@ angular.module('app').service('interfaceService',
             }
           }
         }
-        if evolution[evolution.length-1].date > descendantLanguage.date {
+        if (evolution[evolution.length-1].date > descendantLanguage.date) {
           console.error(descendantLanguage.name + ': Last evolution step is dated out of order with the descenant language\'s own date.')
         }
       }
