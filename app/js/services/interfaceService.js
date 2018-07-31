@@ -130,14 +130,11 @@ angular.module('app').service('interfaceService',
       function checkDates (parentLanguage, descendantLanguage) {
         let evolution = descendantLanguage.evolution
         for (let stepIndex in evolution) {
-          console.log('type of variable: ' + typeof stepIndex)
-          console.log('type of constant: ' + typeof 0)
-          if (stepIndex === 0) {
+          if (stepIndex === '0') {
             if (evolution[stepIndex].date <= parentLanguage.date) {
               console.error(descendantLanguage.name + ': First evolution step is dated out of order with the date of the parent language ' + parentLanguage.name)
             }
           } else {
-            console.log('stepIndex: ' + stepIndex)
             if (evolution[stepIndex].date <= evolution[stepIndex-1].date) {
               console.error(descendantLanguage.name + ': Evolution steps ' + (stepIndex-1) + ' and ' + stepIndex + ' are dated out of order.')
             }
