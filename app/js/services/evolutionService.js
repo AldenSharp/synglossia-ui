@@ -48,6 +48,7 @@ angular.module('app').service('evolutionService', [
           }
           writingSystems = [] // TODO: Evolve writing systems.
         }
+        console.log('vowelCore: ' + vowelCore)
         let newLanguage = {
           name: output[0].name,
           parent: output[0].parent,
