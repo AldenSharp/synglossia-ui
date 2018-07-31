@@ -107,11 +107,11 @@ angular.module('app').service('interfaceService',
         )
         for (let descendantLanguageIndex in syngloss.descendantLanguages) {
           let descendantLanguage = syngloss.descendantLanguages[descendantLanguageIndex]
-          checkDescendantLanguage(descendantLanguage, 'Parent language: Descendant language ' + descendantLanguageIndex)
+          checkDescendantLanguage(descendantLanguage, syngloss, 'Parent language: Descendant language ' + descendantLanguageIndex)
         }
       }
 
-      function checkDescendantLanguage (language, languageLocation) {
+      function checkDescendantLanguage (language, parentLanguage, languageLocation) {
         validity.verifyPropertiesExist(language, languageLocation, ['name', 'evolution', 'descendantLanguages'])
         for (let stepIndex in language.evolution) {
           let step = language.evolution[stepIndex]
@@ -120,9 +120,28 @@ angular.module('app').service('interfaceService',
           )
           validity.verifyNonemptyArray(step.transformations, languageLocation + ': Evolution: Step ' + stepIndex + ': Transformations')
         }
+        checkDates(parentLanguage, language)
         for (let descendantLanguageIndex in language.descendantLanguages) {
           let descendantLanguage = language.descendantLanguages[descendantLanguageIndex]
-          checkDescendantLanguage(descendantLanguage, languageLocation + ': descendantLanguage ' + descendantLanguageIndex)
+          checkDescendantLanguage(descendantLanguage, language, languageLocation + ': descendantLanguage ' + descendantLanguageIndex)
+        }
+      }
+
+      function checkDates (parentLanguage, descendantLanguage) {
+        let evolution = descendantLanguage.evolution
+        for (let stepIndex in evolution) {
+          if (stepIndex === 0) {
+            if (evolution[stepIndex].date <= parentLanguage.date) {
+              console.error(descentantLanguage.name + ': First evolution step is dated out of order with the date of the parent language ' + parentLanguage.name)
+            }
+          } else {
+            if (evolution[stepIndex].date <= evolution[stepIndex-1].date) {
+              console.error(descendantLanguage.name + ': Evolution steps ' + (stepIndex-1) + ' and ' + stepIndex + ' are dated out of order.')
+            }
+          }
+        }
+        if evolution[evolution.length-1].date > descendantLanguage.date {
+          console.error(descendantLanguage.name + ': Last evolution step is dated out of order with the descenant language\'s own date.')
         }
       }
 
@@ -248,10 +267,10 @@ angular.module('app').service('interfaceService',
         for (let descendantLanguage of languageTree) {
           let wordObject = {
             name: descendantLanguage.name,
-            wordArray: getWordDescendants(word, descendantLanguage.languageArray, descendantLanguage.evolution)
+            wordArray: evolution.generate(word, descendantLanguage.languageArray, descendantLanguage.evolution)
           }
           let wordObjectArray = wordObject.wordArray
-          wordObject.daughterWords = svc.getWordTree(wordObjectArray[wordObjectArray.length - 1], descendantLanguage.descendantLanguages)
+          wordObject.descendantWords = svc.getWordTree(wordObjectArray[wordObjectArray.length - 1], descendantLanguage.descendantLanguages)
           output.push(wordObject)
         }
         return output
@@ -265,20 +284,20 @@ angular.module('app').service('interfaceService',
 
       function collectDescendantWords (date, wordTree, descendantWords) {
         for (let wordSubTree of wordTree) {
-          let wordIndex = wordSubTree.wordArray.length - 1
-          if (date <= wordSubTree.wordArray[wordIndex].date) {
-            while (date < wordSubTree.wordArray[wordIndex].date) {
-              wordIndex--
-            }
+          if (currentLanguage(date, wordSubTree)) {
+            let wordIndex = wordSubTree.wordArray.length - 1
+            while (date < wordSubTree.wordArray[wordIndex].date) { wordIndex-- }
             descendantWords.push(wordSubTree.wordArray[wordIndex])
           } else {
-            collectDescendantWords(date, wordSubTree.daughterWords, descendantWords)
+            collectDescendantWords(date, wordSubTree.descendantWords, descendantWords)
           }
         }
       }
 
-      let getWordDescendants = (word, languageArray, steps) =>
-        evolution.generate(word, languageArray, steps)
+      let currentLanguage = (date, wordTree) =>
+        wordTree.descendantWords.every(
+          (wordSubTree) => wordSubTree.wordArray[0].date > date
+        )
 
       function parentLanguageStressRules () {
         let validity = svc.syngloss.validity
