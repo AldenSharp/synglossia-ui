@@ -138,10 +138,10 @@ angular.module('app').service('evolutionService', [
                 stressShift(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
               if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
-                syllablePositionInsertion(newWord, stepLanguage, transformation)
+                syllablePositionInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
               if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
-                syllablePositionDeletion(newWord, stepLanguage, transformation)
+                syllablePositionDeletion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
             }
             if (!phonology.isSameWord(previousTransformationWord, newWord)) {
@@ -697,10 +697,10 @@ angular.module('app').service('evolutionService', [
     // Insert a new syllable position at the specified position, and shift all farther positions away from the vowel core.
     // The position value cannot be 0. But it can be one unit past the current extremities.
     // This transformation cannot take conditions.
-    function syllablePositionInsertion (word, language, transformation) {
+    function syllablePositionInsertion (word, language, syllableIndex, transformation) {
       let absolutePosition = transformation.position + language.phonology.vowelCore
         + (transformation.position < 0 ? 1 : 0)
-      word.syllables.forEach((syllable) => syllable.phonemes.splice(absolutePosition, 0, ''))
+      word.syllables[syllableIndex].phonemes.splice(absolutePosition, 0, '')
     }
 
     function languageSyllablePositionInsertion (phonotactics, vowelCore, transformation) {
@@ -709,7 +709,7 @@ angular.module('app').service('evolutionService', [
       phonotactics.splice(absolutePosition, 0, [''])
     }
 
-    function checkSyllablePositionInsertion (language, transformation, transformationLocation) {
+    function checkSyllablePositionInsertion (language, transformation, syllableIndex, transformationLocation) {
       if (transformation.position === 0) {
         console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_INSERTION\' has zero \'position\' value. It must be nonzero.')
       }
@@ -732,10 +732,8 @@ angular.module('app').service('evolutionService', [
     // Delete the syllable position value at the specified position, including any value occupying that position.
     // The position value cannot be 0, and it must be confined to the current extremities.
     // This transformation cannot take conditions.
-    function syllablePositionDeletion (word, language, transformation) {
-      word.syllables.forEach((syllable) => syllable.phonemes.splice(
-        transformation.position + language.phonology.vowelCore, 1
-      ))
+    function syllablePositionDeletion (word, language, syllableIndex, transformation) {
+      word.syllables[syllableIndex].phonemes.splice(transformation.position + language.phonology.vowelCore, 1)
     }
 
     function languageSyllablePositionDeletion (phonotactics, vowelCore, transformation) {
