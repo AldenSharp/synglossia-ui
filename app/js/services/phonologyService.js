@@ -19,47 +19,57 @@ angular.module('app').service('phonologyService', ['arrayService',
       syllable.phonemes.every((phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === '') &&
       svc.isShortVowel(syllable.phonemes[language.phonology.vowelCore])
 
-    this.nextPhoneme = function (word, syllableIndex, thisPhonemeIndex) {
-      if (svc.wordFinal(word, syllableIndex, thisPhonemeIndex)) {
+    this.nextPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
+      let syllableIndex = originalSyllableIndex
+      let phonemeIndex = originalPhonemeIndex
+      incrementPosition(word, syllableIndex, phonemeIndex)
+      if (syllableIndex >= word.syllables.length) {
         return { value: '', index: -1 }
       }
-      if (svc.syllableFinal(word.syllables[syllableIndex], thisPhonemeIndex)) {
-        let nextSyllable = word.syllables[syllableIndex + 1]
-        for (let phonemeIndex = 0; phonemeIndex < nextSyllable.phonemes.length; phonemeIndex++) {
-          let phoneme = nextSyllable.phonemes[phonemeIndex]
-          if (phoneme !== '') {
-            return { value: phoneme, index: phonemeIndex }
-          }
+      while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '') {
+        incrementPosition(word, syllableIndex, phonemeIndex)
+        if (syllableIndex >= word.syllables.length) {
+          return { value: '', index: -1 }
         }
       }
-      let thisSyllable = word.syllables[syllableIndex]
-      for (let phonemeIndex = thisPhonemeIndex + 1; phonemeIndex < thisSyllable.phonemes.length; phonemeIndex++) {
-        let phoneme = thisSyllable.phonemes[phonemeIndex]
-        if (phoneme !== '') {
-          return { value: phoneme, index: phonemeIndex }
-        }
+      return {
+        value: word.syllables[syllableIndex].phonemes[phonemeIndex],
+        index: phonemeIndex
       }
     }
 
-    this.previousPhoneme = function (word, syllableIndex, thisPhonemeIndex) {
-      if (svc.wordInitial(word, syllableIndex, thisPhonemeIndex)) {
+    this.previousPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
+      let syllableIndex = originalSyllableIndex
+      let phonemeIndex = originalPhonemeIndex
+      decrementPosition(word, syllableIndex, phonemeIndex)
+      if (syllableIndex < 0) {
         return { value: '', index: -1 }
       }
-      if (svc.syllableInitial(word.syllables[syllableIndex], thisPhonemeIndex)) {
-        let previousSyllable = word.syllables[syllableIndex - 1]
-        for (let phonemeIndex = previousSyllable.phonemes.length - 1; phonemeIndex >= 0; phonemeIndex--) {
-          let phoneme = previousSyllable.phonemes[phonemeIndex]
-          if (phoneme !== '') {
-            return { value: phoneme, index: phonemeIndex }
-          }
+      while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '') {
+        decrementPosition(word, syllableIndex, phonemeIndex)
+        if (syllableIndex < 0) {
+          return { value: '', index: -1 }
         }
       }
-      let thisSyllable = word.syllables[syllableIndex]
-      for (let phonemeIndex = thisPhonemeIndex - 1; phonemeIndex >= 0; phonemeIndex--) {
-        let phoneme = thisSyllable.phonemes[phonemeIndex]
-        if (phoneme !== '') {
-          return { value: phoneme, index: phonemeIndex }
-        }
+      return {
+        value: word.syllables[syllableIndex].phonemes[phonemeIndex],
+        index: phonemeIndex
+      }
+    }
+
+    function incrementPosition(word, syllableIndex, phonemeIndex) {
+      phonemeIndex++
+      if (phonemeIndex >= word.syllables[syllableIndex].phonemes.length) {
+        phonemeIndex = 0
+        syllableIndex++
+      }
+    }
+
+    function decrementPosition(word, syllableIndex, phonemeIndex) {
+      phonemeIndex--
+      if (phonemeIndex < 0) {
+        phonemeIndex = word.syllables[syllableIndex].phonemes.length - 1
+        syllableIndex--
       }
     }
 
