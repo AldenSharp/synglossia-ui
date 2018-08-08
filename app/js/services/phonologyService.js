@@ -20,19 +20,18 @@ angular.module('app').service('phonologyService', ['arrayService',
       svc.isShortVowel(syllable.phonemes[language.phonology.vowelCore])
 
     this.nextPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
-      console.log('Getting next phoneme...')
       let syllableIndex = originalSyllableIndex
       let phonemeIndex = originalPhonemeIndex
-      console.log('Original position: ' + originalSyllableIndex + '-' + originalPhonemeIndex)
       do {
-        incrementPosition(word, syllableIndex, phonemeIndex)
-        console.log('New incremented position: ' + syllableIndex + '-' + phonemeIndex)
+        phonemeIndex = phonemeIndex + 1
+        if (phonemeIndex >= word.syllables[syllableIndex].phonemes.length) {
+          phonemeIndex = 0
+          syllableIndex = syllableIndex + 1
+        }
         if (syllableIndex >= word.syllables.length) {
-          console.log('Reached out of bounds. Returning.')
           return { value: '', index: -1 }
         }
       } while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '')
-      console.log('Found next phoneme. Returning.')
       return {
         value: word.syllables[syllableIndex].phonemes[phonemeIndex],
         index: phonemeIndex
@@ -40,38 +39,21 @@ angular.module('app').service('phonologyService', ['arrayService',
     }
 
     this.previousPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
-      console.log('Getting previous phoneme...')
       let syllableIndex = originalSyllableIndex
       let phonemeIndex = originalPhonemeIndex
-      console.log('Original position: ' + originalSyllableIndex + '-' + originalPhonemeIndex)
       do {
-        decrementPosition(word, syllableIndex, phonemeIndex)
-        console.log('New decremented position: ' + syllableIndex + '-' + phonemeIndex)
+        phonemeIndex = phonemeIndex - 1
+        if (phonemeIndex < 0) {
+          phonemeIndex = word.syllables[syllableIndex].phonemes.length - 1
+          syllableIndex = phonemeIndex - 1
+        }
         if (syllableIndex < 0) {
-          console.log('Reached out of bounds. Returning.')
           return { value: '', index: -1 }
         }
       } while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '')
-      console.log('Found previous phoneme. Returning.')
       return {
         value: word.syllables[syllableIndex].phonemes[phonemeIndex],
         index: phonemeIndex
-      }
-    }
-
-    function incrementPosition(word, syllableIndex, phonemeIndex) {
-      phonemeIndex = phonemeIndex + 1
-      if (phonemeIndex >= word.syllables[syllableIndex].phonemes.length) {
-        phonemeIndex = 0
-        syllableIndex = syllableIndex + 1
-      }
-    }
-
-    function decrementPosition(word, syllableIndex, phonemeIndex) {
-      phonemeIndex = phonemeIndex - 1
-      if (phonemeIndex < 0) {
-        phonemeIndex = word.syllables[syllableIndex].phonemes.length - 1
-        syllableIndex = phonemeIndex - 1
       }
     }
 
