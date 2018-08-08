@@ -58,18 +58,18 @@ angular.module('app').service('phonologyService', ['arrayService',
     }
 
     function incrementPosition(word, syllableIndex, phonemeIndex) {
-      phonemeIndex++
+      phonemeIndex = phonemeIndex + 1
       if (phonemeIndex >= word.syllables[syllableIndex].phonemes.length) {
         phonemeIndex = 0
-        syllableIndex++
+        syllableIndex = syllableIndex + 1
       }
     }
 
     function decrementPosition(word, syllableIndex, phonemeIndex) {
-      phonemeIndex--
+      phonemeIndex = phonemeIndex - 1
       if (phonemeIndex < 0) {
         phonemeIndex = word.syllables[syllableIndex].phonemes.length - 1
-        syllableIndex--
+        syllableIndex = phonemeIndex - 1
       }
     }
 
