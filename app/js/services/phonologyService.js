@@ -20,18 +20,19 @@ angular.module('app').service('phonologyService', ['arrayService',
       svc.isShortVowel(syllable.phonemes[language.phonology.vowelCore])
 
     this.nextPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
+      console.log('Getting next phoneme...')
       let syllableIndex = originalSyllableIndex
       let phonemeIndex = originalPhonemeIndex
-      incrementPosition(word, syllableIndex, phonemeIndex)
-      if (syllableIndex >= word.syllables.length) {
-        return { value: '', index: -1 }
-      }
-      while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '') {
+      console.log('Original position: ' + originalSyllableIndex + '-' + originalPhonemeIndex)
+      do {
         incrementPosition(word, syllableIndex, phonemeIndex)
+        console.log('New incremented position: ' + syllableIndex + '-' + phonemeIndex)
         if (syllableIndex >= word.syllables.length) {
+          console.log('Reached out of bounds. Returning.')
           return { value: '', index: -1 }
         }
-      }
+      } while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '')
+      console.log('Found next phoneme. Returning.')
       return {
         value: word.syllables[syllableIndex].phonemes[phonemeIndex],
         index: phonemeIndex
@@ -39,18 +40,19 @@ angular.module('app').service('phonologyService', ['arrayService',
     }
 
     this.previousPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
+      console.log('Getting previous phoneme...')
       let syllableIndex = originalSyllableIndex
       let phonemeIndex = originalPhonemeIndex
-      decrementPosition(word, syllableIndex, phonemeIndex)
-      if (syllableIndex < 0) {
-        return { value: '', index: -1 }
-      }
-      while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '') {
+      console.log('Original position: ' + originalSyllableIndex + '-' + originalPhonemeIndex)
+      do {
         decrementPosition(word, syllableIndex, phonemeIndex)
+        console.log('New decremented position: ' + syllableIndex + '-' + phonemeIndex)
         if (syllableIndex < 0) {
+          console.log('Reached out of bounds. Returning.')
           return { value: '', index: -1 }
         }
-      }
+      } while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '')
+      console.log('Found previous phoneme. Returning.')
       return {
         value: word.syllables[syllableIndex].phonemes[phonemeIndex],
         index: phonemeIndex
