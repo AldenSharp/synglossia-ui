@@ -79,7 +79,6 @@ angular.module('app').service('evolutionService', [
       let output = [firstWord]
       for (let stepIndex in steps) {
         let step = steps[stepIndex]
-        console.log('Step date: ' + step.date)
         let previousStepWord = output[stepIndex]
         let previousTransformationWord = phonology.copyWord(previousStepWord)
         let newWord = phonology.copyWord(previousTransformationWord)
