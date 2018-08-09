@@ -99,7 +99,7 @@ angular.module('app').service('evolutionService', [
             } else {
               let previousStepRunCondition = findFollowsFromLastStepCondition(transformation.condition)
               let syllableShift = 0
-              if (previousStepRunCondition !== null) {
+              if (previousStepRunCondition !== null && previousStepRun) {
                 syllableShift = previousStepRunCondition.syllableShift
               }
               let shiftedSyllableIndex = parseInt(syllableIndex) + syllableShift
