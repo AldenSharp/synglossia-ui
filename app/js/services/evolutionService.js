@@ -74,13 +74,11 @@ angular.module('app').service('evolutionService', [
     this.generate = function (word, languageArray, steps) {
       let firstWord = phonology.copyWord(word)
       firstWord.languageName = languageArray[0].name
-      console.log('Generating descendant word for: ' + firstWord.languageName)
       firstWord.parentLanguageName = languageArray[0].parent
       firstWord.date = languageArray[0].date
       let output = [firstWord]
       for (let stepIndex in steps) {
         let step = steps[stepIndex]
-        console.log('Date: ' + step.date)
         let previousStepWord = output[stepIndex]
         let previousTransformationWord = phonology.copyWord(previousStepWord)
         let newWord = phonology.copyWord(previousTransformationWord)

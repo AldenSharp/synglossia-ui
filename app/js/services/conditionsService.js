@@ -133,7 +133,6 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function meetsBeforeCondition (language, word, syllableIndex, phonemeIndex, condition) {
-      console.log('Entered meetsBeforeCondition function.')
       let actualAdjacentPhoneme = phonology.nextPhoneme(word, syllableIndex, phonemeIndex)
       if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
