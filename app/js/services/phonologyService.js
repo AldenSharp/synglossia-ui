@@ -45,7 +45,7 @@ angular.module('app').service('phonologyService', ['arrayService',
         phonemeIndex = phonemeIndex - 1
         if (phonemeIndex < 0) {
           phonemeIndex = word.syllables[syllableIndex].phonemes.length - 1
-          syllableIndex = phonemeIndex - 1
+          syllableIndex = syllableIndex - 1
         }
         if (syllableIndex < 0) {
           return { value: '', index: -1 }
