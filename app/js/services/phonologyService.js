@@ -20,6 +20,7 @@ angular.module('app').service('phonologyService', ['arrayService',
       svc.isShortVowel(syllable.phonemes[language.phonology.vowelCore])
 
     this.nextPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
+      console.log('Called nextPhoneme function. Position: ' + originalSyllableIndex + '-' + originalPhonemeIndex)
       let syllableIndex = originalSyllableIndex
       let phonemeIndex = originalPhonemeIndex
       do {
@@ -29,9 +30,11 @@ angular.module('app').service('phonologyService', ['arrayService',
           syllableIndex = syllableIndex + 1
         }
         if (syllableIndex >= word.syllables.length) {
+          console.log('Out of bounds. Returning zero phoneme.')
           return { value: '', index: -1 }
         }
       } while (word.syllables[syllableIndex].phonemes[phonemeIndex] === '')
+      console.log('Found next phoneme: ' + word.syllables[syllableIndex].phonemes[phonemeIndex] + ' at position ' + syllableIndex + '-' + phonemeIndex)
       return {
         value: word.syllables[syllableIndex].phonemes[phonemeIndex],
         index: phonemeIndex
