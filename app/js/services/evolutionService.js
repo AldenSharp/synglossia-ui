@@ -2,7 +2,6 @@ angular.module('app').service('evolutionService', [
   'writingService', 'conditionsService', 'phonologyService', 'arrayService', 'validityService',
   function (writing, conditions, phonology, array, validity) {
     this.generateLanguageArray = function (language, descendantLanguage) {
-      console.log('Generating descendants for: ' + descendantLanguage.name)
       let output = [{
         name: descendantLanguage.name,
         parent: language.name,
@@ -15,7 +14,6 @@ angular.module('app').service('evolutionService', [
       for (let stepIndex in steps) {
         let step = steps[stepIndex]
         let date = step.date
-        console.log('Date: ' + date)
         let previousLanguage = JSON.parse(JSON.stringify(output[stepIndex]))
         let phonotactics = previousLanguage.phonology.phonotactics
         let vowelCore = previousLanguage.phonology.vowelCore
@@ -76,6 +74,7 @@ angular.module('app').service('evolutionService', [
     this.generate = function (word, languageArray, steps) {
       let firstWord = phonology.copyWord(word)
       firstWord.languageName = languageArray[0].name
+      console.log('Generating descendant word for: ' + firstWord.languageName)
       firstWord.parentLanguageName = languageArray[0].parent
       firstWord.date = languageArray[0].date
       let output = [firstWord]
@@ -84,6 +83,7 @@ angular.module('app').service('evolutionService', [
         let previousStepWord = output[stepIndex]
         let previousTransformationWord = phonology.copyWord(previousStepWord)
         let newWord = phonology.copyWord(previousTransformationWord)
+        console.log('Date: ' + newWord.date)
         let previousStepRun = false
         let wordLength = previousStepWord.syllables.length
         for (let syllableIndex = 0; syllableIndex < wordLength; syllableIndex++) {
