@@ -80,10 +80,10 @@ angular.module('app').service('evolutionService', [
       let output = [firstWord]
       for (let stepIndex in steps) {
         let step = steps[stepIndex]
+        console.log('Date: ' + step.date)
         let previousStepWord = output[stepIndex]
         let previousTransformationWord = phonology.copyWord(previousStepWord)
         let newWord = phonology.copyWord(previousTransformationWord)
-        console.log('Date: ' + newWord.date)
         let previousStepRun = false
         let wordLength = previousStepWord.syllables.length
         for (let syllableIndex = 0; syllableIndex < wordLength; syllableIndex++) {
