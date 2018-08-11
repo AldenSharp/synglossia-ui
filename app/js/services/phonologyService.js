@@ -143,28 +143,22 @@ angular.module('app').service('phonologyService', ['arrayService',
         }
       })
 
-      // Shift modifiers toward their base characters.
-      function shiftCharacterInOutput (index) {
-        let thisCharacter = output.charAt(index)
-        output[index] = output.charAt(index - 1)
-        output[index - 1] = thisCharacter
-      }
-
+      // Shift modifiers to their base characters.
       for (let characterIndex = 0; characterIndex < output.length; characterIndex++) {
         if (isConsonantModifier(output.charAt(characterIndex)) && isVowelModifier(output.charAt(characterIndex))) {
           while (!(modifyingConsonant(output, characterIndex) || modifyingVowel(output, characterIndex)) && characterIndex > 0) {
-            shiftCharacterInOutput(characterIndex)
+            output = swapCharactersInString(output, characterIndex)
             characterIndex--
           }
         } else if (isConsonantModifier(output.charAt(characterIndex))) {
           while (!modifyingConsonant(output, characterIndex) && characterIndex > 0) {
-            shiftCharacterInOutput(characterIndex)
+            output = swapCharactersInString(output, characterIndex)
             characterIndex--
           }
         } else if (isVowelModifier(output.charAt(characterIndex))) {
           while (!modifyingVowel(output, characterIndex) && characterIndex > 0) {
-            shiftCharacterInOutput(characterIndex)
-            characterIndex--
+            swapCharactersInString(output, characterIndex)
+            output = characterIndex--
           }
         }
       }
@@ -172,11 +166,17 @@ angular.module('app').service('phonologyService', ['arrayService',
       // Change modifiers on descending characters and characters with modifiers below to descender-friendly version.
       for (let characterIndex = 1; characterIndex < output.length; characterIndex++) {
         if (isModifier(output.charAt(characterIndex)) && modifyingDescending(output, characterIndex)) {
-          output[characterIndex] = descenderFriendly(output.charAt(characterIndex))
+          output = replaceCharacterInString(output, characterIndex, descenderFriendly(output.charAt(characterIndex)))
         }
       }
       return output
     }
+
+    let replaceCharacterInString = (string, index, newCharacter) =>
+      string.substr(0, index - 1) + newCharacter + string.substr(index + 1)
+
+    let swapCharactersInString = (string, index) =>
+      string.substr(0, index - 2) + string[index] + string[index - 1] + string.substr(index + 1)
 
     // Present the invidual IPA symbol.
     // In particular, if the individual symbol is an accent, put it on a dotted circle.
@@ -210,9 +210,9 @@ angular.module('app').service('phonologyService', ['arrayService',
     let modifyingConsonant = function (output, characterIndex) {
       let index = characterIndex - 1
       while (index > -1) {
-        if (consonants.indexOf(output[index]) > -1) {
+        if (consonants.indexOf(output.charAt(index)) > -1) {
           return true
-        } else if (consonantModifiers.indexOf(output[index]) > -1) {
+        } else if (consonantModifiers.indexOf(output.charAt(index)) > -1) {
           index--
         } else {
           return false
