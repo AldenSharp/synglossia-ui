@@ -2,6 +2,12 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
   function interfaceController (svc, $scope, $route, $routeParams) {
     let ctrl = this
 
+    this.languageName = $routeParams.languageName
+    this.retrievingSyngloss = true
+    this.retrievingWord = true
+    this.retrievingNoun = true
+    this.retrievingVerb = true
+
     this.showSyllables = false
 
     this.showJson = object => JSON.stringify(object)
@@ -20,7 +26,24 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       syllableIndex === ctrl.nounStem.length - 1 &&
       syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.vowelCore
 
+    let initalizeWord = function() {
+      ctrl.wordMemory = svc.word
+      ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
+      ctrl.word = svc.copyWord(ctrl.wordMemory.spokenForm)
+      svc.verifyWord(ctrl.word, ctrl.syngloss)
+      ctrl.wordMemory.spokenForm.syllables.push(svc.getRandomSyllable())
+      ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
+      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      ctrl.retrievingWord = false
+    }
+
+    let initializeNoun = function() {
+      ctrl.nounStem = svc.noun
+      ctrl.retrievingNoun = false
+    }
+
     let initializeController = function() {
+      ctrl.retrievingSyngloss = false
       ctrl.syngloss = svc.syngloss
 
       for (let position of ctrl.syngloss.phonology.phonotactics) {
@@ -35,21 +58,11 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.selectedDate = ctrl.latestDate
       ctrl.displayDate = ctrl.selectedDate < 0 ? -ctrl.selectedDate + ' BCE' : ctrl.selectedDate + ' CE'
 
-      let initalizeWord = function() {
-        ctrl.wordMemory = svc.word
-        ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
-        ctrl.word = svc.copyWord(ctrl.wordMemory.spokenForm)
-        svc.verifyWord(ctrl.word, ctrl.syngloss)
-        ctrl.wordMemory.spokenForm.syllables.push(svc.getRandomSyllable())
-        ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
-        ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
-      }
-
       ctrl.getWordPromise = svc.getWord($routeParams.languageName)
         .then(initalizeWord)
 
       ctrl.getNounPromise = svc.getNoun($routeParams.languageName)
-        .then(() => ctrl.nounStem = svc.noun)
+        .then(initializeNoun)
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
         .filter((nounClass) => nounClass.type === 'DEFAULT')
       ctrl.selectedNounClass = ctrl.nounClasses[0]
