@@ -134,7 +134,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
     function meetsBeforeCondition (language, word, syllableIndex, phonemeIndex, condition) {
       let actualAdjacentPhoneme = phonology.nextPhoneme(word, syllableIndex, phonemeIndex)
-      if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
       return (
@@ -146,7 +146,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyPropertiesExist(condition, conditionLocation, ['adjacentSound'])
 
       // adjacentSound
-      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'values'])
+      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['possiblySyllabic', 'values'])
 
       // adjacentSound.values
       for (let value of condition.adjacentSound.values) {
@@ -156,7 +156,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
     function meetsAfterCondition (language, word, syllableIndex, phonemeIndex, condition) {
       let actualAdjacentPhoneme = phonology.previousPhoneme(word, syllableIndex, phonemeIndex)
-      if (condition.adjacentSound.type === 'CONSONANT' || actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (!condition.adjacentSound.possiblySyllabic || actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
       return (
@@ -168,7 +168,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyPropertiesExist(condition, conditionLocation, ['adjacentSound'])
 
       // adjacentSound
-      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'values'])
+      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['possiblySyllabic', 'values'])
 
       // adjacentSound.values
       for (let value of condition.adjacentSound.values) {
@@ -615,7 +615,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.vowelCore)
-      if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
       return (
@@ -627,7 +627,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.vowelCore)
-      if (condition.adjacentSound.type === 'CONSONANT' && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
         return false
       }
       return (
@@ -642,7 +642,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       verifyPropertiesExistInPosition(language, condition, conditionLocation)
 
       // adjacentSound
-      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['type', 'values'])
+      validity.verifyPropertiesExist(condition.adjacentSound, conditionLocation + ': Field \'adjacentSound\'', ['possiblySyllabic', 'values'])
 
       // adjacentSound.values
       for (let value of condition.adjacentSound.values) {
