@@ -31,9 +31,9 @@ angular.module('app').service('interfaceService',
       function checkSyngloss (syngloss) {
         validity.verifyNotNull(syngloss, 'Syngloss')
         validity.verifyPropertiesExist(syngloss, 'Syngloss', [
-          'name', 'date', 'phonology', 'validity', 'writingSystems', 'descendantLanguages'
+          'name', 'date', 'phonology', 'morphology', 'validity', 'writingSystems', 'descendantLanguages'
         ])
-        validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'vowelCore', 'prosody'])
+        validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'incrementingSyllable', 'vowelCore', 'prosody'])
         for (let phonemePositionIndex in syngloss.phonology.phonotactics) {
           let phonemePosition = syngloss.phonology.phonotactics[phonemePositionIndex]
           validity.verifyNonemptyArray(phonemePosition, 'Parent language phonotactics: ' + phonemePositionIndex)
@@ -45,6 +45,15 @@ angular.module('app').service('interfaceService',
             )
           }
         }
+        validity.verifyPropertiesExist(syngloss.phonology.incrementingSyllable, 'Parent language incrementing syllable', ['accent', 'phonemes'])
+        if (syngloss.phonology.incrementingSyllable.phonemes.length !== syngloss.phonology.phonotactics.length) {
+          console.error('Parent language incrementing syllable: length is not equal to length of the phonotactics.')
+        }
+        for (let phonemeIndex in syngloss.phonology.incrementingSyllable.phonemes) {
+          let phoneme = syngloss.phonology.incrementingSyllable.phonemes[phonemeIndex]
+          validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.vowelCore, 'Parent language incrementing syllable')
+        }
+        
         validity.verifyPropertiesExist(syngloss.phonology.prosody, 'Parent language prosody', ['type'])
         if (syngloss.phonology.prosody.type === 'STRESS') {
           validity.verifyPositive(syngloss.phonology.prosody.maxOrder, 'Parent language prosody max order')
@@ -362,9 +371,6 @@ angular.module('app').service('interfaceService',
           svc.syngloss, word, syllableIndex, svc.syngloss.validity
         )
       )
-
-      // TODO Temporarily hard-coded. Should be generated randomly within the language's validity rules as applied to the input word.
-      this.getRandomSyllable = (word) => ({ accent: 0, phonemes: ['', '', 'l', 'a', '', '', ''] })
 
       this.getCardinal = (number) => Array.from({length: number}, (object, index) => index)
 
