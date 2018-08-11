@@ -11,6 +11,7 @@
         including descendant languages and languages in other families that borrow these features.
     </p>
     <p>Click on any of these languages to view information about its syngloss.</p>
+    <div ng-show="ctrl.retrievingData" class="solid-box">(Retrieving languages...)</div>
     <ul>
       <li ng-repeat="languageName in ctrl.languageNames">
         <a ng-href="{{languageName.href}}">{{languageName.displayName}}</a>
