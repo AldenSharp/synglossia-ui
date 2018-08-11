@@ -173,10 +173,10 @@ angular.module('app').service('phonologyService', ['arrayService',
     }
 
     let replaceCharacterInString = (string, index, newCharacter) =>
-      string.substr(0, index - 1) + newCharacter + string.substr(index + 1)
+      string.substr(0, index) + newCharacter + string.substr(index + 1)
 
     let swapCharactersInString = (string, index) =>
-      string.substr(0, index - 2) + string[index] + string[index - 1] + string.substr(index + 1)
+      string.substr(0, index - 1) + string[index] + string[index - 1] + string.substr(index + 1)
 
     // Present the invidual IPA symbol.
     // In particular, if the individual symbol is an accent, put it on a dotted circle.
