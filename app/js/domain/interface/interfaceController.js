@@ -31,7 +31,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
       ctrl.word = svc.copyWord(ctrl.wordMemory.spokenForm)
       svc.verifyWord(ctrl.word, ctrl.syngloss)
-      ctrl.wordMemory.spokenForm.syllables.push(ctrl.syngloss.phonology.incrementingSyllable)
+      ctrl.wordMemory.spokenForm.syllables.push(svc.copySyllable(ctrl.syngloss.phonology.incrementingSyllable))
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
       ctrl.retrievingWord = false
@@ -135,7 +135,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     function changeWordLength () {
       while (ctrl.wordMemory.spokenForm.syllables.length <= ctrl.wordLength) {
-        ctrl.wordMemory.spokenForm.syllables.push(ctrl.syngloss.phonology.incrementingSyllable)
+        ctrl.wordMemory.spokenForm.syllables.push(svc.copySyllable(ctrl.syngloss.phonology.incrementingSyllable))
       }
       while (ctrl.word.syllables.length < ctrl.wordLength) {
         ctrl.word.syllables.push(ctrl.wordMemory.spokenForm.syllables[ctrl.word.syllables.length])
