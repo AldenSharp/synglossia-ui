@@ -95,10 +95,10 @@ angular.module('app').service('phonologyService', ['arrayService',
     }
 
     this.copyWord = (word) => ({
-      syllables: word.syllables.map((syllable) => copySyllable(syllable))
+      syllables: word.syllables.map((syllable) => svc.copySyllable(syllable))
     })
 
-    let copySyllable = (syllable) => ({
+    this.copySyllable = (syllable) => ({
       accent: syllable.accent,
       phonemes: syllable.phonemes.map((phoneme) => phoneme.slice())
     })

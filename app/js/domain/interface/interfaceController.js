@@ -97,6 +97,9 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     this.updateWord = function () {
       ctrl.restressWord()
+      for (let syllableIndex in ctrl.word.syllables) {
+        ctrl.wordMemory.spokenForm.syllables[syllableIndex] = svc.copySyllable(ctrl.word.syllables[syllableIndex])
+      }
       getWordTree()
       ctrl.updateDate()
     }

@@ -53,7 +53,7 @@ angular.module('app').service('interfaceService',
           let phoneme = syngloss.phonology.incrementingSyllable.phonemes[phonemeIndex]
           validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.vowelCore, 'Parent language incrementing syllable')
         }
-        
+
         validity.verifyPropertiesExist(syngloss.phonology.prosody, 'Parent language prosody', ['type'])
         if (syngloss.phonology.prosody.type === 'STRESS') {
           validity.verifyPositive(syngloss.phonology.prosody.maxOrder, 'Parent language prosody max order')
@@ -445,4 +445,5 @@ angular.module('app').service('interfaceService',
       this.present = (code) => phonology.presentIPA(code)
 
       this.copyWord = (word) => phonology.copyWord(word)
+      this.copySyllable = (syllable) => phonology.copySyllable(syllable)
     }])
