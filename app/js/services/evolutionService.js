@@ -535,7 +535,7 @@ angular.module('app').service('evolutionService', [
     }
 
     function checkSyllableCollapse (language, transformation, transformationLocation) {
-      validity.verifyPropertiesExist(transformation, transformationLocation, ['position', 'reiterate', 'condition'])
+      validity.verifyPropertiesExist(transformation, transformationLocation, ['position', 'condition'])
 
       // position
       validity.verifyIndexInPhonotactics(language, transformation.position, transformationLocation + ': Field \'position\'')
@@ -543,9 +543,6 @@ angular.module('app').service('evolutionService', [
       // condition
       if (transformation.condition === '') {
         console.error(transformationLocation + ': Transformation of type \'SYLLABLE_COLLAPSE\' has empty \'condition\' property. This is not allowed.')
-      }
-      if (transformation.reiterate && transformation.condition.type === 'follows from last step') {
-        console.error(transformationLocation + ': Transformation of type \'SYLLABLE_COLLAPSE\' has \'reiterate\' set and \'condition\' is merely \'FOLLOWS_FROM_LAST_STEP\'. This is not allowed.')
       }
       conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
     }
