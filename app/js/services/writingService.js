@@ -35,13 +35,13 @@ angular.module('app').service('writingService',
           for (let phonemeIndex in syllable.phonemes) {
             phonemeIndex = parseInt(phonemeIndex)
             let phoneme = syllable.phonemes[phonemeIndex]
-            writtenWord += writeSymbolOfPhoneme(phoneme, phonemeIndex, syllableIndex)
+            writtenWord += writeSymbolOfPhoneme(writingSystem, phoneme, phonemeIndex, syllableIndex)
           }
         }
         return writtenWord
       }
 
-      function writeSymbolOfPhoneme (phoneme, phonemeIndex, syllableIndex) {
+      function writeSymbolOfPhoneme (writingSystem, phoneme, phonemeIndex, syllableIndex) {
         if (phoneme.length === 0) {
           return ''
         }
