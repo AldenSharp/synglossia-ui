@@ -117,7 +117,7 @@ angular.module('app').service('phonologyService', ['arrayService',
 
     function getSplitSemisyllables(word, language) {
       let splitSyllables = []
-      let mainSyllableCore = langauge.phonology.syllableCores[0]
+      let mainSyllableCore = language.phonology.syllableCores[0]
       let syllableCores = JSON.parse(JSON.stringify(language.phonology.syllableCores))
       syllableCores.sort((a, b) => a - b)
       for (let syllableIndex in word.syllables) {

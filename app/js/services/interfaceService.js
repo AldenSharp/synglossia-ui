@@ -51,6 +51,8 @@ angular.module('app').service('interfaceService',
         }
         for (syllableCoreIndex in syngloss.phonology.syllableCores) {
           let syllableCore = syngloss.phonology.syllableCores[syllableCoreIndex]
+          console.log('Type of loop index: ' + typeof syllableCoreIndex)
+          console.log('Type of array indexOf output: ' + typeof syngloss.phonology.syllableCores.indexOf(syllableCore))
           if (syngloss.phonology.syllableCores.indexOf(syllableCore) !== syllableCoreIndex) {
             console.error('Parent language syllable cores: values are not unique.')
           }
