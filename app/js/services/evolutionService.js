@@ -564,7 +564,16 @@ angular.module('app').service('evolutionService', [
     function stressShift (word, language, syllableIndex, transformation) {
       if (word.syllables[syllableIndex].accent === transformation.order) {
         word.syllables[syllableIndex].accent = 0
-        let newSyllableIndex = syllableIndex + transformation.shift
+        let newSyllableIndex = transformation.shift
+          + transformation.syllablePositionAbsolute ? 0 : syllableIndex
+        if (transformation.syllablePositionAbsolute) {
+          while (newSyllableIndex < 0) {
+            newSyllableIndex = newSyllableIndex + word.syllables.length
+          }
+          while (newSyllableIndex >= word.syllables.length) {
+            newSyllableIndex = newSyllableIndex - word.syllables.length
+          }
+        }
         if (newSyllableIndex < 0) {
           word.syllables[0].accent = transformation.order
         } else if (newSyllableIndex >= word.syllables.length) {
@@ -576,7 +585,7 @@ angular.module('app').service('evolutionService', [
     }
 
     function checkStressShift (language, transformation, transformationLocation) {
-      validity.verifyPropertiesExist(transformation, transformationLocation, ['order', 'shift', 'condition'])
+      validity.verifyPropertiesExist(transformation, transformationLocation, ['order', 'shift', 'syllablePositionAbsolute', 'condition'])
 
       // order
       if (transformation.order <= 0 || transformation.order > language.phonology.prosody.maxOrder) {
