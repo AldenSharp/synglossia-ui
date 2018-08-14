@@ -114,7 +114,6 @@ angular.module('app').service('phonologyService', ['arrayService',
       phonemeIndex >= syllable.phonemes.length - 1 ||
       syllableCores.some(syllableCore => syllableCore < mainSyllableCore && phonemeIndex === syllableCore) ||
       syllableCores.some(syllableCore => syllableCore > mainSyllableCore && phonemeIndex === syllableCore - 1)
-    }
 
     function getSplitSemisyllables(word, language) {
       let splitSyllables = []
