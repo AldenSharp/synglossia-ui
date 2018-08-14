@@ -16,8 +16,8 @@ angular.module('app').service('phonologyService', ['arrayService',
       )
 
     this.isShortSyllable = (syllable, language) =>
-      syllable.phonemes.every((phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === '') &&
-      svc.isShortVowel(syllable.phonemes[language.phonology.vowelCore])
+      syllable.phonemes.every((phoneme, phonemeIndex) => phonemeIndex <= language.phonology.syllableCores[0] || phoneme === '') &&
+      svc.isShortVowel(syllable.phonemes[language.phonology.syllableCores[0]])
 
     this.nextPhoneme = function (word, originalSyllableIndex, originalPhonemeIndex) {
       let syllableIndex = originalSyllableIndex
@@ -103,21 +103,60 @@ angular.module('app').service('phonologyService', ['arrayService',
       phonemes: syllable.phonemes.map((phoneme) => phoneme.slice())
     })
 
+    let inMainSyllable = (phonemeIndex, syllableCores, mainSyllableCore) =>
+      syllableCores.every(syllableCore =>
+        syllableCore === mainSyllableCore ||
+        (syllableCore < phonemeIndex && phonemeIndex <= mainSyllableCore) ||
+        (syllableCore > phonemeIndex && phonemeIndex >= mainSyllableCore)
+      )
+
+    let endOfSyllable = (syllable, phonemeIndex, syllableCores, mainSyllableCore) =>
+      phonemeIndex >= syllable.phonemes.length - 1 ||
+      syllableCores.some(syllableCore => syllableCore < mainSyllableCore && phonemeIndex === syllableCore) ||
+      syllableCores.some(syllableCore => syllableCore > mainSyllableCore && phonemeIndex === syllableCore - 1)
+    }
+
+    function getSplitSemisyllables(word, language) {
+      let splitSyllables = []
+      let mainSyllableCore = langauge.phonology.syllableCores[0]
+      let syllableCores = JSON.parse(JSON.stringify(language.phonology.syllableCores))
+      syllableCores.sort((a, b) => a - b)
+      for (let syllableIndex in word.syllables) {
+        let syllable = word.syllables[syllableIndex]
+        let phonemes = []
+        for (let phonemeIndex in syllable.phonemes) {
+          phonemes.push(syllable.phonemes[phonemeIndex])
+          if (endOfSyllable(syllable, phonemeIndex, syllableCores, mainSyllableCore)) {
+            if (phonemes.some(phoneme => phoneme !== '')) {
+              splitSyllables.push({
+                accent: inMainSyllable(phonemeIndex, syllableCores, mainSyllableCores) ? syllable.accent : 0,
+                phonemes: JSON.parse(JSON.stringify(phonemes))
+              })
+            }
+            phonemes = []
+          }
+        }
+      }
+      return splitSyllables
+    }
+
     this.writeIPA = function (word, language) {
       let output = ''
 
-      word.syllables.forEach(function (syllable, syllableIndex) {
+      let splitSyllables = getSplitSemisyllables(word, language)
+
+      splitSyllables.forEach(function (syllable, syllableIndex) {
         if (language.phonology.prosody.type === 'STRESS' || language.phonology.prosody.type === 'NONE') {
-          if (word.syllables.length > 1) {
+          if (splitSyllables.length > 1) {
             if (syllable.accent === 1) output += '\u02C8'
           }
-          if (word.syllables.length > 2) {
+          if (splitSyllables.length > 2) {
             if (syllable.accent === 2) output += '\u02CC'
           }
         }
         syllable.phonemes.forEach(function (phoneme, phonemeIndex) {
           output = output += phoneme
-          if (phonemeIndex !== language.phonology.vowelCore && isVowel(phoneme[0])) {
+          if (phonemeIndex !== language.phonology.syllableCores[0] && isVowel(phoneme[0])) {
             output += '\u032F'
           }
         })
@@ -131,7 +170,7 @@ angular.module('app').service('phonologyService', ['arrayService',
           })
         }
         if (language.phonology.prosody.type === 'STRESS' || language.phonology.prosody.type === 'NONE') {
-          if (syllableIndex < word.syllables.length - 1 && word.syllables[syllableIndex + 1].accent !== 1 && word.syllables[syllableIndex + 1].accent !== 2) {
+          if (syllableIndex < splitSyllables.length - 1 && splitSyllables[syllableIndex + 1].accent !== 1 && splitSyllables[syllableIndex + 1].accent !== 2) {
             output += '.'
           }
         } else if (language.phonology.prosody.type === 'PITCH') {
@@ -157,8 +196,8 @@ angular.module('app').service('phonologyService', ['arrayService',
           }
         } else if (isVowelModifier(output.charAt(characterIndex))) {
           while (!modifyingVowel(output, characterIndex) && characterIndex > 0) {
-            swapCharactersInString(output, characterIndex)
-            output = characterIndex--
+            output = swapCharactersInString(output, characterIndex)
+            characterIndex--
           }
         }
       }

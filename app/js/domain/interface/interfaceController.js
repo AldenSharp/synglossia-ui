@@ -24,7 +24,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     this.outOfStemScope = (syllableIndex, syllablePositionIndex) =>
       syllableIndex === ctrl.nounStem.length - 1 &&
-      syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.vowelCore
+      syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.syllableCores[0]
 
     let initalizeWord = function() {
       ctrl.wordMemory = svc.word
@@ -89,7 +89,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
     }
 
-    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.syngloss.phonology.vowelCore
+    this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.syngloss.phonology.syllableCores[0]
 
     this.restressWord = function () {
       ctrl.word = svc.restress(ctrl.word)

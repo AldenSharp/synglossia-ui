@@ -2,7 +2,8 @@ angular.module('app').service('validityService', [ function () {
   let svc = this
 
   this.verifyValueInPhonotactics = function (language, value, index, valueLocation) {
-    if (language.phonology.phonotactics[index + language.phonology.vowelCore].every((option) => option.value !== value)) {
+    let syllableCenter = language.phonology.syllableCores[0]
+    if (language.phonology.phonotactics[index + syllableCenter].every((option) => option.value !== value)) {
       console.error(valueLocation + ': Value ' + value + ' is not in the phonotactics at position index ' + index)
     }
   }
@@ -14,7 +15,8 @@ angular.module('app').service('validityService', [ function () {
   }
 
   this.verifyIndexInPhonotactics = function (language, index, indexLocation) {
-    if (index < -language.phonology.vowelCore || index >= language.phonology.phonotactics.length - language.phonology.vowelCore) {
+    let syllableCenter = language.phonology.syllableCores[0]
+    if (index < -syllableCenter || index >= language.phonology.phonotactics.length - syllableCenter) {
       console.error(indexLocation + ': Value is out of bounds of the language phonotactics. Found: ' + index)
     }
   }

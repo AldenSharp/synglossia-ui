@@ -33,7 +33,7 @@ angular.module('app').service('interfaceService',
         validity.verifyPropertiesExist(syngloss, 'Syngloss', [
           'name', 'date', 'phonology', 'morphology', 'validity', 'writingSystems', 'descendantLanguages'
         ])
-        validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'incrementingSyllable', 'vowelCore', 'prosody'])
+        validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'incrementingSyllable', 'syllableCores', 'prosody'])
         for (let phonemePositionIndex in syngloss.phonology.phonotactics) {
           let phonemePosition = syngloss.phonology.phonotactics[phonemePositionIndex]
           validity.verifyNonemptyArray(phonemePosition, 'Parent language phonotactics: ' + phonemePositionIndex)
@@ -45,13 +45,25 @@ angular.module('app').service('interfaceService',
             )
           }
         }
+
+        if (syngloss.phonology.syllableCores.length < 1) {
+          console.error('Parent language syllable cores: size of list is less than one. There must be at least one syllable core.')
+        }
+        for (syllableCoreIndex in syngloss.phonology.syllableCores) {
+          let syllableCore = syngloss.phonology.syllableCores[syllableCoreIndex]
+          if (syngloss.phonology.syllableCores.indexOf(syllableCore) !== syllableCoreIndex) {
+            console.error('Parent language syllable cores: values are not unique.')
+          }
+          validity.verifyIndexInPhonotactics(syngloss, syllableCore, 'Parent language syllable core at index ' + syllableCoreIndex)
+        }
+
         validity.verifyPropertiesExist(syngloss.phonology.incrementingSyllable, 'Parent language incrementing syllable', ['accent', 'phonemes'])
         if (syngloss.phonology.incrementingSyllable.phonemes.length !== syngloss.phonology.phonotactics.length) {
           console.error('Parent language incrementing syllable: length is not equal to length of the phonotactics.')
         }
         for (let phonemeIndex in syngloss.phonology.incrementingSyllable.phonemes) {
           let phoneme = syngloss.phonology.incrementingSyllable.phonemes[phonemeIndex]
-          validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.vowelCore, 'Parent language incrementing syllable')
+          validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.syllableCores[0], 'Parent language incrementing syllable')
         }
 
         validity.verifyPropertiesExist(syngloss.phonology.prosody, 'Parent language prosody', ['type'])

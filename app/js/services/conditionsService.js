@@ -134,7 +134,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
     function meetsBeforeCondition (language, word, syllableIndex, phonemeIndex, condition) {
       let actualAdjacentPhoneme = phonology.nextPhoneme(word, syllableIndex, phonemeIndex)
-      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (!condition.adjacentSound.possiblySyllabic && language.phonology.syllableCores.indexOf(actualAdjacentPhoneme.index) > -1) {
         return false
       }
       return (
@@ -156,7 +156,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
 
     function meetsAfterCondition (language, word, syllableIndex, phonemeIndex, condition) {
       let actualAdjacentPhoneme = phonology.previousPhoneme(word, syllableIndex, phonemeIndex)
-      if (!condition.adjacentSound.possiblySyllabic || actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      if (!condition.adjacentSound.possiblySyllabic && language.phonology.syllableCores.indexOf(actualAdjacentPhoneme.index) > -1) {
         return false
       }
       return (
@@ -177,11 +177,11 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function meetsConsonantalCondition (language, phonemeIndex, condition) {
-      return phonemeIndex !== language.phonology.vowelCore
+      return language.phonology.syllableCores.indexOf(phonemeIndex) === -1
     }
 
     function meetsSyllabicCondition (language, phonemeIndex, condition) {
-      return phonemeIndex === language.phonology.vowelCore
+      return language.phonology.syllableCores.indexOf(phonemeIndex) > -1
     }
 
     function meetsWordInitialCondition (word, syllableIndex, phonemeIndex, condition) {
@@ -456,7 +456,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       }
       for (let medialString of condition.values) {
         let thisSyllablePosition = absoluteSyllablePosition
-        let thisSoundPosition = language.phonology.vowelCore + 1
+        let thisSoundPosition = language.phonology.syllableCores[0] + 1
         let match = true
         for (let phoneme of medialString) {
           if (word.syllables[thisSyllablePosition].phonemes[thisSoundPosition] !== phoneme) {
@@ -506,7 +506,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonology.vowelCore
+        let expectedLength = language.phonology.syllableCores[0]
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'WORD_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -522,7 +522,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       return condition.values.some(
         (finalValue) => finalValue.every(
           (final, finalIndex) =>
-            word.syllables[word.syllables.length - 1].phonemes[language.phonology.vowelCore + 1 + finalIndex] === final
+            word.syllables[word.syllables.length - 1].phonemes[language.phonology.syllableCores[0] + 1 + finalIndex] === final
         )
       )
     }
@@ -534,7 +534,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonology.phonotactics.length - language.phonology.vowelCore - 1
+        let expectedLength = language.phonology.phonotactics.length - language.phonology.syllableCores[0] - 1
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'WORD_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -566,7 +566,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonology.vowelCore
+        let expectedLength = language.phonology.syllableCores[0]
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_INITIAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -587,7 +587,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       return condition.values.some(
         (finalValue) => finalValue.every(
           (final, finalIndex) =>
-            word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore + 1 + finalIndex] === final
+            word.syllables[absoluteSyllablePosition].phonemes[language.phonology.syllableCores[0] + 1 + finalIndex] === final
         )
       )
     }
@@ -599,7 +599,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       validity.verifyNonemptyArray(condition.values, conditionLocation + ': Field \'values\'')
       for (let valueIndex in condition.values) {
         let value = condition.values[valueIndex]
-        let expectedLength = language.phonology.phonotactics.length - language.phonology.vowelCore - 1
+        let expectedLength = language.phonology.phonotactics.length - language.phonology.syllableCores[0] - 1
         if (value.length !== expectedLength) {
           console.error(conditionLocation + ': Syllable condition of type \'SYLLABLE_FINAL_CLUSTERS\' has some \'value\' array of improper length in position ' + valueIndex
           + ': it should have ' + expectedLength + ' positions, but actually has ' + value.length + '.')
@@ -614,8 +614,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsBeforeSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
-      let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.vowelCore)
-      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      let actualAdjacentPhoneme = phonology.nextPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.syllableCores[0])
+      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.syllableCores[0]) {
         return false
       }
       return (
@@ -626,8 +626,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsAfterSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.position.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
-      let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.vowelCore)
-      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.vowelCore) {
+      let actualAdjacentPhoneme = phonology.previousPhoneme(word, absoluteSyllablePosition, condition.position.sound + language.phonology.syllableCores[0])
+      if (!condition.adjacentSound.possiblySyllabic && actualAdjacentPhoneme.index === language.phonology.syllableCores[0]) {
         return false
       }
       return (
@@ -659,7 +659,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       }
       return condition.values.some((value) =>
         word.syllables[absoluteSyllablePosition]
-        .phonemes[language.phonology.vowelCore + condition.position.sound] === value
+        .phonemes[language.phonology.syllableCores[0] + condition.position.sound] === value
       )
     }
 
@@ -684,7 +684,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         return false
       }
       return word.syllables[absoluteSyllablePosition]
-        .phonemes[language.phonology.vowelCore + condition.position.sound] === ''
+        .phonemes[language.phonology.syllableCores[0] + condition.position.sound] === ''
     }
 
     function checkEmptySyllableCondition (language, condition, conditionLocation) {
@@ -702,7 +702,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           absoluteSyllablePosition < 0 ||
           absoluteSyllablePosition >= word.syllables.length ||
           word.syllables[absoluteSyllablePosition]
-          .phonemes[language.phonology.vowelCore + position.sound] !== ''
+          .phonemes[language.phonology.syllableCores[0] + position.sound] !== ''
         ) { return false }
       }
       return true
@@ -726,7 +726,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
           absoluteSyllablePosition >= 0 &&
           absoluteSyllablePosition < word.syllables.length &&
           word.syllables[absoluteSyllablePosition]
-          .phonemes[language.phonology.vowelCore + position.sound] === ''
+          .phonemes[language.phonology.syllableCores[0] + position.sound] === ''
         ) {
           return true
         }
@@ -751,7 +751,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         return false
       }
       return word.syllables[absoluteSyllablePosition].phonemes.every(
-        (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === ''
+        (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.syllableCores[0] || phoneme === ''
       )
     }
 
@@ -767,9 +767,9 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       }
       return (
         (word.syllables[absoluteSyllablePosition].phonemes.every(
-          (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.vowelCore || phoneme === '')) &&
+          (phoneme, phonemeIndex) => phonemeIndex <= language.phonology.syllableCores[0] || phoneme === '')) &&
         (word.syllables[absoluteSyllablePosition + 1].phonemes.every(
-          (phoneme, phonemeIndex) => phonemeIndex >= language.phonology.vowelCore || phoneme === ''))
+          (phoneme, phonemeIndex) => phonemeIndex >= language.phonology.syllableCores[0] || phoneme === ''))
       )
     }
 
@@ -789,7 +789,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       return phonology.isShortVowel(
-        word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore]
+        word.syllables[absoluteSyllablePosition].phonemes[language.phonology.syllableCores[0]]
       )
     }
 
@@ -801,7 +801,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       let absoluteSyllablePosition = parseInt(condition.syllablePosition) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       return !phonology.isShortVowel(
-        word.syllables[absoluteSyllablePosition].phonemes[language.phonology.vowelCore]
+        word.syllables[absoluteSyllablePosition].phonemes[language.phonology.syllableCores[0]]
       )
     }
 
@@ -816,7 +816,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         return false
       }
       let firstAbsoluteSoundPosition = parseInt(condition.positions[0].sound) +
-        language.phonology.vowelCore
+        language.phonology.syllableCores[0]
       let sharedPhoneme = word
         .syllables[firstAbsoluteSyllablePosition]
         .phonemes[firstAbsoluteSoundPosition]
@@ -826,7 +826,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
           return false
         }
-        let absoluteSoundPosition = parseInt(position.sound) + language.phonology.vowelCore
+        let absoluteSoundPosition = parseInt(position.sound) + language.phonology.syllableCores[0]
         if (
           firstAbsoluteSyllablePosition < 0 ||
           firstAbsoluteSyllablePosition >= word.syllables.length ||
@@ -849,7 +849,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     function meetsSoundArrayMatchSyllableCondition (language, word, signedSyllableIndex, condition) {
       let absoluteSyllablePosition = parseInt(condition.initialPosition.syllable) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
-      let absoluteSoundPosition = language.phonology.vowelCore + parseInt(condition.initialPosition.sound)
+      let absoluteSoundPosition = language.phonology.syllableCores[0] + parseInt(condition.initialPosition.sound)
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
         return false
       }
