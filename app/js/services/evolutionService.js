@@ -24,6 +24,7 @@ angular.module('app').service('evolutionService', [
         }
         let writingSystems = JSON.parse(JSON.stringify(language.writingSystems))
         for (let transformationIndex in step.transformations) {
+          transformationIndex = parseInt(transformationIndex)
           let transformation = step.transformations[transformationIndex]
           checkTransformation(previousLanguage, date, transformation, transformationIndex)
           if (transformation.type === 'SOUND_CHANGE') {
@@ -57,6 +58,7 @@ angular.module('app').service('evolutionService', [
           if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
             languageSyllablePositionDeletion(phonotactics, syllableCenter, transformation)
             for (let syllableCoreIndex in syllableCores) {
+              syllableCoreIndex = parseInt(syllableCoreIndex)
               let syllableCore = syllableCores[syllableCoreIndex]
               let syllableCenter = syllableCores[0]
               if (parseInt(transformation.position) === parseInt(syllableCore)) {

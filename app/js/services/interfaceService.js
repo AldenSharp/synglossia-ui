@@ -50,9 +50,8 @@ angular.module('app').service('interfaceService',
           console.error('Parent language syllable cores: size of list is less than one. There must be at least one syllable core.')
         }
         for (syllableCoreIndex in syngloss.phonology.syllableCores) {
+          syllableCoreIndex = parseInt(syllableCoreIndex)
           let syllableCore = syngloss.phonology.syllableCores[syllableCoreIndex]
-          console.log('Type of loop index: ' + typeof syllableCoreIndex)
-          console.log('Type of array indexOf output: ' + typeof syngloss.phonology.syllableCores.indexOf(syllableCore))
           if (syngloss.phonology.syllableCores.indexOf(syllableCore) !== syllableCoreIndex) {
             console.error('Parent language syllable cores: values are not unique.')
           }
@@ -64,6 +63,7 @@ angular.module('app').service('interfaceService',
           console.error('Parent language incrementing syllable: length is not equal to length of the phonotactics.')
         }
         for (let phonemeIndex in syngloss.phonology.incrementingSyllable.phonemes) {
+          phonemeIndex = parseInt(phonemeIndex)
           let phoneme = syngloss.phonology.incrementingSyllable.phonemes[phonemeIndex]
           validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.syllableCores[0], 'Parent language incrementing syllable')
         }
@@ -153,7 +153,8 @@ angular.module('app').service('interfaceService',
       function checkDates (parentLanguage, descendantLanguage) {
         let evolution = descendantLanguage.evolution
         for (let stepIndex in evolution) {
-          if (stepIndex === '0') {
+          stepIndex = parseInt(stepIndex)
+          if (stepIndex === 0) {
             if (evolution[stepIndex].date <= parentLanguage.date) {
               console.error(descendantLanguage.name + ': First evolution step is dated out of order with the date of the parent language ' + parentLanguage.name)
             }

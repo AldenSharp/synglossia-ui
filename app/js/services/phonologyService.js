@@ -121,14 +121,16 @@ angular.module('app').service('phonologyService', ['arrayService',
       let syllableCores = JSON.parse(JSON.stringify(language.phonology.syllableCores))
       syllableCores.sort((a, b) => a - b)
       for (let syllableIndex in word.syllables) {
+        syllableIndex = parseInt(syllableIndex)
         let syllable = word.syllables[syllableIndex]
         let phonemes = []
         for (let phonemeIndex in syllable.phonemes) {
+          phonemeIndex = parseInt(phonemeIndex)
           phonemes.push(syllable.phonemes[phonemeIndex])
           if (endOfSyllable(syllable, phonemeIndex, syllableCores, mainSyllableCore)) {
             if (phonemes.some(phoneme => phoneme !== '')) {
               splitSyllables.push({
-                accent: inMainSyllable(phonemeIndex, syllableCores, mainSyllableCores) ? syllable.accent : 0,
+                accent: inMainSyllable(phonemeIndex, syllableCores, mainSyllableCore) ? syllable.accent : 0,
                 phonemes: JSON.parse(JSON.stringify(phonemes))
               })
             }

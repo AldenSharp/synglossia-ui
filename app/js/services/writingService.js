@@ -28,35 +28,37 @@ angular.module('app').service('writingService',
 
       // The 'ALPHABET' type expects a list of all phonemes in the language (and none not in the language).
       function alphabetWrite (language, word, writingSystem) {
-        function writeSymbolOfPhoneme (phoneme, phonemeIndex, syllableIndex) {
-          if (phoneme.length === 0) {
-            return ''
-          }
-
-          let rule = writingSystem.rules.find((rule) =>
-            rule.sounds.some((sound) => sound === phoneme)
-          )
-
-          if (rule === undefined) { return "" }
-
-          for (let grapheme of rule.graphemes) {
-            if (conditions.meetsCondition(
-              language, word, syllableIndex, phonemeIndex, grapheme.condition
-            )) {
-              return grapheme.value
-            }
-          }
-        }
-
         let writtenWord = ''
         for (let syllableIndex in word.syllables) {
+          syllableIndex = parseInt(syllableIndex)
           let syllable = word.syllables[syllableIndex]
           for (let phonemeIndex in syllable.phonemes) {
+            phonemeIndex = parseInt(phonemeIndex)
             let phoneme = syllable.phonemes[phonemeIndex]
             writtenWord += writeSymbolOfPhoneme(phoneme, phonemeIndex, syllableIndex)
           }
         }
         return writtenWord
+      }
+
+      function writeSymbolOfPhoneme (phoneme, phonemeIndex, syllableIndex) {
+        if (phoneme.length === 0) {
+          return ''
+        }
+
+        let rule = writingSystem.rules.find((rule) =>
+          rule.sounds.some((sound) => sound === phoneme)
+        )
+
+        if (rule === undefined) { return "" }
+
+        for (let grapheme of rule.graphemes) {
+          if (conditions.meetsCondition(
+            language, word, syllableIndex, phonemeIndex, grapheme.condition
+          )) {
+            return grapheme.value
+          }
+        }
       }
 
       // The 'CONSONANTAL' type expects a list of all consonants, and optionally allows vowels (plus zero vowel).

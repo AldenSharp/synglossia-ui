@@ -3,8 +3,6 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     let svc = this
 
     this.meetsCondition = function (language, word, syllableIndex, phonemeIndex, condition) {
-      syllableIndex = parseInt(syllableIndex)
-      phonemeIndex = parseInt(phonemeIndex)
       if (syllableIndex < 0 || syllableIndex >= word.syllables.length) {
         return false
       }
