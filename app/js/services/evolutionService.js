@@ -113,6 +113,7 @@ angular.module('app').service('evolutionService', [
             let transformation = step.transformations[transformationIndex]
             let stepLanguage = languageArray[stepIndex]
             newWord = null
+            console.log('Transformation: ' + JSON.stringify(transformation))
             if (!conditions.meetsSyllableCondition(
               stepLanguage, previousTransformationWord, syllableIndex,
               transformation.condition, previousStepRun
