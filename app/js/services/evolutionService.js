@@ -241,8 +241,6 @@ angular.module('app').service('evolutionService', [
         checkSyllableCollapse(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_INSERTION') {
         checkSyllableInsertion(language, transformation, transformationLocation)
-      } else if (transformation.type === 'ACCENT') {
-        checkAccent(language, transformation, transformationLocation)
       } else if (transformation.type === 'STRESS_SHIFT') {
         checkStressShift(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
