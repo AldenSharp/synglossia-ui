@@ -398,9 +398,11 @@ angular.module('app').service('evolutionService', [
       for (let migration of transformation.migrations) {
         let absoluteFromPosition = syllableCenter + migration.fromPosition
         let absoluteToPosition = syllableCenter + migration.toPosition
-        for (let fromOption of phonotactics[absoluteFromPosition]) {
-          if (phonotactics[absoluteToPosition].every((toOption) => toOption.value !== fromOption.value)) {
-            phonotactics[absoluteToPosition].push(fromOption)
+        if (absoluteToPosition >= 0 && absoluteToPosition < phonotactics.length) {
+          for (let fromOption of phonotactics[absoluteFromPosition]) {
+            if (phonotactics[absoluteToPosition].every((toOption) => toOption.value !== fromOption.value)) {
+              phonotactics[absoluteToPosition].push(fromOption)
+            }
           }
         }
       }
