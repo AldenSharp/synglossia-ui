@@ -18,7 +18,8 @@ angular.module('app').service('evolutionService', [
         let phonotactics = previousLanguage.phonology.phonotactics
         let syllableCores = previousLanguage.phonology.syllableCores
         let syllableCenter = syllableCores[0]
-        let prosodyType = previousLanguage.phonology.prosody.type
+        let prosody = JSON.parse(JSON.stringify(previousLangauge.phonology.prosody))
+        let prosodyType = prosody.type
         if (prosodyType === 'STRESS') {
           var accentMaxOrder = previousLanguage.phonology.prosody.maxOrder
         }
@@ -69,6 +70,9 @@ angular.module('app').service('evolutionService', [
               }
             }
           }
+          if (transformation.type === 'ACCENT') {
+            languageAccent(prosody, syllableCenter, transformation)
+          }
           writingSystems = [] // TODO: Evolve writing systems.
         }
         let newLanguage = {
@@ -78,9 +82,7 @@ angular.module('app').service('evolutionService', [
           phonology: {
             phonotactics: phonotactics,
             syllableCores: syllableCores,
-            prosody: {
-              type: prosodyType
-            }
+            prosody: prosody
           },
           writingSystems: writingSystems
         }
@@ -154,6 +156,9 @@ angular.module('app').service('evolutionService', [
               if (transformation.type === 'SYLLABLE_INSERTION') {
                 syllableInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
                 wordLength++
+              }
+              if (transformation.type === 'ACCENT') {
+                accent(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
               if (transformation.type === 'STRESS_SHIFT') {
                 stressShift(newWord, stepLanguage, shiftedSyllableIndex, transformation)
@@ -236,6 +241,8 @@ angular.module('app').service('evolutionService', [
         checkSyllableCollapse(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_INSERTION') {
         checkSyllableInsertion(language, transformation, transformationLocation)
+      } else if (transformation.type === 'ACCENT') {
+        checkAccent(language, transformation, transformationLocation)
       } else if (transformation.type === 'STRESS_SHIFT') {
         checkStressShift(language, transformation, transformationLocation)
       } else if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
@@ -582,6 +589,22 @@ angular.module('app').service('evolutionService', [
           transformationLocation + ': Phoneme array is the incorrect length. ' +
           'Length must be ' + language.phonology.phonotactics.length + ', but found: ' + transformation.phonemes.length
         )
+      }
+    }
+
+    function accent (word, language, syllableIndex, transformation) {
+      let absoluteSyllablePosition = transformation.syllablePosition
+        + transformation.syllablePositionAbsolute ? 0 : syllableIndex
+      word.absoluteSyllablePosition.accent = transformation.order
+    }
+
+    function languageAccent (prosody, syllableCenter, transformation) {
+      if (prosody.type === 'NONE') {
+        prosody.type = 'STRESS'
+        prosody.maxOrder = transformation.order
+      }
+      if (prosody.type === 'STRESS' && prosody.maxOrder < transformation.order) {
+        prosody.maxOrder = transformation.order
       }
     }
 
