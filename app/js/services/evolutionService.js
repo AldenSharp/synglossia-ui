@@ -18,7 +18,7 @@ angular.module('app').service('evolutionService', [
         let phonotactics = previousLanguage.phonology.phonotactics
         let syllableCores = previousLanguage.phonology.syllableCores
         let syllableCenter = syllableCores[0]
-        let prosody = JSON.parse(JSON.stringify(previousLangauge.phonology.prosody))
+        let prosody = JSON.parse(JSON.stringify(previousLanguage.phonology.prosody))
         let prosodyType = prosody.type
         if (prosodyType === 'STRESS') {
           var accentMaxOrder = previousLanguage.phonology.prosody.maxOrder
