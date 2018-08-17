@@ -445,7 +445,6 @@ angular.module('app').service('interfaceService',
       }
 
       this.getLatestDate = function (language) {
-        console.log('Getting latest date for langauge: ' + JSON.stringify(language))
         let latestDate = language.date
         for (let descendantLanguage of language.descendantLanguages) {
           let descendantLanguageDate = svc.getLatestDate(descendantLanguage)
