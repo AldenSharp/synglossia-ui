@@ -444,15 +444,13 @@ angular.module('app').service('interfaceService',
         return wordEvolutions
       }
 
-      this.getLatestDate = function (languageTree, earliestDate) {
-        let latestDate = earliestDate
-        for (let languageBranch of languageTree) {
-          let latestLanguage = languageBranch.evolution[languageBranch.evolution.length - 1]
-          let languageArrayLatestDate = latestLanguage.date
-          if (languageArrayLatestDate > latestDate) {
-            latestDate = languageArrayLatestDate
+      this.getLatestDate = function (language) {
+        let latestDate = language.date
+        for (let descendantLanguage of language.descendantLanguages) {
+          let descendantLanguageDate = svc.getLatestDate(descendantLanguage)
+          if (descendantLanguageDate > latestDate) {
+            latestDate = descendantLanguageDate
           }
-          latestDate = svc.getLatestDate(languageBranch.descendantLanguages, latestDate)
         }
         return latestDate
       }
