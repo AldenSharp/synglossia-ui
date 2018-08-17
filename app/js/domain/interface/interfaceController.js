@@ -54,7 +54,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
       ctrl.languageTree = svc.getLanguageTree(ctrl.syngloss)
       ctrl.earliestDate = ctrl.syngloss.date
-      ctrl.latestDate = svc.getLatestDate(ctrl.languageTree, ctrl.earliestDate)
+      ctrl.latestDate = svc.getLatestDate(ctrl.syngloss)
       ctrl.selectedDate = ctrl.latestDate
       ctrl.displayDate = ctrl.selectedDate < 0 ? -ctrl.selectedDate + ' BCE' : ctrl.selectedDate + ' CE'
 
