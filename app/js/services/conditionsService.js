@@ -317,7 +317,7 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         return meetsBeforeStressSyllableCondition(word, syllableIndex, condition)
       }
       if (condition.type === 'AFTER_STRESS') {
-        return meetsAfterStressSyllableConditon(word, syllableIndex, condition)
+        return meetsAfterStressSyllableCondition(word, syllableIndex, condition)
       }
       if (condition.type === 'STRESS_EXISTENCE') {
         return meetsStressExistenceSyllableCondition(language, word, condition)
