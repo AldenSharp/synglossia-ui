@@ -316,6 +316,9 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       if (condition.type === 'BEFORE_STRESS') {
         return meetsBeforeStressSyllableCondition(word, syllableIndex, condition)
       }
+      if (condition.type === 'AFTER_STRESS') {
+        return meetsAfterStressSyllableConditon(word, syllableIndex, condition)
+      }
       if (condition.type === 'STRESS_EXISTENCE') {
         return meetsStressExistenceSyllableCondition(language, word, condition)
       }
@@ -382,6 +385,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
         checkStressedSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'BEFORE_STRESS') {
         checkBeforeStressSyllableCondition(language, condition, conditionLocation)
+      } else if (condition.type === 'AFTER_STRESS') {
+        checkAfterStressSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'STRESS_EXISTENCE') {
         checkStressExistenceSyllableCondition(language, condition, conditionLocation)
       } else if (condition.type === 'STRESS_UNIQUENESS') {
@@ -914,8 +919,8 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function meetsBeforeStressSyllableCondition (word, syllableIndex, condition) {
-      return word.syllables.every(
-        (syllable, thisSyllableIndex) => thisSyllableIndex > syllableIndex || syllable.accent !== condition.order
+      return word.syllables.slice(0, syllableIndex + 1).every(
+        (syllable) => syllable.accent !== condition.order
       )
     }
 
@@ -928,6 +933,24 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
       // order
       if (condition.order < 1 || condition.order > language.phonology.prosody.maxOrder) {
         console.error(conditionLocation + ': Syllable condition of type \'BEFORE_STRESS\' has out-of-bounds \'order\' value.')
+      }
+    }
+
+    function meetsAfterStressSyllableCondition (word, syllableIndex, condition) {
+      return word.syllables.slice(syllableIndex, word.syllables.length).every(
+        (syllable) => syllable.accent !== condition.order
+      )
+    }
+
+    function checkAfterStressSyllableCondition (language, condition, conditionLocation) {
+      if (language.phonology.prosody.type !== 'STRESS') {
+        console.error(conditionLocation + ': Syllable condition of type \'AFTER_STRESS\' is incompatible with language of accent type \'' + language.phonology.prosody.type + '\'; type must be \'STRESS\'.')
+      }
+      validity.verifyPropertiesExist(condition, conditionLocation, ['order'])
+
+      // order
+      if (condition.order < 1 || condition.order > language.phonology.prosody.maxOrder) {
+        console.error(conditionLocation + ': Syllable condition of type \'AFTER_STRESS\' has out-of-bounds \'order\' value.')
       }
     }
 
