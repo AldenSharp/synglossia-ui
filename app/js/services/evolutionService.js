@@ -594,7 +594,7 @@ angular.module('app').service('evolutionService', [
 
     function accent (word, language, syllableIndex, transformation) {
       let absoluteSyllablePosition = transformation.syllablePosition
-        + transformation.syllablePositionAbsolute ? 0 : syllableIndex
+        + (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
       word.syllables[absoluteSyllablePosition].accent = transformation.order
     }
 
@@ -612,7 +612,7 @@ angular.module('app').service('evolutionService', [
       if (word.syllables[syllableIndex].accent === transformation.order) {
         word.syllables[syllableIndex].accent = 0
         let newSyllableIndex = transformation.shift
-          + transformation.syllablePositionAbsolute ? 0 : syllableIndex
+          + (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
         if (transformation.syllablePositionAbsolute) {
           while (newSyllableIndex < 0) {
             newSyllableIndex = newSyllableIndex + word.syllables.length
