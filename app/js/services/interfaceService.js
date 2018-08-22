@@ -141,7 +141,6 @@ angular.module('app').service('interfaceService',
           validity.verifyPropertiesExist(
             step, languageLocation + ': Evolution: Step ' + stepIndex, ['date', 'transformations']
           )
-          validity.verifyNonemptyArray(step.transformations, languageLocation + ': Evolution: Step ' + stepIndex + ': Transformations')
         }
         checkDates(parentLanguage, language)
         for (let descendantLanguageIndex in language.descendantLanguages) {
