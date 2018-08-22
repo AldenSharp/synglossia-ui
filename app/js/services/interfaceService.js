@@ -5,7 +5,7 @@ angular.module('app').service('interfaceService',
 
       this.getSyngloss = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName)
-        .then((httpResponse) => initializeSyngloss(httpResponse))
+        .then(httpResponse => initializeSyngloss(httpResponse))
 
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
@@ -173,21 +173,21 @@ angular.module('app').service('interfaceService',
       function determineStressType (language, order) {
         let validityCondition = language.validity
         if (validityCondition.type === 'AND') {
-          if (validityCondition.conditions.some((condition) =>
+          if (validityCondition.conditions.some(condition =>
             condition.type === 'STRESSED' &&
             condition.order === order &&
             condition.syllablePositionAbsolute
           )) {
             return 'ABSOLUTE'
           }
-          if (validityCondition.conditions.some((condition) =>
+          if (validityCondition.conditions.some(condition =>
             condition.type === 'STRESS_PARADIGM' &&
             condition.order === order &&
             condition.positions[condition.positions.length - 1].condition.type === 'DEFAULT'
-          ) && validityCondition.conditions.some((condition) =>
+          ) && validityCondition.conditions.some(condition =>
             condition.type === 'STRESS_EXISTENCE' &&
             condition.orders.includes(order)
-          ) && validityCondition.conditions.some((condition) =>
+          ) && validityCondition.conditions.some(condition =>
             condition.type === 'STRESS_UNIQUENESS' &&
             condition.orders.includes(order)
           )) {
@@ -240,7 +240,7 @@ angular.module('app').service('interfaceService',
       this.restress = function (word) {
         if (
           svc.syngloss.phonology.prosody.type !== 'STRESS' ||
-          svc.syngloss.phonology.prosody.stressType.some((orderStressType) =>
+          svc.syngloss.phonology.prosody.stressType.some(orderStressType =>
             orderStressType !== 'ABSOLUTE' && orderStressType !== 'CONDITIONAL'
           )) {
           return word
@@ -321,7 +321,7 @@ angular.module('app').service('interfaceService',
 
       let currentLanguage = (date, wordTree) =>
         wordTree.descendantWords.every(
-          (wordSubTree) => wordSubTree.wordArray[0].date > date
+          wordSubTree => wordSubTree.wordArray[0].date > date
         )
 
       function parentLanguageStressRules () {
@@ -329,7 +329,7 @@ angular.module('app').service('interfaceService',
         if (validity.type !== 'AND') {
           return []
         }
-        return validity.conditions.filter((condition) =>
+        return validity.conditions.filter(condition =>
             condition.type === 'STRESS_EXISTENCE' ||
             condition.type === 'STRESS_UNIQUENESS' ||
             condition.type === 'STRESS_PARADIGM'
@@ -346,7 +346,7 @@ angular.module('app').service('interfaceService',
           let stressPermutationWordsLength = stressPermutationWords.length
           for (let stressPermutationWordIndex = 0; stressPermutationWordIndex < stressPermutationWordsLength; stressPermutationWordIndex++) {
             let stressPermutationWord = stressPermutationWords[stressPermutationWordIndex]
-            if (stressRules.some((rule) => rule.type === 'STRESS_UNIQUENESS' && rule.orders.some((order) => order === orderIndex))) {
+            if (stressRules.some(rule => rule.type === 'STRESS_UNIQUENESS' && rule.orders.some(order => order === orderIndex))) {
               for (let syllableIndex = 0; syllableIndex < word.syllables.length; syllableIndex++) {
                 if (stressPermutationWord.syllables[syllableIndex].accent === 0) {
                   let accentedWord = JSON.parse(JSON.stringify(stressPermutationWord))
@@ -355,7 +355,7 @@ angular.module('app').service('interfaceService',
                 }
               }
             } else {
-              for (let permutationIndex = 1; permutationIndex < Math.pow(2, stressPermutationWord.syllables.filter((syllable) => syllable.accent === 0).length); permutationIndex++) {
+              for (let permutationIndex = 1; permutationIndex < Math.pow(2, stressPermutationWord.syllables.filter(syllable => syllable.accent === 0).length); permutationIndex++) {
                 let accentedWord = JSON.parse(JSON.stringify(stressPermutationWord))
                 let accentCode = permutationIndex
                 let accentArray = []
@@ -373,11 +373,11 @@ angular.module('app').service('interfaceService',
                 stressPermutationWords.push(accentedWord)
               }
             }
-            if (stressRules.some((rule) => rule.type === 'STRESS_EXISTENCE' && rule.orders.some((order) => order === orderIndex))) {
+            if (stressRules.some(rule => rule.type === 'STRESS_EXISTENCE' && rule.orders.some(order => order === orderIndex))) {
               delete stressPermutationWords[stressPermutationWordIndex]
             }
           }
-          stressPermutationWords = stressPermutationWords.filter((stressPermutationWord) => stressPermutationWord)
+          stressPermutationWords = stressPermutationWords.filter(stressPermutationWord => stressPermutationWord)
         }
         return stressPermutationWords
       }
@@ -388,11 +388,11 @@ angular.module('app').service('interfaceService',
         )
       )
 
-      this.getCardinal = (number) => Array.from({length: number}, (object, index) => index)
+      this.getCardinal = number => Array.from({length: number}, (object, index) => index)
 
       this.getWord = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/word")
-        .then((httpResponse) => svc.word = httpResponse.data)
+        .then(httpResponse => svc.word = httpResponse.data)
 
       this.getNoun = languageName =>
         $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/noun")
@@ -422,7 +422,7 @@ angular.module('app').service('interfaceService',
           }
           for (let phonemeIndex in syllable.phonemes) {
             let phoneme = syllable.phonemes[phonemeIndex]
-            if (language.phonology.phonotactics[phonemeIndex].every((option) => option.value !== phoneme)) {
+            if (language.phonology.phonotactics[phonemeIndex].every(option => option.value !== phoneme)) {
               console.error(
                 'Word: Syllable ' + syllableIndex + ': Phoneme ' + phonemeIndex +
                 ': Value is not found in the language phonotactics options at that index.'
@@ -456,5 +456,5 @@ angular.module('app').service('interfaceService',
 
       this.write = (word, language, writingSystemName) => writing.write(word, language, writingSystemName)
 
-      this.present = (code) => phonology.presentIPA(code)
+      this.present = code => phonology.presentIPA(code)
     }])

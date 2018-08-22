@@ -39,7 +39,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     let initializeNoun = function() {
       ctrl.nounStem = svc.noun
-      console.log('Retrieved noun stem: ' + JSON.stringify(ctrl.nounStem))
+      ctrl.selectedNounClass = ctrl.nounStem.nounClass
+      ctrl.selectedNounGender = ctrl.nounStem.gender
       ctrl.retrievingNoun = false
     }
 
