@@ -158,7 +158,7 @@ angular.module('app').service('interfaceService',
               console.error(descendantLanguage.name + ': First evolution step is dated out of order with the date of the parent language ' + parentLanguage.name)
             }
           } else {
-            if (evolution[stepIndex].date <= evolution[stepIndex-1].date) {
+            if (evolution[stepIndex].date < evolution[stepIndex-1].date) {
               console.error(descendantLanguage.name + ': Evolution steps ' + (stepIndex-1) + ' and ' + stepIndex + ' are dated out of order.')
             }
           }
