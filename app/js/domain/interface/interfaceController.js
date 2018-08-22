@@ -29,9 +29,9 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     let initalizeWord = function() {
       ctrl.wordMemory = svc.word
       ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
-      ctrl.word = svc.copyWord(ctrl.wordMemory.spokenForm)
+      ctrl.word = JSON.parse(JSON.stringify(ctrl.wordMemory.spokenForm))
       svc.verifyWord(ctrl.word, ctrl.syngloss)
-      ctrl.wordMemory.spokenForm.syllables.push(svc.copySyllable(ctrl.syngloss.phonology.incrementingSyllable))
+      ctrl.wordMemory.spokenForm.syllables.push(JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable)))
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
       ctrl.retrievingWord = false
@@ -98,7 +98,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     this.updateWord = function () {
       ctrl.restressWord()
       for (let syllableIndex in ctrl.word.syllables) {
-        ctrl.wordMemory.spokenForm.syllables[syllableIndex] = svc.copySyllable(ctrl.word.syllables[syllableIndex])
+        ctrl.wordMemory.spokenForm.syllables[syllableIndex] = JSON.parse(JSON.stringify(ctrl.word.syllables[syllableIndex]))
       }
       getWordTree()
       ctrl.updateDate()
@@ -135,7 +135,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     function changeWordLength () {
       while (ctrl.wordMemory.spokenForm.syllables.length <= ctrl.wordLength) {
-        ctrl.wordMemory.spokenForm.syllables.push(svc.copySyllable(ctrl.syngloss.phonology.incrementingSyllable))
+        ctrl.wordMemory.spokenForm.syllables.push(JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable)))
       }
       while (ctrl.word.syllables.length < ctrl.wordLength) {
         ctrl.word.syllables.push(ctrl.wordMemory.spokenForm.syllables[ctrl.word.syllables.length])

@@ -95,7 +95,7 @@ angular.module('app').service('evolutionService', [
     }
 
     this.generate = function (word, languageArray, steps) {
-      let firstWord = phonology.copyWord(word)
+      let firstWord = JSON.parse(JSON.stringify(word))
       firstWord.languageName = languageArray[0].name
       firstWord.parentLanguageName = languageArray[0].parent
       firstWord.date = languageArray[0].date
@@ -103,8 +103,8 @@ angular.module('app').service('evolutionService', [
       for (let stepIndex in steps) {
         let step = steps[stepIndex]
         let previousStepWord = output[stepIndex]
-        let previousTransformationWord = phonology.copyWord(previousStepWord)
-        let newWord = phonology.copyWord(previousTransformationWord)
+        let previousTransformationWord = JSON.parse(JSON.stringify(previousStepWord))
+        let newWord = JSON.parse(JSON.stringify(previousTransformationWord))
         let previousStepRun = false
         let wordLength = previousStepWord.syllables.length
         for (let syllableIndex = 0; syllableIndex < wordLength; syllableIndex++) {
@@ -118,7 +118,7 @@ angular.module('app').service('evolutionService', [
               transformation.condition, previousStepRun
             )) {
               previousStepRun = false
-              newWord = phonology.copyWord(previousTransformationWord)
+              newWord = JSON.parse(JSON.stringify(previousTransformationWord))
             } else {
               let previousStepRunCondition = findFollowsFromLastStepCondition(transformation.condition)
               let syllableShift = 0
@@ -127,7 +127,7 @@ angular.module('app').service('evolutionService', [
               }
               let shiftedSyllableIndex = parseInt(syllableIndex) + syllableShift
               previousStepRun = false
-              newWord = phonology.copyWord(previousTransformationWord)
+              newWord = JSON.parse(JSON.stringify(previousTransformationWord))
               if (transformation.type === 'SOUND_CHANGE') {
                 soundChange(newWord, stepLanguage, shiftedSyllableIndex, transformation)
               }
@@ -176,7 +176,7 @@ angular.module('app').service('evolutionService', [
             newWord.languageName = stepLanguage.name
             newWord.parentLanguageName = stepLanguage.parent
             newWord.date = step.date
-            previousTransformationWord = phonology.copyWord(newWord)
+            previousTransformationWord = JSON.parse(JSON.stringify(newWord))
           }
         }
         output.push(newWord)

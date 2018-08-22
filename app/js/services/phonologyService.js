@@ -94,15 +94,6 @@ angular.module('app').service('phonologyService', ['arrayService',
       return true
     }
 
-    this.copyWord = (word) => ({
-      syllables: word.syllables.map((syllable) => svc.copySyllable(syllable))
-    })
-
-    this.copySyllable = (syllable) => ({
-      accent: syllable.accent,
-      phonemes: syllable.phonemes.map((phoneme) => phoneme.slice())
-    })
-
     let inMainSyllable = (phonemeIndex, syllableCores, mainSyllableCore) =>
       syllableCores.every(syllableCore =>
         syllableCore === mainSyllableCore ||

@@ -216,7 +216,7 @@ angular.module('app').service('interfaceService',
           }
       */
       this.testAlterationValidity = function (word, alteration) {
-        let testWord = phonology.copyWord(word)
+        let testWord = JSON.parse(JSON.stringify(word))
         if (alteration.type === 'NEW_PHONEME') {
           testWord.syllables[alteration.syllableIndex].phonemes[alteration.phonemeIndex] = alteration.value
           testWord = svc.restress(testWord)
@@ -337,7 +337,7 @@ angular.module('app').service('interfaceService',
       }
 
       function getAllPossibleStress (word, stressRules) {
-        let zeroStressWord = svc.copyWord(word)
+        let zeroStressWord = JSON.parse(JSON.stringify(word))
         for (let syllableIndex in zeroStressWord.syllables) {
           zeroStressWord.syllables[syllableIndex].accent = 0
         }
@@ -349,14 +349,14 @@ angular.module('app').service('interfaceService',
             if (stressRules.some((rule) => rule.type === 'STRESS_UNIQUENESS' && rule.orders.some((order) => order === orderIndex))) {
               for (let syllableIndex = 0; syllableIndex < word.syllables.length; syllableIndex++) {
                 if (stressPermutationWord.syllables[syllableIndex].accent === 0) {
-                  let accentedWord = svc.copyWord(stressPermutationWord)
+                  let accentedWord = JSON.parse(JSON.stringify(stressPermutationWord))
                   accentedWord.syllables[syllableIndex].accent = orderIndex
                   stressPermutationWords.push(accentedWord)
                 }
               }
             } else {
               for (let permutationIndex = 1; permutationIndex < Math.pow(2, stressPermutationWord.syllables.filter((syllable) => syllable.accent === 0).length); permutationIndex++) {
-                let accentedWord = svc.copyWord(stressPermutationWord)
+                let accentedWord = JSON.parse(JSON.stringify(stressPermutationWord))
                 let accentCode = permutationIndex
                 let accentArray = []
                 while (accentCode > 0) {
@@ -457,7 +457,4 @@ angular.module('app').service('interfaceService',
       this.write = (word, language, writingSystemName) => writing.write(word, language, writingSystemName)
 
       this.present = (code) => phonology.presentIPA(code)
-
-      this.copyWord = (word) => phonology.copyWord(word)
-      this.copySyllable = (syllable) => phonology.copySyllable(syllable)
     }])
