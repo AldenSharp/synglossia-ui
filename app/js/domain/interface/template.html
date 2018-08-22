@@ -73,7 +73,6 @@
     <div ng-show="isSet(2)">
       <div ng-show="ctrl.retrievingNoun" class="solid-box">Retrieving syngloss and sample noun...</div>
       <div ng-hide="ctrl.retrievingNoun">
-        <p>Retrieved noun stem: {{JSON.stringify(ctrl.nounStem)}}</p>
         <form>
           Select the noun declension class:
           <select
@@ -97,7 +96,7 @@
             <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.nounStem.length)">
               <td ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
                 <select
-                  ng-model="ctrl.nounStem[syllableIndex][ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
+                  ng-model="ctrl.nounStem.phonology[syllableIndex][ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
                   ng-options="phoneme.value as phoneme.presentation for phoneme in syllablePosition"
                   ng-hide="ctrl.outOfStemScope(syllableIndex, ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))"
                 ></select>
