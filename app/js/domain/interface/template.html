@@ -73,6 +73,7 @@
     <div ng-show="isSet(2)">
       <div ng-show="ctrl.retrievingNoun" class="solid-box">Retrieving syngloss and sample noun...</div>
       <div ng-hide="ctrl.retrievingNoun">
+        <p>Retrieved noun stem: {{JSON.stringify(ctrl.nounStem)}}</p>
         <form>
           Select the noun declension class:
           <select
@@ -87,7 +88,6 @@
             ng-options="gender for gender in ctrl.nounGenders"
           ></select>
           <br><br>
-          <p>{{JSON.stringify(ctrl.nounStem)}}</p>
           <table>
             <tr>
               <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
