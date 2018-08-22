@@ -87,6 +87,7 @@
             ng-options="gender for gender in ctrl.nounGenders"
           ></select>
           <br><br>
+          <p>{{JSON.stringify(ctrl.nounStem)}}</p>
           <table>
             <tr>
               <th ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
