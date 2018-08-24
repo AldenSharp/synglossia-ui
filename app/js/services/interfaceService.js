@@ -454,6 +454,32 @@ angular.module('app').service('interfaceService',
         return latestDate
       }
 
+      function applyAffixToNoun(stem, affix) {
+        return stem // TODO
+      }
+
+      function applyAffixesToNoun(stem, affixes) {
+        for (let affix of affixes) {
+          stem = applyAffixToNoun(stem, affix)
+        }
+        return svc.restress(stem)
+      }
+
+      this.computeNoun = function(stem, number, nounCase, nounMorphemes) {
+        let affixes = nounMorphemes.filter(morpheme =>
+          morpheme.categories.some(category =>
+            category.numbers.indexOf(number) > -1 &&
+            category.cases.indexOf(nounCase) > -1
+          )
+        )
+        let word = {
+          number: number,
+          case: nounCase,
+          syllables: stem.phonology.map(syllable => ({ accent: 0, phonemes: syllable }))
+        }
+        return applyAffixesToNoun(word, affixes)
+      }
+
       this.write = (word, language, writingSystemName) => writing.write(word, language, writingSystemName)
 
       this.present = code => phonology.presentIPA(code)

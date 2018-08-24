@@ -23,8 +23,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     }
 
     this.outOfStemScope = (syllableIndex, syllablePositionIndex) =>
-      syllableIndex === ctrl.nounStem.length - 1 &&
-      syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.syllableCores[0]
+      (syllableIndex >= ctrl.nounStem.phonology.length - 1) &&
+      (syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.syllableCores[0])
 
     let initalizeWord = function() {
       ctrl.wordMemory = svc.word
@@ -37,14 +37,37 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.retrievingWord = false
     }
 
-    let initializeNoun = function() {
+    ctrl.getNounForm = function(number, nounCase) {
+      if (ctrl.nounForms === undefined) { return null }
+      return ctrl.nounForms.filter(
+        nounForm => nounForm.number === number && nounForm.case === nounCase
+      )[0]
+    }
+
+    function initializeNoun() {
       ctrl.nounStem = svc.noun
-      ctrl.selectedNounClass = ctrl.nounStem.nounClass
+      ctrl.selectedNounClass = ctrl.nounClasses.filter(nounClass => nounClass.name === ctrl.nounStem.nounClass)[0]
       ctrl.selectedNounGender = ctrl.nounStem.gender
+      ctrl.nounEndingStartPosition = ctrl.selectedNounClass.endingStartPosition
+      ctrl.nounMorphemes = ctrl.syngloss.morphology.nominals.morphemes
+        .filter(morpheme => morpheme.categories.some(category =>
+          category.classes.indexOf(ctrl.nounStem.nounClass) > -1 &&
+          category.genders.indexOf(ctrl.nounStem.gender) > -1
+        ))
+      ctrl.setNounForms()
       ctrl.retrievingNoun = false
     }
 
-    let initializeController = function() {
+    this.setNounForms = function() {
+      ctrl.nounForms = []
+      for (let number of ctrl.syngloss.morphology.nominals.numbers) {
+        for (let nounCase of ctrl.syngloss.morphology.nominals.cases) {
+          ctrl.nounForms.push(svc.computeNoun(ctrl.nounStem, number, nounCase, ctrl.nounMorphemes))
+        }
+      }
+    }
+
+    function initializeController() {
       ctrl.retrievingSyngloss = false
       ctrl.syngloss = svc.syngloss
 
@@ -66,7 +89,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.getNounPromise = svc.getNoun($routeParams.languageName)
         .then(initializeNoun)
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
-        .filter((nounClass) => nounClass.type === 'DEFAULT')
+        .filter(nounClass => nounClass.type === 'DEFAULT')
       ctrl.selectedNounClass = ctrl.nounClasses[0]
       ctrl.setGender()
     }
@@ -83,7 +106,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
     }
 
-    this.write = (word, language, writingSystemName) => 'word' in ctrl ?
+    this.write = (word, language, writingSystemName, field) => field in ctrl && word !== undefined ?
       svc.write(word, language, writingSystemName)
       : null
 

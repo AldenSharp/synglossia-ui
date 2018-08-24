@@ -41,9 +41,9 @@
         </form>
         <br><br>
         <div class="solid-box">
-          <p>{{ctrl.display(ctrl.syngloss.name)}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA')}}/</p>
+          <p>{{ctrl.display(ctrl.syngloss.name)}}: /{{ctrl.write(ctrl.word, ctrl.syngloss, 'IPA', 'word')}}/</p>
           <p ng-repeat="writingSystem in ctrl.syngloss.writingSystems">
-            {{ctrl.display(writingSystem.name)}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name)}}
+            {{ctrl.display(writingSystem.name)}}: {{ctrl.write(ctrl.word, ctrl.syngloss, writingSystem.name, 'word')}}
           </p>
         </div>
         <br><br>
@@ -99,6 +99,7 @@
                   ng-model="ctrl.nounStem.phonology[syllableIndex][ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
                   ng-options="phoneme.value as phoneme.presentation for phoneme in syllablePosition"
                   ng-hide="ctrl.outOfStemScope(syllableIndex, ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))"
+                  ng-change="ctrl.setNounForms()"
                 ></select>
               </td>
             </tr>
@@ -116,7 +117,7 @@
             <tr ng-repeat="case in ctrl.syngloss.morphology.nominals.cases">
               <td class="text-table">{{case}}</td>
               <td class="text-table" ng-repeat="number in ctrl.syngloss.morphology.nominals.numbers">
-                WORD <!-- TODO: Compute word for this case, number, class, and gender -->
+                {{ctrl.write(ctrl.getNounForm(number, case), ctrl.syngloss, 'IPA', 'nounForms')}}
               </td>
             </tr>
           </table>
