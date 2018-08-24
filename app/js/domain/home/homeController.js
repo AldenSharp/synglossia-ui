@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('app').controller('homeController', [ '$http', function homeController ($http) {
   let ctrl = this
 
@@ -11,7 +12,6 @@ angular.module('app').controller('homeController', [ '$http', function homeContr
     }))
   }
 
-  $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/languages")
-  .then((httpResponse) => setLanguageNames(httpResponse.data))
-
+  $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/languages')
+    .then((httpResponse) => setLanguageNames(httpResponse.data))
 }])

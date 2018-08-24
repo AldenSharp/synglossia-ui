@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('app').service('arrayService', [ function () {
   let svc = this
   this.signedModulate = (modulus, value) => value % modulus === 0 ? 0 : value < 0 ? modulus - (-value % modulus) : value % modulus

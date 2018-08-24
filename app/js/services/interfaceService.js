@@ -1,11 +1,12 @@
+/* global angular */
 angular.module('app').service('interfaceService',
   ['evolutionService', 'writingService', 'conditionsService', 'phonologyService', 'arrayService', 'validityService', '$http',
     function (evolution, writing, conditions, phonology, array, validity, $http) {
       let svc = this
 
       this.getSyngloss = languageName =>
-        $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName)
-        .then(httpResponse => initializeSyngloss(httpResponse))
+        $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/' + languageName)
+          .then(httpResponse => initializeSyngloss(httpResponse))
 
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
@@ -49,7 +50,7 @@ angular.module('app').service('interfaceService',
         if (syngloss.phonology.syllableCores.length < 1) {
           console.error('Parent language syllable cores: size of list is less than one. There must be at least one syllable core.')
         }
-        for (syllableCoreIndex in syngloss.phonology.syllableCores) {
+        for (let syllableCoreIndex in syngloss.phonology.syllableCores) {
           syllableCoreIndex = parseInt(syllableCoreIndex)
           let syllableCore = syngloss.phonology.syllableCores[syllableCoreIndex]
           if (syngloss.phonology.syllableCores.indexOf(syllableCore) !== syllableCoreIndex) {
@@ -158,13 +159,13 @@ angular.module('app').service('interfaceService',
               console.error(descendantLanguage.name + ': First evolution step is dated out of order with the date of the parent language ' + parentLanguage.name)
             }
           } else {
-            if (evolution[stepIndex].date < evolution[stepIndex-1].date) {
-              console.error(descendantLanguage.name + ': Evolution steps ' + (stepIndex-1) + ' and ' + stepIndex + ' are dated out of order.')
+            if (evolution[stepIndex].date < evolution[stepIndex - 1].date) {
+              console.error(descendantLanguage.name + ': Evolution steps ' + (stepIndex - 1) + ' and ' + stepIndex + ' are dated out of order.')
             }
           }
         }
         if (evolution.length > 0) {
-          if (evolution[evolution.length-1].date > descendantLanguage.date) {
+          if (evolution[evolution.length - 1].date > descendantLanguage.date) {
             console.error(descendantLanguage.name + ': Last evolution step is dated out of order with the descenant language\'s own date.')
           }
         }
@@ -185,12 +186,13 @@ angular.module('app').service('interfaceService',
             condition.order === order &&
             condition.positions[condition.positions.length - 1].condition.type === 'DEFAULT'
           ) && validityCondition.conditions.some(condition =>
-            condition.type === 'STRESS_EXISTENCE' &&
-            condition.orders.includes(order)
-          ) && validityCondition.conditions.some(condition =>
-            condition.type === 'STRESS_UNIQUENESS' &&
-            condition.orders.includes(order)
-          )) {
+              condition.type === 'STRESS_EXISTENCE' &&
+              condition.orders.includes(order)
+            ) && validityCondition.conditions.some(condition =>
+              condition.type === 'STRESS_UNIQUENESS' &&
+              condition.orders.includes(order)
+            )
+          ) {
             return 'CONDITIONAL'
           }
           return 'ARBITRARY'
@@ -330,10 +332,10 @@ angular.module('app').service('interfaceService',
           return []
         }
         return validity.conditions.filter(condition =>
-            condition.type === 'STRESS_EXISTENCE' ||
-            condition.type === 'STRESS_UNIQUENESS' ||
-            condition.type === 'STRESS_PARADIGM'
-          )
+          condition.type === 'STRESS_EXISTENCE' ||
+          condition.type === 'STRESS_UNIQUENESS' ||
+          condition.type === 'STRESS_PARADIGM'
+        )
       }
 
       function getAllPossibleStress (word, stressRules) {
@@ -391,12 +393,12 @@ angular.module('app').service('interfaceService',
       this.getCardinal = number => Array.from({length: number}, (object, index) => index)
 
       this.getWord = languageName =>
-        $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/word")
-        .then(httpResponse => svc.word = httpResponse.data)
+        $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/' + languageName + '/word')
+          .then(function (httpResponse) { svc.word = httpResponse.data })
 
       this.getNoun = languageName =>
-        $http.get("https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/" + languageName + "/noun")
-        .then(httpResponse => svc.noun = httpResponse.data)
+        $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/' + languageName + '/noun')
+          .then(function (httpResponse) { svc.noun = httpResponse.data })
 
       this.verifyWord = function (word, language) {
         validity.verifyNotNull(word, 'Word')
@@ -454,18 +456,18 @@ angular.module('app').service('interfaceService',
         return latestDate
       }
 
-      function applyAffixToNoun(stem, affix) {
+      function applyAffixToNoun (stem, affix) {
         return stem // TODO
       }
 
-      function applyAffixesToNoun(stem, affixes) {
+      function applyAffixesToNoun (stem, affixes) {
         for (let affix of affixes) {
           stem = applyAffixToNoun(stem, affix)
         }
         return svc.restress(stem)
       }
 
-      this.computeNoun = function(stem, number, nounCase, nounMorphemes) {
+      this.computeNoun = function (stem, number, nounCase, nounMorphemes) {
         let affixes = nounMorphemes.filter(morpheme =>
           morpheme.categories.some(category =>
             category.numbers.indexOf(number) > -1 &&

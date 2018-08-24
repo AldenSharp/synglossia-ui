@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('app').service('evolutionService', [
   'writingService', 'conditionsService', 'phonologyService', 'arrayService', 'validityService',
   function (writing, conditions, phonology, array, validity) {
@@ -207,8 +208,8 @@ angular.module('app').service('evolutionService', [
         return condition
       } else if (condition.type === 'AND' || condition.type === 'OR') {
         let conjunctConditions = condition.conditions
-        .map((conjunctCondition) => findFollowsFromLastStepCondition(conjunctCondition))
-        .filter((conjunctCondition) => conjunctCondition !== null)
+          .map((conjunctCondition) => findFollowsFromLastStepCondition(conjunctCondition))
+          .filter((conjunctCondition) => conjunctCondition !== null)
         if (conjunctConditions.length > 0) {
           return conjunctConditions[0]
         } else {
@@ -379,9 +380,9 @@ angular.module('app').service('evolutionService', [
         let fromSyllableIndex = syllableIndex
         let toSyllableIndex = parseInt(syllableIndex) + parseInt(migration.syllableShift)
         if (
-            toSyllableIndex < word.syllables.length && toSyllableIndex >= 0
-            && fromSyllableIndex < word.syllables.length && fromSyllableIndex >= 0
-          ) {
+          toSyllableIndex < word.syllables.length && toSyllableIndex >= 0 &&
+          fromSyllableIndex < word.syllables.length && fromSyllableIndex >= 0
+        ) {
           let fromPhonemeIndex = language.phonology.syllableCores[0] + migration.fromPosition
           let toPhonemeIndex = language.phonology.syllableCores[0] + migration.toPosition
           if (word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] === '' || transformation.overwrite) {
@@ -593,8 +594,8 @@ angular.module('app').service('evolutionService', [
     }
 
     function accent (word, language, syllableIndex, transformation) {
-      let absoluteSyllablePosition = transformation.syllablePosition
-        + (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
+      let absoluteSyllablePosition = transformation.syllablePosition +
+      (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
       word.syllables[absoluteSyllablePosition].accent = transformation.order
     }
 
@@ -611,8 +612,8 @@ angular.module('app').service('evolutionService', [
     function stressShift (word, language, syllableIndex, transformation) {
       if (word.syllables[syllableIndex].accent === transformation.order) {
         word.syllables[syllableIndex].accent = 0
-        let newSyllableIndex = transformation.shift
-          + (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
+        let newSyllableIndex = transformation.shift +
+          (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
         if (transformation.syllablePositionAbsolute) {
           while (newSyllableIndex < 0) {
             newSyllableIndex = newSyllableIndex + word.syllables.length
@@ -644,14 +645,14 @@ angular.module('app').service('evolutionService', [
     }
 
     function syllablePositionInsertion (word, language, syllableIndex, transformation) {
-      let absolutePosition = transformation.position + language.phonology.syllableCores[0]
-        + (transformation.position < 0 ? 1 : 0)
+      let absolutePosition = transformation.position + language.phonology.syllableCores[0] +
+        (transformation.position < 0 ? 1 : 0)
       word.syllables[syllableIndex].phonemes.splice(absolutePosition, 0, '')
     }
 
     function languageSyllablePositionInsertion (phonotactics, syllableCenter, transformation) {
-      let absolutePosition = transformation.position + syllableCenter
-        + (transformation.position < 0 ? 1 : 0)
+      let absolutePosition = transformation.position + syllableCenter +
+        (transformation.position < 0 ? 1 : 0)
       phonotactics.splice(absolutePosition, 0, [''])
     }
 
@@ -692,5 +693,4 @@ angular.module('app').service('evolutionService', [
         console.error(transformationLocation + ': Transformation of type \'SYLLABLE_POSITION_DELETION\' has non-default condition. It must be default.')
       }
     }
-
   }])

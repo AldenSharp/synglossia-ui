@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('app').controller('interfaceController', ['interfaceService', '$scope', '$route', '$routeParams',
   function interfaceController (svc, $scope, $route, $routeParams) {
     let ctrl = this
@@ -13,10 +14,10 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     this.showJson = object => JSON.stringify(object)
 
     $scope.tab = 1
-    $scope.setTab = tab => $scope.tab = tab
+    $scope.setTab = function (tab) { $scope.tab = tab }
     $scope.isSet = tab => $scope.tab === tab
 
-    this.setGender = function() {
+    this.setGender = function () {
       ctrl.nounGenders = ctrl.selectedNounClass.genders
       ctrl.selectedNounGender = ctrl.nounGenders[0]
       ctrl.nounEndingStartPosition = ctrl.selectedNounClass.endingStartPosition
@@ -26,7 +27,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       (syllableIndex >= ctrl.nounStem.phonology.length - 1) &&
       (syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.syllableCores[0])
 
-    let initalizeWord = function() {
+    let initalizeWord = function () {
       ctrl.wordMemory = svc.word
       ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
       ctrl.word = JSON.parse(JSON.stringify(ctrl.wordMemory.spokenForm))
@@ -37,14 +38,14 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.retrievingWord = false
     }
 
-    ctrl.getNounForm = function(number, nounCase) {
+    ctrl.getNounForm = function (number, nounCase) {
       if (ctrl.nounForms === undefined) { return null }
       return ctrl.nounForms.filter(
         nounForm => nounForm.number === number && nounForm.case === nounCase
       )[0]
     }
 
-    function initializeNoun() {
+    function initializeNoun () {
       ctrl.nounStem = svc.noun
       ctrl.selectedNounClass = ctrl.nounClasses.filter(nounClass => nounClass.name === ctrl.nounStem.nounClass)[0]
       ctrl.selectedNounGender = ctrl.nounStem.gender
@@ -58,7 +59,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.retrievingNoun = false
     }
 
-    this.setNounForms = function() {
+    this.setNounForms = function () {
       ctrl.nounForms = []
       for (let number of ctrl.syngloss.morphology.nominals.numbers) {
         for (let nounCase of ctrl.syngloss.morphology.nominals.cases) {
@@ -67,7 +68,7 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       }
     }
 
-    function initializeController() {
+    function initializeController () {
       ctrl.retrievingSyngloss = false
       ctrl.syngloss = svc.syngloss
 
@@ -106,8 +107,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
     }
 
-    this.write = (word, language, writingSystemName, field) => field in ctrl && word !== undefined ?
-      svc.write(word, language, writingSystemName)
+    this.write = (word, language, writingSystemName, field) => field in ctrl && word !== undefined
+      ? svc.write(word, language, writingSystemName)
       : null
 
     function getWordTree () {
@@ -173,47 +174,47 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       }
     }
 
-    this.display = name => ((name == undefined) ? '' : name.replace('_', ' '))
+    this.display = name => ((name === undefined) ? '' : name.replace('_', ' '))
     this.getCardinal = number => svc.getCardinal(number)
   }])
-  // Attempt to fix the issue with the slider initalizing at 100 instead of the maximum value:
-  // .directive('range', function () {
-  //   return {
-  //     replace: true,
-  //     restrict: 'E',
-  //     scope: {
-  //       value: '=ngModel',
-  //       min: '=rangeMin',
-  //       max: '=rangeMax',
-  //       step: '=rangeStep'
-  //     },
-  //     template: '<input type="range"/>',
-  //     link: function (scope, iElement, iAttrs) {
-  //       scope.$watch('min', function () { setValue() })
-  //       scope.$watch('max', function () { setValue() })
-  //       scope.$watch('step', function () { setValue() })
-  //       scope.$watch('value', function () { setValue() })
-  //
-  //       function setValue () {
-  //         if (
-  //           angular.isDefined(scope.min) &&
-  //           angular.isDefined(scope.max) &&
-  //           angular.isDefined(scope.step) &&
-  //           angular.isDefined(scope.value)
-  //         ) {
-  //           iElement.attr('min', scope.min)
-  //           iElement.attr('max', scope.max)
-  //           iElement.attr('step', scope.step)
-  //           iElement.val(scope.value)
-  //         }
-  //       }
-  //       function read () {
-  //         scope.value = iElement.val()
-  //       }
-  //
-  //       iElement.on('change', function () {
-  //         scope.$apply(read)
-  //       })
-  //     }
-  //   }
-  // })
+// Attempt to fix the issue with the slider initalizing at 100 instead of the maximum value:
+// .directive('range', function () {
+//   return {
+//     replace: true,
+//     restrict: 'E',
+//     scope: {
+//       value: '=ngModel',
+//       min: '=rangeMin',
+//       max: '=rangeMax',
+//       step: '=rangeStep'
+//     },
+//     template: '<input type="range"/>',
+//     link: function (scope, iElement, iAttrs) {
+//       scope.$watch('min', function () { setValue() })
+//       scope.$watch('max', function () { setValue() })
+//       scope.$watch('step', function () { setValue() })
+//       scope.$watch('value', function () { setValue() })
+//
+//       function setValue () {
+//         if (
+//           angular.isDefined(scope.min) &&
+//           angular.isDefined(scope.max) &&
+//           angular.isDefined(scope.step) &&
+//           angular.isDefined(scope.value)
+//         ) {
+//           iElement.attr('min', scope.min)
+//           iElement.attr('max', scope.max)
+//           iElement.attr('step', scope.step)
+//           iElement.val(scope.value)
+//         }
+//       }
+//       function read () {
+//         scope.value = iElement.val()
+//       }
+//
+//       iElement.on('change', function () {
+//         scope.$apply(read)
+//       })
+//     }
+//   }
+// })

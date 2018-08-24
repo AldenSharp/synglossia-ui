@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('app').service('phonologyService', ['arrayService',
   function (array) {
     let svc = this
@@ -106,7 +107,7 @@ angular.module('app').service('phonologyService', ['arrayService',
       syllableCores.some(syllableCore => syllableCore < mainSyllableCore && phonemeIndex === syllableCore) ||
       syllableCores.some(syllableCore => syllableCore > mainSyllableCore && phonemeIndex === syllableCore - 1)
 
-    function getSplitSemisyllables(word, language) {
+    function getSplitSemisyllables (word, language) {
       let splitSyllables = []
       let mainSyllableCore = language.phonology.syllableCores[0]
       let syllableCores = JSON.parse(JSON.stringify(language.phonology.syllableCores))
@@ -232,11 +233,11 @@ angular.module('app').service('phonologyService', ['arrayService',
     }
 
     let isNextModifiableLetter = (letter, modifier, char) =>
-        (isConsonant(letter) || (isConsonantModifier(modifier) && !isVowelModifier(modifier)))
-      ? isConsonant(char)
-      : (isVowel(letter) || (isVowelModifier(modifier) && !isConsonantModifier(modifier)))
-      ? isVowel(char)
-      : isConsonant(char) || isVowel(char)
+      (isConsonant(letter) || (isConsonantModifier(modifier) && !isVowelModifier(modifier)))
+        ? isConsonant(char)
+        : (isVowel(letter) || (isVowelModifier(modifier) && !isConsonantModifier(modifier)))
+          ? isVowel(char)
+          : isConsonant(char) || isVowel(char)
 
     let modifyingConsonant = function (output, characterIndex) {
       let index = characterIndex - 1

@@ -1,3 +1,4 @@
+/* global angular */
 angular.module('app').service('writingService',
   ['conditionsService', 'phonologyService', 'arrayService',
     function (conditions, phonology, array) {
@@ -50,7 +51,7 @@ angular.module('app').service('writingService',
           rule.sounds.some((sound) => sound === phoneme)
         )
 
-        if (rule === undefined) { return "" }
+        if (rule === undefined) { return '' }
 
         for (let grapheme of rule.graphemes) {
           if (conditions.meetsCondition(
@@ -74,9 +75,9 @@ angular.module('app').service('writingService',
       }
 
       // After implementing linguistic semantics, a 'LOGOGRAPHIC' writing system type could also be implemented.
-        // This type can be partial, defaulting to an alternate writing system for words outside of its list.
-          // Examples include Ancient Egyptian, Sumerian, and Japanese.
-          // Another possible example is 'smart'/'liberal' handling of Chinese logograms, imitating its earlier stages.
+      // This type can be partial, defaulting to an alternate writing system for words outside of its list.
+      // Examples include Ancient Egyptian, Sumerian, and Japanese.
+      // Another possible example is 'smart'/'liberal' handling of Chinese logograms, imitating its earlier stages.
       function logographicWrite (language, word, writingSystem) {
         console.error('Logographic writing system called, but not yet implemented.')
       }

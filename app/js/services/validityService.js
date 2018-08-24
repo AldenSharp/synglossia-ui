@@ -1,6 +1,5 @@
+/* global angular */
 angular.module('app').service('validityService', [ function () {
-  let svc = this
-
   this.verifyValueInPhonotactics = function (language, value, index, valueLocation) {
     let syllableCenter = language.phonology.syllableCores[0]
     if (language.phonology.phonotactics[index + syllableCenter].every((option) => option.value !== value)) {
@@ -21,7 +20,7 @@ angular.module('app').service('validityService', [ function () {
     }
   }
 
-  this.verifyNotNull = function(value, valueLocation) {
+  this.verifyNotNull = function (value, valueLocation) {
     if (value === undefined) {
       console.error(valueLocation + ': Value is undefined.')
     }
@@ -46,5 +45,4 @@ angular.module('app').service('validityService', [ function () {
       console.error(valueLocation + ': Value must be positive. Instead found: ' + value)
     }
   }
-
 }])
