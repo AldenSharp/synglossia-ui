@@ -87,12 +87,12 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.getWordPromise = svc.getWord($routeParams.languageName)
         .then(initalizeWord)
 
-      ctrl.getNounPromise = svc.getNoun($routeParams.languageName)
-        .then(initializeNoun)
       ctrl.nounClasses = ctrl.syngloss.morphology.nominals.classes
         .filter(nounClass => nounClass.type === 'DEFAULT')
       ctrl.selectedNounClass = ctrl.nounClasses[0]
       ctrl.setGender()
+      ctrl.getNounPromise = svc.getNoun($routeParams.languageName, ctrl.selectedNounGender, ctrl.selectedNounClass.name)
+        .then(initializeNoun)
     }
 
     this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)

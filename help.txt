@@ -1,0 +1,42 @@
+To copy from the local machine to the EC2 instance:
+scp -i synglossia-ec2.pem -r synglossia-ui/app ubuntu@ec2-3-90-209-184.compute-1.amazonaws.com:~/apps/synglossia-ui
+
+To run Forever in the EC2 instance:
+forever start ./node_modules/http-server/bin/http-server ./app -p 8000 -d false
+
+If the PEM file goes missing:
+1. Terminate the EC2 instance.
+2. Delete the key pair in the EC2 console.
+3. Delete all security groups except for "default".
+4. Go to Instances and select "Launch Instance".
+5. Search for and select a bitnami-meanstack-#.#.#-#-###-linux-ubuntu-... (any version will be sufficient)
+6. Select t1.micro or t2.micro (the type is not very important).
+7. Select "Review and Launch."
+8. Select "Launch."
+9. Download the PEM file and place it in several secure locations.
+10. Go to the instance's security group, and modify the SSH rule's source to "My IP". Click Save.
+11. In the command line, navigate to the location of the new PEM file.
+12. Run: chmod 400 <name of PEM file>.
+13. Run: ssh -i <name of PEM file> ubuntu@<EC2 public DNS>. Be sure that the SSH runs successfully.
+14. In the EC2 instance, navigate to apps.
+15. Run: sudo chown -R bitnami /opt/bitnami
+16. Run: sudo chown -R bitnami /home/bitnami
+17. Run: git config --global user.email "Aldensharp2@gmail.com"
+18. Run: git config --global user.name "AldenSharp"
+19. Run: git clone https://github.com/AldenSharp/synglossia-ui.git
+20. Run: git clone https://github.com/yaoyuyang/angular-phonecat
+21. In Angular Phonecat, in package.json, change the word "localhost" to "0.0.0.0" to publish the app.
+22. Navigate to angular-phonecat, and run: npm start. Be sure the app starts successfully.
+23. In Synglossia-UI, delete the node_modules directory,
+    and replace it with a copy of the Angular Phonecat node_modules directory.
+24. Navigate to synglossia-ui, and run: npm start. Be sure the app starts successfully. Leave it running.
+25. In the EC2 security group, add a new rule.
+    Leave Protocol Type as TCP, set port range to 8000, and set source as Anywhere. Click Save.
+26. Navigate to the EC2's public DNS, and be sure the site is visible.
+27. Stop the app inside the instance.
+28. Run: sudo npm install forever -g.
+29. Run: forever start ./node_modules/http-server/bin/http-server ./app -p 8000 -d false.
+30. Git add the node_modules directory.
+31. Git commit.
+32. Git push. (Provide Git password.)
+33. Return to the local environment, and pull the recently pushed changes.

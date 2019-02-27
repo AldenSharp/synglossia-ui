@@ -186,12 +186,12 @@ angular.module('app').service('interfaceService',
             condition.order === order &&
             condition.positions[condition.positions.length - 1].condition.type === 'DEFAULT'
           ) && validityCondition.conditions.some(condition =>
-              condition.type === 'STRESS_EXISTENCE' &&
+            condition.type === 'STRESS_EXISTENCE' &&
               condition.orders.includes(order)
-            ) && validityCondition.conditions.some(condition =>
-              condition.type === 'STRESS_UNIQUENESS' &&
-              condition.orders.includes(order)
-            )
+          ) && validityCondition.conditions.some(condition =>
+            condition.type === 'STRESS_UNIQUENESS' &&
+            condition.orders.includes(order)
+          )
           ) {
             return 'CONDITIONAL'
           }
@@ -390,14 +390,14 @@ angular.module('app').service('interfaceService',
         )
       )
 
-      this.getCardinal = number => Array.from({length: number}, (object, index) => index)
+      this.getCardinal = number => Array.from({ length: number }, (object, index) => index)
 
       this.getWord = languageName =>
         $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/' + languageName + '/word')
           .then(function (httpResponse) { svc.word = httpResponse.data })
 
-      this.getNoun = languageName =>
-        $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/' + languageName + '/noun')
+      this.getNoun = (languageName, genderName, className) =>
+        $http.get('https://c1hj6zyvol.execute-api.us-east-1.amazonaws.com/prod/syngloss/' + languageName + '/noun/' + genderName + '/' + className)
           .then(function (httpResponse) { svc.noun = httpResponse.data })
 
       this.verifyWord = function (word, language) {
