@@ -129,47 +129,9 @@ angular.module('app').service('evolutionService', [
               let shiftedSyllableIndex = parseInt(syllableIndex) + syllableShift
               previousStepRun = false
               newWord = JSON.parse(JSON.stringify(previousTransformationWord))
-              if (transformation.type === 'SOUND_CHANGE') {
-                soundChange(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SOUND_DELETION') {
-                soundDeletion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SOUND_INSERTION') {
-                soundInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SOUND_MIGRATION') {
-                soundMigration(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SOUND_COPY') {
-                soundCopy(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SOUND_SWAP') {
-                soundSwap(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'CONSONANT_DEGEMINATION') {
-                consonantDegemination(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SYLLABLE_COLLAPSE') {
-                syllableCollapse(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-                wordLength--
-              }
-              if (transformation.type === 'SYLLABLE_INSERTION') {
-                syllableInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-                wordLength++
-              }
-              if (transformation.type === 'ACCENT') {
-                accent(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'STRESS_SHIFT') {
-                stressShift(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
-                syllablePositionInsertion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
-              if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
-                syllablePositionDeletion(newWord, stepLanguage, shiftedSyllableIndex, transformation)
-              }
+              transform(
+                newWord, wordLength, stepLanguage, shiftedSyllableIndex, transformation
+              )
             }
             if (!phonology.isSameWord(previousTransformationWord, newWord)) {
               previousStepRun = true
@@ -201,6 +163,64 @@ angular.module('app').service('evolutionService', [
         }
       }
       return output
+    }
+
+    this.transformAffixedStem = function (stem, transformations, language) {
+      let stemLength = stem.syllables.length
+      for (let transformation of transformations) {
+        for (let syllableIndex in stem.syllables) {
+          if (conditions.meetsSyllableCondition(language, stem, syllableIndex, transformation.condition, false)) {
+            transform(stem, stemLength, language, parseInt(syllableIndex), transformation)
+          }
+        }
+      }
+      return stem
+    }
+
+    let transform = function (
+      word, wordLength, language, syllableIndex, transformation
+    ) {
+      if (transformation.type === 'SOUND_CHANGE') {
+        soundChange(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_DELETION') {
+        soundDeletion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_INSERTION') {
+        soundInsertion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_MIGRATION') {
+        soundMigration(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_COPY') {
+        soundCopy(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_SWAP') {
+        soundSwap(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'CONSONANT_DEGEMINATION') {
+        consonantDegemination(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_COLLAPSE') {
+        syllableCollapse(word, language, syllableIndex, transformation)
+        wordLength--
+      }
+      if (transformation.type === 'SYLLABLE_INSERTION') {
+        syllableInsertion(word, language, syllableIndex, transformation)
+        wordLength++
+      }
+      if (transformation.type === 'ACCENT') {
+        accent(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'STRESS_SHIFT') {
+        stressShift(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
+        syllablePositionInsertion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
+        syllablePositionDeletion(word, language, syllableIndex, transformation)
+      }
     }
 
     function findFollowsFromLastStepCondition (condition) {

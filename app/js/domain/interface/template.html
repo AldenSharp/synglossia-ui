@@ -85,6 +85,7 @@
           <select
             ng-model="ctrl.selectedNounGender"
             ng-options="gender for gender in ctrl.nounGenders"
+            ng-change="ctrl.resetNoun()"
           ></select>
           <br><br>
           <table>
@@ -93,10 +94,10 @@
                 {{ctrl.tableHeader(ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))}}
               </th>
             </tr>
-            <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.nounStem.phonology.length)">
+            <tr ng-repeat="syllableIndex in ctrl.getCardinal(ctrl.nounStem.phonology.syllables.length)">
               <td ng-repeat="syllablePosition in ctrl.syngloss.phonology.phonotactics">
                 <select
-                  ng-model="ctrl.nounStem.phonology[syllableIndex][ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
+                  ng-model="ctrl.nounStem.phonology.syllables[syllableIndex].phonemes[ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition)]"
                   ng-options="phoneme.value as phoneme.presentation for phoneme in syllablePosition"
                   ng-hide="ctrl.outOfStemScope(syllableIndex, ctrl.syngloss.phonology.phonotactics.indexOf(syllablePosition))"
                   ng-change="ctrl.setNounForms()"

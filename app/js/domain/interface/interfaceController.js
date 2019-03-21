@@ -17,14 +17,24 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     $scope.setTab = function (tab) { $scope.tab = tab }
     $scope.isSet = tab => $scope.tab === tab
 
+    this.resetNoun = function () {
+      ctrl.getNounPromise = svc.getNoun(
+        $routeParams.languageName,
+        ctrl.selectedNounGender,
+        ctrl.selectedNounClass.name
+      )
+        .then(initializeNoun)
+    }
+
     this.setGender = function () {
       ctrl.nounGenders = ctrl.selectedNounClass.genders
       ctrl.selectedNounGender = ctrl.nounGenders[0]
       ctrl.nounEndingStartPosition = ctrl.selectedNounClass.endingStartPosition
+      ctrl.resetNoun()
     }
 
     this.outOfStemScope = (syllableIndex, syllablePositionIndex) =>
-      (syllableIndex >= ctrl.nounStem.phonology.length - 1) &&
+      (syllableIndex >= ctrl.nounStem.phonology.syllables.length - 1) &&
       (syllablePositionIndex >= ctrl.nounEndingStartPosition + ctrl.syngloss.phonology.syllableCores[0])
 
     let initalizeWord = function () {
@@ -32,7 +42,9 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.wordLength = ctrl.wordMemory.spokenForm.syllables.length
       ctrl.word = JSON.parse(JSON.stringify(ctrl.wordMemory.spokenForm))
       svc.verifyWord(ctrl.word, ctrl.syngloss)
-      ctrl.wordMemory.spokenForm.syllables.push(JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable)))
+      ctrl.wordMemory.spokenForm.syllables.push(
+        JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable))
+      )
       ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
       ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
       ctrl.retrievingWord = false
@@ -47,25 +59,63 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     function initializeNoun () {
       ctrl.nounStem = svc.noun
-      ctrl.selectedNounClass = ctrl.nounClasses.filter(nounClass => nounClass.name === ctrl.nounStem.nounClass)[0]
+      ctrl.selectedNounClass = ctrl.nounClasses.filter(
+        nounClass => nounClass.name === ctrl.nounStem.nounClass
+      )[0]
       ctrl.selectedNounGender = ctrl.nounStem.gender
       ctrl.nounEndingStartPosition = ctrl.selectedNounClass.endingStartPosition
-      ctrl.nounMorphemes = ctrl.syngloss.morphology.nominals.morphemes
-        .filter(morpheme => morpheme.categories.some(category =>
-          category.classes.indexOf(ctrl.nounStem.nounClass) > -1 &&
-          category.genders.indexOf(ctrl.nounStem.gender) > -1
-        ))
       ctrl.setNounForms()
       ctrl.retrievingNoun = false
     }
 
     this.setNounForms = function () {
+      setNounMorphemes()
       ctrl.nounForms = []
       for (let number of ctrl.syngloss.morphology.nominals.numbers) {
         for (let nounCase of ctrl.syngloss.morphology.nominals.cases) {
-          ctrl.nounForms.push(svc.computeNoun(ctrl.nounStem, number, nounCase, ctrl.nounMorphemes))
+          ctrl.nounForms.push(
+            svc.computeNoun(
+              ctrl.nounStem,
+              ctrl.nounStem.gender, number, nounCase,
+              ctrl.nounMorphemes,
+              ctrl.syngloss.phonology.phonotactics
+            )
+          )
         }
       }
+    }
+
+    function setNounMorphemes () {
+      ctrl.nounMorphemes = ctrl.syngloss.morphology.nominals.morphemes
+        .filter(morpheme => morpheme.categories.some(category =>
+          category.classes.indexOf(ctrl.nounStem.nounClass) > -1 &&
+          category.genders.indexOf(ctrl.nounStem.gender) > -1
+        ))
+      let variantClasses = ctrl.syngloss.morphology.nominals.classes
+        .filter(nounClass =>
+          nounClass.type === 'VARIANT' &&
+          nounClass.defaultClass === ctrl.nounStem.nounClass &&
+          svc.meetsVariantClassCondition(ctrl.nounStem.phonology, nounClass)
+        )
+      let variantNounMorphemes = ctrl.syngloss.morphology.nominals.morphemes
+        .filter(morpheme => morpheme.categories.some(category =>
+          variantClasses.some(variantClass =>
+            category.classes.indexOf(variantClass.name) > -1
+          ) &&
+          category.genders.indexOf(ctrl.nounStem.gender) > -1
+        ))
+      ctrl.nounMorphemes = ctrl.nounMorphemes.filter(nounMorpheme =>
+        nounMorpheme.categories.some(nounMorphemeCategory =>
+          nounMorphemeCategory.numbers.some(number => nounMorphemeCategory.cases.some(nounCase =>
+            variantNounMorphemes.every(variantNounMorpheme =>
+              variantNounMorpheme.categories.every(variantNounMorphemeCategory =>
+                variantNounMorphemeCategory.numbers.indexOf(number) === -1 ||
+                variantNounMorphemeCategory.cases.indexOf(nounCase) === -1
+              )
+            )
+          ))
+        )
+      ).concat(variantNounMorphemes)
     }
 
     function initializeController () {
@@ -91,8 +141,6 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
         .filter(nounClass => nounClass.type === 'DEFAULT')
       ctrl.selectedNounClass = ctrl.nounClasses[0]
       ctrl.setGender()
-      ctrl.getNounPromise = svc.getNoun($routeParams.languageName, ctrl.selectedNounGender, ctrl.selectedNounClass.name)
-        .then(initializeNoun)
     }
 
     this.getSynglossPromise = svc.getSyngloss($routeParams.languageName)
@@ -124,7 +172,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     this.updateWord = function () {
       ctrl.restressWord()
       for (let syllableIndex in ctrl.word.syllables) {
-        ctrl.wordMemory.spokenForm.syllables[syllableIndex] = JSON.parse(JSON.stringify(ctrl.word.syllables[syllableIndex]))
+        ctrl.wordMemory.spokenForm.syllables[syllableIndex] =
+          JSON.parse(JSON.stringify(ctrl.word.syllables[syllableIndex]))
       }
       getWordTree()
       ctrl.updateDate()
@@ -161,11 +210,18 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
 
     function changeWordLength () {
       while (ctrl.wordMemory.spokenForm.syllables.length <= ctrl.wordLength) {
-        ctrl.wordMemory.spokenForm.syllables.push(JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable)))
+        ctrl.wordMemory.spokenForm.syllables.push(
+          JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable))
+        )
       }
       while (ctrl.word.syllables.length < ctrl.wordLength) {
-        ctrl.word.syllables.push(ctrl.wordMemory.spokenForm.syllables[ctrl.word.syllables.length])
-        if (ctrl.syngloss.phonology.prosody.stressType === 'ABSOLUTE' || ctrl.syngloss.phonology.prosody.stressType === 'CONDITIONAL') {
+        ctrl.word.syllables.push(
+          ctrl.wordMemory.spokenForm.syllables[ctrl.word.syllables.length]
+        )
+        if (
+          ctrl.syngloss.phonology.prosody.stressType === 'ABSOLUTE' ||
+          ctrl.syngloss.phonology.prosody.stressType === 'CONDITIONAL'
+        ) {
           ctrl.word = svc.restress(ctrl.word)
         }
       }

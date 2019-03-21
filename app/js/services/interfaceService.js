@@ -239,6 +239,11 @@ angular.module('app').service('interfaceService',
         }
       }
 
+      this.meetsVariantClassCondition = (stem, variantClass) =>
+        conditions.meetsSyllableCondition(
+          svc.syngloss, stem, 0, variantClass.condition, false
+        )
+
       this.restress = function (word) {
         if (
           svc.syngloss.phonology.prosody.type !== 'STRESS' ||
@@ -456,20 +461,38 @@ angular.module('app').service('interfaceService',
         return latestDate
       }
 
-      function applyAffixToNoun (stem, affix) {
-        return stem // TODO
+      function applyEnding (stemSyllables, endingSyllables, phonotactics) {
+        if (stemSyllables[stemSyllables.length - 1].phonemes.length !== phonotactics.length) {
+          stemSyllables[stemSyllables.length - 1].phonemes = stemSyllables[stemSyllables.length - 1].phonemes.concat(endingSyllables[0])
+          endingSyllables.shift()
+        }
+        let wordSyllables = stemSyllables.concat(
+          endingSyllables.map(syllable => ({ accent: 0, phonemes: syllable }))
+        )
+        return wordSyllables
       }
 
-      function applyAffixesToNoun (stem, affixes) {
+      function applyAffixToNoun (stem, affix, phonotactics) {
+        if (affix.type === 'ENDING') {
+          stem.syllables = applyEnding(stem.syllables, JSON.parse(JSON.stringify(affix.phonology)), phonotactics)
+        }
+        if ('transformations' in affix) {
+          evolution.transformAffixedStem(stem, affix.transformations, svc.syngloss)
+        }
+        return stem
+      }
+
+      function applyAffixesToNoun (stem, affixes, phonotactics) {
         for (let affix of affixes) {
-          stem = applyAffixToNoun(stem, affix)
+          stem = applyAffixToNoun(stem, affix, phonotactics)
         }
         return svc.restress(stem)
       }
 
-      this.computeNoun = function (stem, number, nounCase, nounMorphemes) {
+      this.computeNoun = function (stem, gender, number, nounCase, nounMorphemes, phonotactics) {
         let affixes = nounMorphemes.filter(morpheme =>
           morpheme.categories.some(category =>
+            category.genders.indexOf(gender) > -1 &&
             category.numbers.indexOf(number) > -1 &&
             category.cases.indexOf(nounCase) > -1
           )
@@ -477,9 +500,9 @@ angular.module('app').service('interfaceService',
         let word = {
           number: number,
           case: nounCase,
-          syllables: stem.phonology.map(syllable => ({ accent: 0, phonemes: syllable }))
+          syllables: JSON.parse(JSON.stringify(stem.phonology.syllables))
         }
-        return applyAffixesToNoun(word, affixes)
+        return applyAffixesToNoun(word, affixes, phonotactics)
       }
 
       this.write = (word, language, writingSystemName) => writing.write(word, language, writingSystemName)

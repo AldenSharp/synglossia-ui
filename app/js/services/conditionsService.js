@@ -655,7 +655,10 @@ angular.module('app').service('conditionsService', ['phonologyService', 'arraySe
     }
 
     function meetsSoundValuesSyllableCondition (language, word, signedSyllableIndex, condition) {
-      let absoluteSyllablePosition = parseInt(condition.position.syllable) +
+      let syllablePosition = condition.syllablePositionAbsolute
+        ? array.signedModulate(word.syllables.length, condition.position.syllable)
+        : condition.position.syllable
+      let absoluteSyllablePosition = parseInt(syllablePosition) +
         (condition.syllablePositionAbsolute ? 0 : parseInt(signedSyllableIndex))
       let output = null
       if (absoluteSyllablePosition < 0 || absoluteSyllablePosition >= word.syllables.length) {
