@@ -57,11 +57,55 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       )[0]
     }
 
+    function addSyllableToStem (stem, stemMemory) {
+      let stemLength = ctrl.syngloss.phonology.phonotactics.length
+      let finalSyllable = stem.phonology.syllables[stem.phonology.syllables.length - 1]
+      let stemTerminus = finalSyllable.phonemes.length
+      for (let syllablePosition = stemTerminus; syllablePosition < stemLength; syllablePosition++) {
+        finalSyllable.phonemes[syllablePosition] =
+        stemMemory.phonology.syllables[stem.phonology.syllables.length - 1].phonemes[syllablePosition]
+      }
+      let newSyllable = { phonemes: [] }
+      for (let syllablePosition = 0; syllablePosition < stemTerminus; syllablePosition++) {
+        newSyllable.phonemes[syllablePosition] =
+        stemMemory.phonology.syllables[stem.phonology.syllables.length].phonemes[syllablePosition]
+      }
+      stem.phonology.syllables.push(newSyllable)
+    }
+
+    function addSyllableToStemMemory (stemMemory) {
+      let stemLength = ctrl.syngloss.phonology.phonotactics.length
+      let incrementingSyllable = ctrl.syngloss.phonology.incrementingSyllable
+      let finalSyllable = stemMemory.phonology.syllables[stemMemory.phonology.syllables.length - 1]
+      let stemTerminus = finalSyllable.phonemes.length
+      for (let syllablePosition = stemTerminus; syllablePosition < stemLength; syllablePosition++) {
+        finalSyllable.phonemes[syllablePosition] =
+        incrementingSyllable.phonemes[syllablePosition]
+      }
+      let newSyllable = { phonemes: [] }
+      for (let syllablePosition = 0; syllablePosition < stemTerminus; syllablePosition++) {
+        newSyllable.phonemes[syllablePosition] = incrementingSyllable.phonemes[syllablePosition]
+      }
+      stemMemory.phonology.syllables.push(newSyllable)
+    }
+
+    function removeSyllableFromStem (stem) {
+      let stemTerminus = stem.phonology.syllables[stem.phonology.syllables.length - 1].phonemes.length
+      stem.phonology.syllables.pop()
+      let finalSyllable = stem.phonology.syllables[stem.phonology.syllables.length - 1]
+      while (finalSyllable.phonemes.length > stemTerminus) {
+        finalSyllable.phonemes.pop()
+      }
+    }
+
     function initializeNoun () {
-      ctrl.nounStem = svc.noun
+      ctrl.nounStemMemory = svc.noun
+      ctrl.nounStemLength = ctrl.nounStemMemory.phonology.syllables.length
+      ctrl.nounStem = JSON.parse(JSON.stringify(ctrl.nounStemMemory))
       ctrl.selectedNounClass = ctrl.nounClasses.filter(
         nounClass => nounClass.name === ctrl.nounStem.nounClass
       )[0]
+      addSyllableToStemMemory(ctrl.nounStemMemory)
       ctrl.selectedNounGender = ctrl.nounStem.gender
       ctrl.nounEndingStartPosition = ctrl.selectedNounClass.endingStartPosition
       ctrl.setNounForms()
@@ -179,16 +223,39 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.updateDate()
     }
 
+    this.updateNounRoot = function () {
+      for (let syllableIndex in ctrl.nounStem.phonology.syllables) {
+        let syllable = ctrl.nounStem.phonology.syllables[syllableIndex]
+        for (let phonemeIndex in syllable.phonemes) {
+          ctrl.nounStemMemory.phonology.syllables[syllableIndex].phonemes[phonemeIndex] =
+          syllable.phonemes[phonemeIndex]
+        }
+      }
+      ctrl.setNounForms()
+    }
+
     this.incrementWord = function () {
       ctrl.wordLength++
       changeWordLength()
       ctrl.updateWord()
     }
 
+    this.incrementNounRoot = function () {
+      ctrl.nounStemLength++
+      changeNounRootLength()
+      ctrl.updateNounRoot()
+    }
+
     this.decrementWord = function () {
       ctrl.wordLength--
       changeWordLength()
       ctrl.updateWord()
+    }
+
+    this.decrementNounRoot = function () {
+      ctrl.nounStemLength--
+      changeNounRootLength()
+      ctrl.updateNounRoot()
     }
 
     this.incrementedWordInvalid = function () {
@@ -201,9 +268,18 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       return true
     }
 
+    this.incrementedNounRootInvalid = () => !('nounStem' in ctrl)
+
     this.decrementedWordInvalid = function () {
       if ('word' in ctrl) {
         return !svc.testAlterationValidity(ctrl.word, { type: 'SYLLABLE_DECREMENT' })
+      }
+      return true
+    }
+
+    this.decrementedNounRootInvalid = function () {
+      if ('nounStem' in ctrl) {
+        return ctrl.nounStem.phonology.syllables.length <= 1
       }
       return true
     }
@@ -227,6 +303,18 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       }
       while (ctrl.word.syllables.length > ctrl.wordLength) {
         ctrl.word.syllables.pop()
+      }
+    }
+
+    function changeNounRootLength () {
+      while (ctrl.nounStemMemory.phonology.syllables.length <= ctrl.nounStemLength) {
+        addSyllableToStemMemory(ctrl.nounStemMemory)
+      }
+      while (ctrl.nounStem.phonology.syllables.length < ctrl.nounStemLength) {
+        addSyllableToStem(ctrl.nounStem, ctrl.nounStemMemory)
+      }
+      while (ctrl.nounStem.phonology.syllables.length > ctrl.nounStemLength) {
+        removeSyllableFromStem(ctrl.nounStem)
       }
     }
 

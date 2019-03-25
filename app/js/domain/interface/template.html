@@ -73,6 +73,12 @@
     <div ng-show="isSet(2)">
       <div ng-show="ctrl.retrievingNoun" class="solid-box">Retrieving syngloss and sample noun...</div>
       <div ng-hide="ctrl.retrievingNoun">
+        <div>
+          Select the number of syllables: {{ctrl.nounRootLength}}
+          <button ng-click="ctrl.decrementNounRoot()" ng-disabled="ctrl.decrementedNounRootInvalid()">-</button>
+          <button ng-click="ctrl.incrementNounRoot()" ng-disabled="ctrl.incrementedNounRootInvalid()">+</button>
+        </div>
+        <br>
         <form>
           Select the noun declension class:
           <select
