@@ -11,28 +11,37 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
-        if (svc.syngloss.phonology.prosody.type === 'STRESS') {
-          svc.syngloss.phonology.prosody.stressType = []
-          for (let orderIndex = 0; orderIndex < svc.syngloss.phonology.prosody.maxOrder; orderIndex++) {
-            svc.syngloss.phonology.prosody.stressType[orderIndex] = determineStressType(svc.syngloss, orderIndex + 1)
+        if (svc.syngloss.type === 'PARENT') {
+          if (svc.syngloss.phonology.prosody.type === 'STRESS') {
+            svc.syngloss.phonology.prosody.stressType = []
+            for (let orderIndex = 0; orderIndex < svc.syngloss.phonology.prosody.maxOrder; orderIndex++) {
+              svc.syngloss.phonology.prosody.stressType[orderIndex] = determineStressType(svc.syngloss, orderIndex + 1)
+            }
           }
-        }
-        svc.syngloss.phonology.phonotactics.forEach((phonemePlace, phonemeIndex) =>
-          phonemePlace.forEach(function (option) {
-            option.invalid = (word, syllableIndex) => !svc.testAlterationValidity(word, {
-              type: 'NEW_PHONEME',
-              syllableIndex: syllableIndex,
-              phonemeIndex: phonemeIndex,
-              value: option.value
+          svc.syngloss.phonology.phonotactics.forEach((phonemePlace, phonemeIndex) =>
+            phonemePlace.forEach(function (option) {
+              option.invalid = (word, syllableIndex) => !svc.testAlterationValidity(word, {
+                type: 'NEW_PHONEME',
+                syllableIndex: syllableIndex,
+                phonemeIndex: phonemeIndex,
+                value: option.value
+              })
             })
-          })
-        )
+          )
+        }
       }
 
       function checkSyngloss (syngloss) {
         validity.verifyNotNull(syngloss, 'Syngloss')
+        validity.verifyPropertiesExist(syngloss, 'Syngloss', ['name', 'type', 'date'])
+        if (syngloss.type === 'PARENT') {
+          checkParentSyngloss(syngloss)
+        }
+      }
+
+      function checkParentSyngloss (syngloss) {
         validity.verifyPropertiesExist(syngloss, 'Syngloss', [
-          'name', 'date', 'phonology', 'morphology', 'validity', 'writingSystems', 'descendantLanguages'
+          'phonology', 'morphology', 'validity', 'writingSystems', 'descendantLanguages'
         ])
         validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'incrementingSyllable', 'syllableCores', 'prosody'])
         for (let phonemePositionIndex in syngloss.phonology.phonotactics) {

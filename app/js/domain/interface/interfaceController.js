@@ -9,21 +9,23 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     this.retrievingNoun = true
     this.retrievingVerb = true
 
+    this.isParent = () => 'syngloss' in ctrl && ctrl.syngloss.type === 'PARENT'
+    this.isDescendant = () => 'syngloss' in ctrl && ctrl.syngloss.type === 'DESCENDANT'
+
     this.showSyllables = false
 
     this.showJson = object => JSON.stringify(object)
 
     $scope.tab = 1
     $scope.setTab = function (tab) { $scope.tab = tab }
-    $scope.isSet = tab => $scope.tab === tab
+    $scope.isSet = tab => $scope.tab === tab && 'syngloss' in ctrl && ctrl.syngloss.type === 'PARENT'
 
     this.resetNoun = function () {
       ctrl.getNounPromise = svc.getNoun(
         $routeParams.languageName,
         ctrl.selectedNounGender,
         ctrl.selectedNounClass.name
-      )
-        .then(initializeNoun)
+      ).then(initializeNoun)
     }
 
     this.setGender = function () {
@@ -165,7 +167,16 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
     function initializeController () {
       ctrl.retrievingSyngloss = false
       ctrl.syngloss = svc.syngloss
+      if (ctrl.syngloss.type === 'PARENT') {
+        initializeParentSyngloss()
+      } else {
+        ctrl.retrievingWord = false
+        ctrl.retrievingNoun = false
+        ctrl.retrievingVerb = false
+      }
+    }
 
+    function initializeParentSyngloss () {
       for (let position of ctrl.syngloss.phonology.phonotactics) {
         for (let option of position) {
           option.presentation = svc.present(option.value)

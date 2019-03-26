@@ -3,16 +3,18 @@
     <div class="jumbotron">
       <h1>Syngloss: {{ctrl.display(ctrl.languageName)}}</h1>
     </div>
+    <div ng-show="ctrl.retrievingSyngloss" class="solid-box">Retrieving syngloss...</div>
     <div>
-  		<ul class="nav nav-pills">
+  		<ul class="nav nav-pills" ng-show="ctrl.isParent()">
        	<li><a href ng-click="setTab(1)">Phonology</a></li>
        	<li><a href ng-click="setTab(2)">Nouns</a></li>
        	<li><a href ng-click="setTab(3)">Verbs</a></li>
      	</ul>
   	</div>
     <br><br>
+    <div ng-show="ctrl.isDescendant()">This is a descendant syngloss.</div>
     <div ng-show="isSet(1)">
-      <div ng-show="ctrl.retrievingWord" class="solid-box">Retrieving syngloss and sample word...</div>
+      <div ng-show="ctrl.retrievingWord" class="solid-box">Retrieving sample word...</div>
       <div ng-hide="ctrl.retrievingWord">
         <form>
           <div>

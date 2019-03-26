@@ -282,6 +282,14 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    // function reverseSoundChange (word, language, syllableIndex, transformation) {
+    // let output = []
+    // TODO: Append the array with every permutation of this transformation.
+    // TODO: Filter the array by condition.
+    // output.push(JSON.parse(JSON.stringify(word)))
+    // return output
+    // }
+
     function languageSoundChange (phonotactics, syllableCenter, transformation) {
       for (let position of transformation.positions) {
         let absolutePosition = syllableCenter + position
