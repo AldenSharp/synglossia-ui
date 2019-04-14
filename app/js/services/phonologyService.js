@@ -133,6 +133,35 @@ angular.module('app').service('phonologyService', ['arrayService',
       return splitSyllables
     }
 
+    this.generatePossibleSyllables = phonotactics => generatePossibleSyllablesIncrement([[]], phonotactics, 0)
+
+    this.getAllPossibleAccents = function (prosody) {
+      let possibleAccents = []
+      if (prosody.type === 'PITCH') {
+        for (let pitchIndex in prosody.inventory) {
+          possibleAccents.push(pitchIndex)
+        }
+      } else {
+        for (let pitchIndex = 0; pitchIndex <= prosody.maxOrder; pitchIndex++) {
+          possibleAccents.push(pitchIndex)
+        }
+      }
+      return possibleAccents
+    }
+
+    function generatePossibleSyllablesIncrement (possibleSyllables, phonotactics, index) {
+      if (index >= phonotactics.length) { return possibleSyllables }
+      let newPossibleSyllables = []
+      for (let possibleSyllable of possibleSyllables) {
+        for (let phoneme of phonotactics[index]) {
+          let newPossibleSyllable = JSON.parse(JSON.stringify(possibleSyllable))
+          newPossibleSyllable.push(phoneme.value)
+          newPossibleSyllables.push(newPossibleSyllable)
+        }
+      }
+      return generatePossibleSyllablesIncrement(newPossibleSyllables, phonotactics, index + 1)
+    }
+
     this.writeIPA = function (word, language) {
       let output = ''
 

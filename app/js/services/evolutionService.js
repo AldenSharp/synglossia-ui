@@ -165,6 +165,42 @@ angular.module('app').service('evolutionService', [
       return output
     }
 
+    this.generateReverse = function (word, languageArray, steps) {
+      let output = [word]
+      for (let stepIndex = steps.length - 1; stepIndex >= 0; stepIndex--) {
+        let newWords = []
+        for (let word of output) {
+          newWords.concat(runSyllablesReverse(word, languageArray[stepIndex], steps[stepIndex].transformations))
+        }
+        output = newWords
+      }
+      return output
+    }
+
+    function runSyllablesReverse (word, language, transformations) {
+      let output = [word]
+      for (let syllableIndex = word.syllables.length - 1; syllableIndex >= 0; syllableIndex--) {
+        let newWords = []
+        for (let word of output) {
+          newWords.concat(runTransformationsReverse(word, language, syllableIndex, transformations))
+        }
+        output = newWords
+      }
+      return output
+    }
+
+    function runTransformationsReverse (word, language, syllableIndex, transformations) {
+      let output = [word]
+      for (let transformationIndex = transformations.length - 1; transformationIndex >= 0; transformationIndex--) {
+        let newWords = []
+        for (let word of output) {
+          newWords.concat(reverseTransform(word, language, syllableIndex, transformations[transformationIndex]))
+        }
+        output = newWords
+      }
+      return output
+    }
+
     this.transformAffixedStem = function (stem, transformations, language) {
       let stemLength = stem.syllables.length
       for (let transformation of transformations) {
@@ -177,7 +213,7 @@ angular.module('app').service('evolutionService', [
       return stem
     }
 
-    let transform = function (
+    function transform (
       word, wordLength, language, syllableIndex, transformation
     ) {
       if (transformation.type === 'SOUND_CHANGE') {
@@ -220,6 +256,48 @@ angular.module('app').service('evolutionService', [
       }
       if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
         syllablePositionDeletion(word, language, syllableIndex, transformation)
+      }
+    }
+
+    function reverseTransform (word, language, syllableIndex, transformation) {
+      if (transformation.type === 'SOUND_CHANGE') {
+        return reverseSoundChange(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_DELETION') {
+        return reverseSoundDeletion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_INSERTION') {
+        return reverseSoundInsertion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_MIGRATION') {
+        return reverseSoundMigration(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_COPY') {
+        return reverseSoundCopy(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SOUND_SWAP') {
+        return reverseSoundSwap(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'CONSONANT_DEGEMINATION') {
+        return reverseConsonantDegemination(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_COLLAPSE') {
+        return reverseSyllableCollapse(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_INSERTION') {
+        return reverseSyllableInsertion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'ACCENT') {
+        return reverseAccent(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'STRESS_SHIFT') {
+        return reverseStressShift(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_POSITION_INSERTION') {
+        return reverseSyllablePositionInsertion(word, language, syllableIndex, transformation)
+      }
+      if (transformation.type === 'SYLLABLE_POSITION_DELETION') {
+        return reverseSyllablePositionDeletion(word, language, syllableIndex, transformation)
       }
     }
 
@@ -271,6 +349,12 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    let meetsPhonotactics = (word, phonotactics) => word.syllables.every(syllable =>
+      phonotactics.every((possiblePhonemes, phonemeIndex) =>
+        possiblePhonemes.map(phoneme => phoneme.value).indexOf(syllable.phonemes[phonemeIndex]) > -1
+      )
+    )
+
     function soundChange (word, language, syllableIndex, transformation) {
       for (let position of transformation.positions) {
         let absolutePosition = language.phonology.syllableCores[0] + position
@@ -282,13 +366,35 @@ angular.module('app').service('evolutionService', [
       }
     }
 
-    // function reverseSoundChange (word, language, syllableIndex, transformation) {
-    // let output = []
-    // TODO: Append the array with every permutation of this transformation.
-    // TODO: Filter the array by condition.
-    // output.push(JSON.parse(JSON.stringify(word)))
-    // return output
-    // }
+    function reverseSoundChange (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      for (let position of transformation.positions) {
+        let absolutePosition = language.phonology.syllableCores[0] + position
+        let newPossibleInputs = JSON.parse(JSON.stringify(possibleInputs))
+        for (let possibleInput of possibleInputs) {
+          for (let change of transformation.changes.filter(thisChange =>
+            possibleInput.syllables[syllableIndex].phonemes[absolutePosition] === change.toSound
+          )) {
+            let newPossibleInput = JSON.parse(JSON.stringify(possibleInput))
+            newPossibleInput.syllables[syllableIndex].phonemes[absolutePosition] = change.fromSound
+            newPossibleInputs.push(newPossibleInput)
+          }
+        }
+        possibleInputs = JSON.parse(JSON.stringify(newPossibleInputs))
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
 
     function languageSoundChange (phonotactics, syllableCenter, transformation) {
       for (let position of transformation.positions) {
@@ -345,6 +451,36 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    function reverseSoundDeletion (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      for (let position of transformation.positions) {
+        let absolutePosition = language.phonology.syllableCores[0] + position
+        let newPossibleInputs = JSON.parse(JSON.stringify(possibleInputs))
+        for (let possibleInput of possibleInputs) {
+          if (possibleInput.syllables[syllableIndex].phonemes[absolutePosition] === '') {
+            for (let sound of transformation.sounds) {
+              let newPossibleInput = JSON.parse(JSON.stringify(possibleInput))
+              newPossibleInput.syllables[syllableIndex].phonemes[absolutePosition] = sound
+              newPossibleInputs.push(newPossibleInput)
+            }
+          }
+        }
+        possibleInputs = JSON.parse(JSON.stringify(newPossibleInputs))
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function languageSoundDeletion (phonotactics, syllableCenter, transformation) {
       for (let position of transformation.positions) {
         let absolutePosition = syllableCenter + position
@@ -384,6 +520,28 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    function reverseSoundInsertion (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      let absolutePosition = language.phonology.syllableCores[0] + transformation.position
+      if (word.syllables[syllableIndex].phonemes[absolutePosition] === transformation.sound) {
+        let newPossibleInput = JSON.parse(JSON.stringify(word))
+        newPossibleInput.syllables[syllableIndex].phonemes[absolutePosition] = ''
+        possibleInputs.push(newPossibleInput)
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function languageSoundInsertion (phonotactics, syllableCenter, transformation) {
       let absolutePosition = syllableCenter + transformation.position
       if (phonotactics[absolutePosition].every((option) => option.value !== transformation.sound)) {
@@ -419,6 +577,45 @@ angular.module('app').service('evolutionService', [
           }
         }
       }
+    }
+
+    function reverseSoundMigration (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      for (let migration of transformation.migrations) {
+        let absoluteFromPosition = language.phonology.syllableCores[0] + migration.fromPosition
+        let absoluteToPosition = language.phonology.syllableCores[0] + migration.toPosition
+        let fromSyllableIndex = syllableIndex
+        let toSyllableIndex = syllableIndex + migration.syllableShift
+        if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
+          if (word.syllables[fromSyllableIndex].phonemes[absoluteFromPosition] === '') {
+            let newPossibleInputs = JSON.parse(JSON.stringify(possibleInputs))
+            for (let possibleInput of possibleInputs) {
+              for (let sound of language.phonology.phonotactics[absoluteToPosition]
+                .filter(phonotacticsPosition => phonotacticsPosition === '' || transformation.overwrite)
+              ) {
+                let newPossibleInput = JSON.parse(JSON.stringify(possibleInput))
+                newPossibleInput.syllables[fromSyllableIndex].phonemes[absoluteFromPosition] =
+                  newPossibleInput.syllables[toSyllableIndex].phonemes[absoluteToPosition]
+                newPossibleInput.syllables[toSyllableIndex].phonemes[absoluteToPosition] = sound
+                newPossibleInputs.push(newPossibleInput)
+              }
+            }
+            possibleInputs = JSON.parse(JSON.stringify(newPossibleInputs))
+          }
+        }
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
     }
 
     function languageSoundMigration (phonotactics, syllableCenter, transformation) {
@@ -473,6 +670,45 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    function reverseSoundCopy (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      for (let migration of transformation.migrations) {
+        let absoluteFromPosition = language.phonology.syllableCores[0] + migration.fromPosition
+        let absoluteToPosition = language.phonology.syllableCores[0] + migration.toPosition
+        let fromSyllableIndex = syllableIndex
+        let toSyllableIndex = syllableIndex + migration.syllableShift
+        if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
+          if (word.syllables[fromSyllableIndex].phonemes[absoluteFromPosition] ===
+            word.syllables[toSyllableIndex].phonemes[absoluteToPosition]
+          ) {
+            let newPossibleInputs = JSON.parse(JSON.stringify(possibleInputs))
+            for (let possibleInput of possibleInputs) {
+              for (let sound of language.phonology.phonotactics[absoluteToPosition]
+                .filter(phonotacticsPosition => phonotacticsPosition === '' || transformation.overwrite)
+              ) {
+                let newPossibleInput = JSON.parse(JSON.stringify(possibleInput))
+                newPossibleInput.syllables[toSyllableIndex].phonemes[absoluteToPosition] = sound
+                newPossibleInputs.push(newPossibleInput)
+              }
+            }
+            possibleInputs = JSON.parse(JSON.stringify(newPossibleInputs))
+          }
+        }
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function languageSoundCopy (phonotactics, syllableCenter, transformation) {
       for (let migration of transformation.migrations) {
         let absoluteFromPosition = syllableCenter + migration.fromPosition
@@ -515,6 +751,33 @@ angular.module('app').service('evolutionService', [
         word.syllables[toSyllableIndex].phonemes[toPhonemeIndex] = word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex]
         word.syllables[fromSyllableIndex].phonemes[fromPhonemeIndex] = reservePhoneme
       }
+    }
+
+    function reverseSoundSwap (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      let absoluteFromPosition = language.phonology.syllableCores[0] + transformation.swap.fromPosition
+      let absoluteToPosition = language.phonology.syllableCores[0] + transformation.swap.toPosition
+      let fromSyllableIndex = syllableIndex
+      let toSyllableIndex = syllableIndex + transformation.swap.syllableShift
+      if (toSyllableIndex < word.syllables.length && toSyllableIndex >= 0) {
+        let newPossibleInput = JSON.parse(JSON.stringify(word))
+        let reservePhoneme = word.syllables[fromSyllableIndex].phonemes[absoluteFromPosition]
+        word.syllables[fromSyllableIndex].phonemes[absoluteFromPosition] = word.syllables[toSyllableIndex].phonemes[absoluteToPosition]
+        word.syllables[toSyllableIndex].phonemes[absoluteToPosition] = reservePhoneme
+        possibleInputs.push(newPossibleInput)
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
     }
 
     function checkSoundSwap (language, transformation, transformationLocation) {
@@ -565,6 +828,40 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    function reverseConsonantDegemination (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      if (syllableIndex < word.syllables.length - 1) {
+        let syllableStartIndex = -language.phonology.syllableCores[0]
+        while (word.syllables[syllableIndex + 1].phonemes[syllableStartIndex] === '' && syllableStartIndex < 0) {
+          syllableStartIndex++
+        }
+        if (syllableStartIndex < 0) {
+          let consonant = word.syllables[syllableIndex + 1].phonemes[syllableStartIndex]
+          let syllableEndIndex = word.syllables[syllableIndex].phonemes.length - language.phonology.syllableCores[0]
+          while (word.syllables[syllableIndex].phonemes[syllableEndIndex] === '' && syllableEndIndex > 0) {
+            syllableEndIndex--
+          }
+          if (syllableEndIndex > 0 && word.syllable[syllableIndex].phonemes[syllableEndIndex] === consonant) {
+            let newPossibleInput = JSON.parse(JSON.stringify(word))
+            newPossibleInput.syllable[syllableIndex].phonemes[syllableEndIndex] = ''
+            possibleInputs.push(newPossibleInput)
+          }
+        }
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function checkConsonantDegemination (language, transformation, transformationLocation) {
       validity.verifyPropertiesExist(transformation, transformationLocation, ['condition'])
       conditions.checkSyllableCondition(language, transformation.condition, transformationLocation + ': Condition')
@@ -594,6 +891,36 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    function reverseSyllableCollapse (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      for (let possibleSyllable of phonology.generatePossibleSyllables(language.phonotactics)) {
+        let newPossibleInput = JSON.parse(JSON.stringify(word))
+        newPossibleInput.syllables.splice(
+          syllableIndex + 1, 0, JSON.parse(JSON.stringify(newPossibleInput.syllables[syllableIndex]))
+        )
+        for (let phonemeIndex in possibleSyllable) {
+          if (phonemeIndex < transformation.position) {
+            newPossibleInput.syllables[syllableIndex + 1].phonemes[phonemeIndex] = possibleSyllable[phonemeIndex]
+          } else {
+            newPossibleInput.syllables[syllableIndex].phonemes[phonemeIndex] = possibleSyllable[phonemeIndex]
+          }
+        }
+        possibleInputs.push(newPossibleInput)
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function checkSyllableCollapse (language, transformation, transformationLocation) {
       validity.verifyPropertiesExist(transformation, transformationLocation, ['position', 'condition'])
 
@@ -611,6 +938,33 @@ angular.module('app').service('evolutionService', [
       word.syllables.splice(syllableIndex, 0, { accent: 0, phonemes: transformation.phonemes })
     }
 
+    function reverseSyllableInsertion (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      if (
+        syllableIndex > 0 &&
+        word.syllables[syllableIndex - 1].accent === 0 &&
+        word.syllables[syllableIndex - 1].phonemes.every(
+          (phoneme, phonemeIndex) => phoneme === transformation.phonemes[phonemeIndex]
+        )
+      ) {
+        let newPossibleInput = JSON.parse(JSON.stringify(word))
+        newPossibleInput.syllables.splice(syllableIndex - 1, 1)
+        possibleInputs.push(newPossibleInput)
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function checkSyllableInsertion (language, transformation, transformationLocation) {
       validity.verifyPropertiesExist(transformation, transformationLocation, ['phonemes', 'condition'])
       if (transformation.phonemes.length !== language.phonology.phonotactics.length) {
@@ -625,6 +979,32 @@ angular.module('app').service('evolutionService', [
       let absoluteSyllablePosition = transformation.syllablePosition +
       (transformation.syllablePositionAbsolute ? 0 : syllableIndex)
       word.syllables[absoluteSyllablePosition].accent = transformation.order
+    }
+
+    function reverseAccent (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      let absoluteSyllablePosition = transformation.syllablePositionAbsolute
+        ? array.signedModulate(transformation.syllablePosition)
+        : transformation.syllablePosition + syllableIndex < 0 ? 0
+          : transformation.syllablePosition + syllableIndex >= word.syllables.length ? word.syllables.length - 1
+            : transformation.syllablePosition + syllableIndex
+      for (let possibleAccent of phonology.getAllPossibleAccents(language.phonology.prosody)) {
+        let newPossibleInput = JSON.parse(JSON.stringify(word))
+        newPossibleInput.syllables[absoluteSyllablePosition].accent = possibleAccent
+        possibleInputs.push(newPossibleInput)
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
     }
 
     function languageAccent (prosody, syllableCenter, transformation) {
@@ -660,6 +1040,38 @@ angular.module('app').service('evolutionService', [
       }
     }
 
+    function reverseStressShift (word, language, syllableIndex, transformation) {
+      let possibleInputs = conditions.meetsSyllableCondition(
+        language, word, syllableIndex,
+        transformation.condition, true
+      ) ? [] : [JSON.parse(JSON.stringify(word))]
+      let targetSyllableIndex = transformation.syllablePositionAbsolute
+        ? array.signedModulate(transformation.shift)
+        : transformation.shift + syllableIndex < 0 ? 0
+          : transformation.shift + syllableIndex >= word.syllables.length ? word.syllables.length - 1
+            : transformation.shift + syllableIndex
+      if (
+        word.syllables[targetSyllableIndex].accent === transformation.order &&
+        word.syllables[syllableIndex].accent === 0
+      ) {
+        for (let possibleAccent of phonology.getAllPossibleAccents(language.phonology.prosody)) {
+          let newPossibleInput = JSON.parse(JSON.stringify(word))
+          newPossibleInput.syllables[targetSyllableIndex].accent = possibleAccent
+          newPossibleInput.syllables[syllableIndex].accent = transformation.order
+          possibleInputs.push(newPossibleInput)
+        }
+      }
+      return possibleInputs.filter(possibleInput =>
+        meetsPhonotactics(possibleInput, language.phonotactics) && (
+          JSON.stringify(possibleInput) === JSON.stringify(word) ||
+          conditions.meetsSyllableCondition(
+            language, possibleInput, syllableIndex,
+            transformation.condition, true
+          )
+        )
+      )
+    }
+
     function checkStressShift (language, transformation, transformationLocation) {
       validity.verifyPropertiesExist(transformation, transformationLocation, ['order', 'shift', 'syllablePositionAbsolute', 'condition'])
 
@@ -676,6 +1088,20 @@ angular.module('app').service('evolutionService', [
       let absolutePosition = transformation.position + language.phonology.syllableCores[0] +
         (transformation.position < 0 ? 1 : 0)
       word.syllables[syllableIndex].phonemes.splice(absolutePosition, 0, '')
+    }
+
+    function reverseSyllablePositionInsertion (word, language, syllableIndex, transformation) {
+      let newPossibleInput = JSON.parse(JSON.stringify(word))
+      for (
+        let phonemeIndex = language.phonology.syllableCores[0] + transformation.position +
+          (transformation.position < 0 ? 1 : 0);
+        phonemeIndex < newPossibleInput.syllables.length - 1;
+        phonemeIndex++
+      ) {
+        word.syllables[syllableIndex].phonemes[phonemeIndex] = word.syllables[syllableIndex].phonemes[phonemeIndex + 1]
+      }
+      newPossibleInput.pop()
+      return [newPossibleInput]
     }
 
     function languageSyllablePositionInsertion (phonotactics, syllableCenter, transformation) {
@@ -701,6 +1127,24 @@ angular.module('app').service('evolutionService', [
 
     function syllablePositionDeletion (word, language, syllableIndex, transformation) {
       word.syllables[syllableIndex].phonemes.splice(transformation.position + language.phonology.syllableCores[0], 1)
+    }
+
+    function reverseSyllablePositionDeletion (word, language, syllableIndex, transformation) {
+      let possibleInputs = []
+      for (let possiblePhoneme of language.phonology.phonotactics[transformation.position]) {
+        let newPossibleInput = JSON.parse(JSON.stringify(word))
+        for (
+          let phonemeIndex = language.phonology.syllablesCores[0] + transformation.position -
+            (transformation.position < 0 ? 1 : 0);
+          phonemeIndex < newPossibleInput.syllables[syllableIndex].phonemes.length;
+          phonemeIndex++
+        ) {
+          newPossibleInput.syllables[syllableIndex].phonemes[phonemeIndex + 1] = newPossibleInput.syllables[syllableIndex].phonemes[phonemeIndex]
+        }
+        newPossibleInput.syllables[syllableIndex].phonemes[language.phonology.syllablesCores[0] + transformation.position] = possiblePhoneme.value
+        possibleInputs.push(newPossibleInput)
+      }
+      return possibleInputs
     }
 
     function languageSyllablePositionDeletion (phonotactics, syllableCenter, transformation) {

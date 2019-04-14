@@ -303,15 +303,43 @@ angular.module('app').service('interfaceService',
         return output
       }
 
+      this.getParentLanguageTree = function (language) {
+        let output = []
+        // TODO: Get all languages for which the given language is a descendant.
+        // TODO: Iterate on this until all branches terminate with a primal parent language.
+        // TODO: Gather the sum phonotactics for the current language.
+        return output
+      }
+
       this.getWordTree = function (word, languageTree) {
         let output = []
         for (let descendantLanguage of languageTree) {
           let wordObject = {
             name: descendantLanguage.name,
-            wordArray: evolution.generate(word, descendantLanguage.languageArray, descendantLanguage.evolution)
+            wordArray: evolution.generate(
+              word, descendantLanguage.languageArray, descendantLanguage.evolution
+            )
           }
           let wordObjectArray = wordObject.wordArray
-          wordObject.descendantWords = svc.getWordTree(wordObjectArray[wordObjectArray.length - 1], descendantLanguage.descendantLanguages)
+          wordObject.descendantWords = svc.getWordTree(
+            wordObjectArray[wordObjectArray.length - 1],
+            descendantLanguage.descendantLanguages
+          )
+          output.push(wordObject)
+        }
+        return output
+      }
+
+      this.getWordAncestors = function (word, languageTree) {
+        // This language tree is built differently. C.f. this.getParentLanguageTree
+        let output = []
+        for (let parentLanguage of languageTree) {
+          let wordObject = {
+            name: parentLanguage.name,
+            possibleAncestors: evolution.generateReverse(
+              word, parentLanguage.languageArray, parentLanguage.evolution
+            )
+          }
           output.push(wordObject)
         }
         return output
