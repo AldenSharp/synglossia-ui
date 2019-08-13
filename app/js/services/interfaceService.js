@@ -11,7 +11,7 @@ angular.module('app').service('interfaceService',
       let initializeSyngloss = function (httpResponse) {
         svc.syngloss = httpResponse.data
         checkSyngloss(svc.syngloss)
-        if (svc.syngloss.type === 'PARENT') {
+        if ('phonology' in svc.syngloss) {
           if (svc.syngloss.phonology.prosody.type === 'STRESS') {
             svc.syngloss.phonology.prosody.stressType = []
             for (let orderIndex = 0; orderIndex < svc.syngloss.phonology.prosody.maxOrder; orderIndex++) {
@@ -33,114 +33,111 @@ angular.module('app').service('interfaceService',
 
       function checkSyngloss (syngloss) {
         validity.verifyNotNull(syngloss, 'Syngloss')
-        validity.verifyPropertiesExist(syngloss, 'Syngloss', ['name', 'type', 'date'])
-        if (syngloss.type === 'PARENT') {
-          checkParentSyngloss(syngloss)
+        validity.verifyPropertiesExist(syngloss, 'Syngloss', ['name', 'date', 'writingSystems', 'descendantLanguages', 'ancestorLanguages'])
+        if (syngloss.ancestorLanguages.length < 1) {
+          checkPrimalSyngloss(syngloss)
         }
       }
 
-      function checkParentSyngloss (syngloss) {
+      function checkPrimalSyngloss (syngloss) {
         validity.verifyPropertiesExist(syngloss, 'Syngloss', [
-          'phonology', 'morphology', 'validity', 'writingSystems', 'descendantLanguages'
+          'phonology', 'morphology', 'validity'
         ])
-        validity.verifyPropertiesExist(syngloss.phonology, 'Parent language phonology', ['phonotactics', 'incrementingSyllable', 'syllableCores', 'prosody'])
+        validity.verifyPropertiesExist(syngloss.phonology, 'Primal language phonology', ['phonotactics', 'incrementingSyllable', 'syllableCores', 'prosody'])
         for (let phonemePositionIndex in syngloss.phonology.phonotactics) {
           let phonemePosition = syngloss.phonology.phonotactics[phonemePositionIndex]
-          validity.verifyNonemptyArray(phonemePosition, 'Parent language phonotactics: ' + phonemePositionIndex)
+          validity.verifyNonemptyArray(phonemePosition, 'Primal language phonotactics: ' + phonemePositionIndex)
           for (let optionIndex in phonemePosition) {
             let option = phonemePosition[optionIndex]
             validity.verifyPropertiesExist(option,
-              'Parent language phonotactics: Index ' + phonemePositionIndex + ': Index ' + optionIndex,
+              'Primal language phonotactics: Index ' + phonemePositionIndex + ': Index ' + optionIndex,
               ['value']
             )
           }
         }
 
         if (syngloss.phonology.syllableCores.length < 1) {
-          console.error('Parent language syllable cores: size of list is less than one. There must be at least one syllable core.')
+          console.error('Primal language syllable cores: size of list is less than one. There must be at least one syllable core.')
         }
         for (let syllableCoreIndex in syngloss.phonology.syllableCores) {
           syllableCoreIndex = parseInt(syllableCoreIndex)
           let syllableCore = syngloss.phonology.syllableCores[syllableCoreIndex]
           if (syngloss.phonology.syllableCores.indexOf(syllableCore) !== syllableCoreIndex) {
-            console.error('Parent language syllable cores: values are not unique.')
+            console.error('Primal language syllable cores: values must be unique, but found duplicates.')
           }
-          validity.verifyIndexInPhonotactics(syngloss, syllableCore, 'Parent language syllable core at index ' + syllableCoreIndex)
+          validity.verifyIndexInPhonotactics(syngloss, syllableCore, 'Primal language syllable core at index ' + syllableCoreIndex)
         }
 
-        validity.verifyPropertiesExist(syngloss.phonology.incrementingSyllable, 'Parent language incrementing syllable', ['accent', 'phonemes'])
+        validity.verifyPropertiesExist(syngloss.phonology.incrementingSyllable, 'Primal language incrementing syllable', ['accent', 'phonemes'])
         if (syngloss.phonology.incrementingSyllable.phonemes.length !== syngloss.phonology.phonotactics.length) {
-          console.error('Parent language incrementing syllable: length is not equal to length of the phonotactics.')
+          console.error('Primal language incrementing syllable: length is not equal to length of the phonotactics.')
         }
         for (let phonemeIndex in syngloss.phonology.incrementingSyllable.phonemes) {
           phonemeIndex = parseInt(phonemeIndex)
           let phoneme = syngloss.phonology.incrementingSyllable.phonemes[phonemeIndex]
-          validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.syllableCores[0], 'Parent language incrementing syllable')
+          validity.verifyValueInPhonotactics(syngloss, phoneme, phonemeIndex - syngloss.phonology.syllableCores[0], 'Primal language incrementing syllable')
         }
 
-        validity.verifyPropertiesExist(syngloss.phonology.prosody, 'Parent language prosody', ['type'])
+        validity.verifyPropertiesExist(syngloss.phonology.prosody, 'Primal language prosody', ['type'])
         if (syngloss.phonology.prosody.type === 'STRESS') {
-          validity.verifyPositive(syngloss.phonology.prosody.maxOrder, 'Parent language prosody max order')
+          validity.verifyPositive(syngloss.phonology.prosody.maxOrder, 'Primal language prosody max order')
         }
-        conditions.checkSyllableCondition(syngloss, syngloss.validity, 'Parent language validity')
+        conditions.checkSyllableCondition(syngloss, syngloss.validity, 'Primal language validity')
 
         for (let writingSystemIndex in syngloss.writingSystems) {
           let writingSystem = syngloss.writingSystems[writingSystemIndex]
           validity.verifyPropertiesExist(
             writingSystem,
-            'Parent language writing system ' + writingSystemIndex,
+            'Primal language writing system ' + writingSystemIndex,
             ['name', 'type']
           )
           if (writingSystem.type === 'ALPHABET') {
             validity.verifyPropertiesExist(
               writingSystem,
-              'Parent language ALPHABET writing system ' + writingSystemIndex,
+              'Primal language ALPHABET writing system ' + writingSystemIndex,
               ['rules']
             )
             for (let ruleIndex in writingSystem.rules) {
               let rule = writingSystem.rules[ruleIndex]
               validity.verifyPropertiesExist(
                 rule,
-                'Parent language writing system ' + writingSystemIndex + ': Rule ' + ruleIndex,
+                'Primal language writing system ' + writingSystemIndex + ': Rule ' + ruleIndex,
                 ['sounds', 'graphemes']
               )
-              validity.verifyNonemptyArray(rule.sounds, 'Parent language writing system ' + writingSystemIndex + ': Rule ' + ruleIndex + ': Sounds')
+              validity.verifyNonemptyArray(rule.sounds, 'Primal language writing system ' + writingSystemIndex + ': Rule ' + ruleIndex + ': Sounds')
               for (let soundIndex in rule.sounds) {
                 let sound = rule.sounds[soundIndex]
                 validity.verifyValueSomewhereInPhonotactics(
                   syngloss, sound,
-                  'Parent language writing system ' + writingSystemIndex +
+                  'Primal language writing system ' + writingSystemIndex +
                   ': Rule ' + ruleIndex + ': Sound ' + soundIndex
                 )
               }
               validity.verifyNonemptyArray(
                 rule.graphemes,
-                'Parent language writing system ' + writingSystemIndex +
+                'Primal language writing system ' + writingSystemIndex +
                 ': Rule ' + ruleIndex + ': Graphemes'
               )
               for (let graphemeIndex in rule.graphemes) {
                 let grapheme = rule.graphemes[graphemeIndex]
                 validity.verifyPropertiesExist(
                   grapheme,
-                  'Parent language writing system ' + writingSystemIndex +
+                  'Primal language writing system ' + writingSystemIndex +
                   ': Rule ' + ruleIndex + ': Grapheme ' + graphemeIndex,
                   ['value', 'condition']
                 )
                 conditions.checkCondition(
                   syngloss, grapheme.condition,
-                  'Parent language writing system ' + writingSystemIndex +
+                  'Primal language writing system ' + writingSystemIndex +
                   ': Rule ' + ruleIndex + ': Grapheme ' + graphemeIndex
                 )
               }
             }
           }
         }
-        validity.verifyNonemptyArray(
-          syngloss.descendantLanguages, 'Parent language: Descendant languages'
-        )
         for (let descendantLanguageIndex in syngloss.descendantLanguages) {
           let descendantLanguage = syngloss.descendantLanguages[descendantLanguageIndex]
-          checkDescendantLanguage(descendantLanguage, syngloss, 'Parent language: Descendant language ' + descendantLanguageIndex)
+          checkDescendantLanguage(descendantLanguage, syngloss, 'Primal language: Descendant language ' + descendantLanguageIndex)
         }
       }
 
