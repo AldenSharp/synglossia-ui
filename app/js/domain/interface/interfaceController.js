@@ -47,12 +47,13 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       ctrl.wordMemory.spokenForm.syllables.push(
         JSON.parse(JSON.stringify(ctrl.syngloss.phonology.incrementingSyllable))
       )
-      ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
-      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      ctrl.descendantWordTree = svc.getDescendantWordTree(ctrl.word, ctrl.descendantLanguageTree)
+      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.descendantWordTree)
+      ctrl.ancestorWordTree = svc.getAncestorWordTree(ctrl.word, ctrl.ancestorLanguageTree)
       ctrl.retrievingWord = false
     }
 
-    ctrl.getNounForm = function (number, nounCase) {
+    this.getNounForm = function (number, nounCase) {
       if (ctrl.nounForms === undefined) { return null }
       return ctrl.nounForms.filter(
         nounForm => nounForm.number === number && nounForm.case === nounCase
@@ -183,7 +184,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
         }
       }
 
-      ctrl.languageTree = svc.getLanguageTree(ctrl.syngloss)
+      ctrl.descendantLanguageTree = svc.getDescendantLanguageTree(ctrl.syngloss)
+      ctrl.ancestorLanguageTree = svc.getAncestorLanguageTree(ctrl.syngloss)
       ctrl.earliestDate = ctrl.syngloss.date
       ctrl.latestDate = svc.getLatestDate(ctrl.syngloss)
       ctrl.selectedDate = ctrl.latestDate
@@ -207,15 +209,19 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
       } else {
         ctrl.displayDate = ctrl.selectedDate + ' CE'
       }
-      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.wordTree)
+      ctrl.descendantWords = svc.getDescendantWordsForDate(ctrl.selectedDate, ctrl.descendantWordTree)
     }
 
     this.write = (word, language, writingSystemName, field) => field in ctrl && word !== undefined
       ? svc.write(word, language, writingSystemName)
       : null
 
-    function getWordTree () {
-      ctrl.wordTree = svc.getWordTree(ctrl.word, ctrl.languageTree)
+    function getDescendantWordTree () {
+      ctrl.descendantWordTree = svc.getDescendantWordTree(ctrl.word, ctrl.descendantLanguageTree)
+    }
+
+    function getAncestorWordTree () {
+      ctrl.ancestorWordTree = svc.getAncestorWordTree(ctrl.word, ctrl.ancestorLanguageTree)
     }
 
     this.tableHeader = (syllablePositionIndex) => syllablePositionIndex - ctrl.syngloss.phonology.syllableCores[0]
@@ -230,7 +236,8 @@ angular.module('app').controller('interfaceController', ['interfaceService', '$s
         ctrl.wordMemory.spokenForm.syllables[syllableIndex] =
           JSON.parse(JSON.stringify(ctrl.word.syllables[syllableIndex]))
       }
-      getWordTree()
+      getDescendantWordTree()
+      getAncestorWordTree()
       ctrl.updateDate()
     }
 

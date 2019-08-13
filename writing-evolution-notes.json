@@ -1,0 +1,70 @@
+/* Romance languages use only the Roman Classical Miniscule writing system. */
+/* Regular spelling changes include parallel transformations in spelling in response to any given spoken transformation. */
+/* The introduction of new sounds never have regular spelling changes, and must be accounted for as special cases. */
+/* Default spelling behavior: spelling updates in parallel with the sound changes, except in the case of new sounds, which borrow the same spellings as the old sounds. */
+
+{
+  "parentLanguage": "Classical_Latin",
+  "descendantLanguage": "Vulgar_Latin",
+  "spelling": "<i> and <y> are used interchangeably.",
+  "evolution": []
+}
+
+{
+  "parentLanguage": "Proto-Western-Romance",
+  "descendantLanguage": "Old_Spanish",
+  "spelling": [
+    "Accent rules are reinterpreted as regularly being penultimate when ending with a vowel, /n/, or /s/, and ultimate otherwise, with irregularities marked using an acute accent on the vowel of the stressed syllable.",
+    "A new letter <v> takes the place of <u> when word-initial, regardless of whether the sound is a vowel or a consonant."
+  ]
+}
+
+{
+  "parentLanguage": "Old_Spanish",
+  "descendantLanguage": "Modern_Spanish",
+  "spelling": [
+    "<nn> is abbreviated <ñ>.",
+    "<y> is used only for /j/, and <i> only for /i/. Similarly, <v> is used for /ʋ/, and <u> is used for /u/."
+  ]
+}
+
+/*
+Old French:
+A rule of reading goes that <e> means /ə/ when the syllable is unstressed and non-initial, and /e/, /ɛ/, or /æ/ when the syllable is stressed or initial.
+A rule of stress for multi-syllable words goes that stress falls on the latest syllable with vowel not <e>, or the first syllable if all vowels are <e>. Exceptions are marked with acute accent on the vowel of the stressed syllable.
+While this acute accent rule is typical for a Romance language, in the case of French, only <e> takes this accent as a logical consequence.
+*/
+
+{
+  "parentLanguage": "Proto-Western-Romance",
+  "descendantLanguage": "Old_French",
+  "spelling": [
+    "/ɲ/ is spelled <gn>, taking after an alternate Latin consonant group that became /ɲ/."
+    "Development of the h-digraphs in French originate as the following:",
+    "Koine Greek: <ph>/f/, <th>/θ/, <ch>/k/",
+    "Fricativization analogy from <ph>/f/, <th>/θ/: <dh>/ð/, <ch>/x/, <gh>/x/",
+    "Phonological Development: <ch>/tʃ/"
+  ]
+}
+
+{
+  "parentLanguage": "Norman",
+  "descendantLanguage": "Middle_English",
+  "spelling": [
+    "Some cross-familiar spelling changes include <qu> and word-final <c> to <k>.",
+    "As spelling regularizes toward the end, <y> and <i> gain separate functions: <y> is used for consonants and word-final vowels, and <i> is used for non-word-final vowels."
+  ]
+}
+
+{
+  "parentLanguage": "Old_French",
+  "descendantLanguage": "Middle_French",
+  "spellings": [
+    "Diacritics develop into the following:",
+    "Acute accent: Used only on <e> to indicate specifically the meaning /e/ in Modern French. Used since Old French.",
+    "Grave accent: Used on <e> to mean /ɛ/ in Modern French. Otherwise, only used to disambiguate homophones.",
+    "Circumflex: Used to indicate long vowels in Middle French. Comes into use with the emergence of Middle French long vowels.",
+    "Diaeresis: Used to disambiguate diphthongs from plain vowels indicated by vowel digraphs. Comes into use when diphthongs become leveled and spelling is not updated.",
+    "Cedilla: As in Old French."
+  ]
+}

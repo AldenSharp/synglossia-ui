@@ -285,7 +285,7 @@ angular.module('app').service('interfaceService',
         return validStressPermutationWords[0]
       }
 
-      this.getLanguageTree = function (language) {
+      this.getDescendantLanguageTree = function (language) {
         let output = []
         for (let descendantLanguage of language.descendantLanguages) {
           let descendantLanguageArray = evolution.generateLanguageArray(language, descendantLanguage)
@@ -297,21 +297,100 @@ angular.module('app').service('interfaceService',
           let lastArrayLanguage = descendantLanguageArray[descendantLanguageArray.length - 1]
           descendantLanguage.phonology = JSON.parse(JSON.stringify(lastArrayLanguage.phonology))
           descendantLanguage.writingSystems = JSON.parse(JSON.stringify(lastArrayLanguage.writingSystems))
-          descendantLanguageBranch.descendantLanguages = svc.getLanguageTree(descendantLanguage)
+          descendantLanguageBranch.descendantLanguages = svc.getDescendantLanguageTree(descendantLanguage)
           output.push(descendantLanguageBranch)
         }
         return output
       }
 
-      this.getParentLanguageTree = function (language) {
+      this.getAncestorLanguageTree = function (language) {
+        let languageTree = generateBasicAncestorLanguageTree(language)
+        for (let languageNode of languageTree) {
+          languageNode.languageArray = generateAncestorLanguageArray(language, languageNode)
+        }
+        return languageTree
+      }
+
+      function generateBasicAncestorLanguageTree (language) {
         let output = []
-        // TODO: Get all languages for which the given language is a descendant.
-        // TODO: Iterate on this until all branches terminate with a primal parent language.
-        // TODO: Gather the sum phonotactics for the current language.
+        for (let ancestorLanguage of language.ancestorLanguages) {
+          let ancestorLanguageBranch = {
+            name: ancestorLanguage.name,
+            evolution: ancestorLanguage.evolution,
+            languageArray: [ancestorLanguage],
+            ancestorLanguages: generateBasicAncestorLanguageTree(ancestorLanguage)
+          }
+          output.push(ancestorLanguageBranch)
+        }
         return output
       }
 
-      this.getWordTree = function (word, languageTree) {
+      function generateAncestorLanguageArray (descendantLanguage, languageNode) {
+        let language = languageNode.languageArray[0]
+        if (languageNode.ancestorLanguages.length > 0) {
+          for (let ancestorLanguageNode of languageNode.ancestorLanguages) {
+            ancestorLanguageNode.languageArray = generateAncestorLanguageArray(language, ancestorLanguageNode)
+          }
+          language.phonology = generatePhonologyFromAncestorLanguageNodes(languageNode.ancestorLanguages)
+          language.writingSystems = []
+          for (let ancestorLanguage of languageNode.ancestorLanguages) {
+            language.writingSystems = array.concatenate(
+              language.writingSystems,
+              ancestorLanguage.languageArray[ancestorLanguage.languageArray.length - 1].writingSystems
+            )
+          }
+        }
+        return evolution.generateLanguageArray(language, descendantLanguage)
+      }
+
+      function generatePhonologyFromAncestorLanguageNodes (ancestorLanguageNodes) {
+        let phonologies = ancestorLanguageNodes.map(ancestorLanguageNode =>
+          ancestorLanguageNode.languageArray[ancestorLanguageNode.languageArray.length - 1].phonology
+        )
+        let primarySyllableCore = array.max(phonologies.map(phonology => phonology.syllableCores[0]))
+        let offsets = phonologies.map(phonology => primarySyllableCore - phonology.syllableCores[0])
+        let prosody = {}
+        if (phonologies.every(phonology.prosody.type === 'STRESS')) {
+          prosody = {
+            type: 'STRESS',
+            maxOrder: array.max(phonologies.map(phonology => phonology.prosody.maxOrder))
+          }
+        } else if (phonologies.every(phonology.prosody.type === 'PITCH')) {
+          prosody = {
+            type: 'PITCH',
+            inventory: array.union(phonologies.map(phonology => phonology.prosody.inventory))
+          }
+        } else {
+          console.error(
+            'Error generating phonology object from ancestor language nodes: all phonologies must be the same type, but received: ' +
+            JSON.stringify(phonologies.map(phonology.prosody.type))
+          )
+        }
+        return {
+          syllablesCores: array.union(phonologies.map(
+            (phonology, phonologyIndex) => phonology.syllableCores.map(
+              (syllableCore, index, array) => syllableCore + (primarySyllableCore - array[0])
+            )
+          )),
+          phonotactics: svc.getCardinal(
+            array.max(phonologies.map(
+              (phonology, phonologyIndex) => offsets[phonologyIndex] + phonology.length()
+            ))
+          ).map((element, finalPhonotacticsIndex) => array.union(
+            phonologies.map((phonology, phonologyIndex) =>
+              (
+                finalPhonotacticsIndex - offsets[phonologyIndex] < 0 ||
+                finalPhonotacticsIndex - offsets[phonologyIndex] >= phonology.phonotactics.length
+              )
+                ? []
+                : phonology.phonotactics[finalPhonotacticsIndex - offsets[phonologyIndex]]
+            )
+          )),
+          prosody: prosody
+        }
+      }
+
+      this.getDescendantWordTree = function (word, languageTree) {
         let output = []
         for (let descendantLanguage of languageTree) {
           let wordObject = {
@@ -321,7 +400,7 @@ angular.module('app').service('interfaceService',
             )
           }
           let wordObjectArray = wordObject.wordArray
-          wordObject.descendantWords = svc.getWordTree(
+          wordObject.descendantWords = svc.getDescendantWordTree(
             wordObjectArray[wordObjectArray.length - 1],
             descendantLanguage.descendantLanguages
           )
@@ -330,17 +409,23 @@ angular.module('app').service('interfaceService',
         return output
       }
 
-      this.getWordAncestors = function (word, languageTree) {
-        // This language tree is built differently. C.f. this.getParentLanguageTree
+      this.getAncestorWordTree = function (word, languageTree) {
         let output = []
-        for (let parentLanguage of languageTree) {
+        for (let ancestorLanguage of languageTree) {
           let wordObject = {
-            name: parentLanguage.name,
-            possibleAncestors: evolution.generateReverse(
-              word, parentLanguage.languageArray, parentLanguage.evolution
+            name: ancestorLanguage.name,
+            wordArray: evolution.generateReverse(
+              word, ancestorLanguage.languageArray, ancestorLanguage.evolution
             )
           }
-          output.push(wordObject)
+          let wordObjectArray = wordObject.wordArray
+          let ancestorWord = wordObjectArray[wordObjectArray.length - 1]
+          wordObject.ancestorWords = svc.getAncestorWordTree(
+            ancestorWord, ancestorLanguage.ancestorLanguages
+          )
+          if (!('validity' in ancestorLanguage) || svc.isValidInLanguage(ancestorWord, ancestorLanguage)) {
+            output.push(wordObject)
+          }
         }
         return output
       }
@@ -426,11 +511,13 @@ angular.module('app').service('interfaceService',
         return stressPermutationWords
       }
 
-      this.isValid = word => word.syllables.every(
+      this.isValidInLanguage = (word, language) => word.syllables.every(
         (syllable, syllableIndex) => conditions.meetsSyllableCondition(
-          svc.syngloss, word, syllableIndex, svc.syngloss.validity
+          language, word, syllableIndex, language.validity
         )
       )
+
+      this.isValid = (word) => svc.isValidInLanguage(word, svc.syngloss)
 
       this.getCardinal = number => Array.from({ length: number }, (object, index) => index)
 

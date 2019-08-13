@@ -803,25 +803,24 @@ angular.module('app').service('evolutionService', [
         while (
           word.syllables[syllableIndex].phonemes[currentSyllableFinalSoundIndex] === '' &&
           currentSyllableFinalSoundIndex >= 0
-        ) {
-          currentSyllableFinalSoundIndex--
-        }
+        ) { currentSyllableFinalSoundIndex-- }
         let nextSyllableInitialSoundIndex = 0
         while (
           syllableIndex < word.syllables.length - 1 &&
           word.syllables[syllableIndex + 1].phonemes[nextSyllableInitialSoundIndex] === '' &&
           nextSyllableInitialSoundIndex < word.syllables[syllableIndex].phonemes.length
-        ) {
-          nextSyllableInitialSoundIndex++
-        }
+        ) { nextSyllableInitialSoundIndex++ }
         if (
           currentSyllableFinalSoundIndex > language.phonology.syllableCores[0] &&
           nextSyllableInitialSoundIndex < language.phonology.syllableCores[0]
         ) {
           if (
             word.syllables[syllableIndex].phonemes[currentSyllableFinalSoundIndex] ===
-            word.syllables[syllableIndex + 1].phonemes[nextSyllableInitialSoundIndex]
+            word.syllables[syllableIndex + 1].phonemes[nextSyllableInitialSoundIndex] ||
+            word.syllables[syllableIndex + 1].phonemes[nextSyllableInitialSoundIndex] === 'ː'
           ) {
+            word.syllables[syllableIndex + 1].phonemes[nextSyllableInitialSoundIndex] =
+            word.syllables[syllableIndex].phonemes[currentSyllableFinalSoundIndex]
             word.syllables[syllableIndex].phonemes[currentSyllableFinalSoundIndex] = ''
           }
         }
@@ -844,9 +843,10 @@ angular.module('app').service('evolutionService', [
           while (word.syllables[syllableIndex].phonemes[syllableEndIndex] === '' && syllableEndIndex > 0) {
             syllableEndIndex--
           }
-          if (syllableEndIndex > 0 && word.syllable[syllableIndex].phonemes[syllableEndIndex] === consonant) {
+          if (syllableEndIndex > 0 && word.syllable[syllableIndex].phonemes[syllableEndIndex] === '') {
             let newPossibleInput = JSON.parse(JSON.stringify(word))
-            newPossibleInput.syllable[syllableIndex].phonemes[syllableEndIndex] = ''
+            newPossibleInput.syllable[syllableIndex].phonemes[syllableEndIndex] = consonant
+            word.syllables[syllableIndex + 1].phonemes[syllableStartIndex] = 'ː'
             possibleInputs.push(newPossibleInput)
           }
         }
